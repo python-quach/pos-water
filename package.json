@@ -14,7 +14,10 @@
         "web-vitals": "^0.2.4"
     },
     "scripts": {
-        "start": "react-scripts start",
+        "start-mac": "export BROWSER=none && react-scripts start",
+        "start-win": "set BROWSER=none && react-scripts start",
+        "start-electron-mac": "export ELECTRON_START_URL=http://localhost:3000 && electron .",
+        "start-electron-win": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"

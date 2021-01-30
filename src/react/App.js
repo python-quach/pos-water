@@ -18,18 +18,12 @@ function App() {
         !data || console.log({ data });
     });
 
-    // const { appName, appVersion, production, development } = data;
     const { appName } = data;
 
     return (
         <div className='App'>
             <header className='App-header'>
                 <pre>{appName}</pre>
-                {/* <pre>{row.id + '' + row.info}</pre> */}
-                {/* <pre>{row}</pre> */}
-                {/* <pre>{appVersion}</pre>
-                <pre>{production}</pre>
-                <pre>{development}</pre> */}
             </header>
         </div>
     );

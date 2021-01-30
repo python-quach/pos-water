@@ -1,5 +1,5 @@
 {
-    "productName": "Electron React Sqlite",
+    "productName": "ElectronReactSqlite3",
     "main": "electron/electron.js",
     "name": "electron-react-sqlite",
     "version": "0.1.0",

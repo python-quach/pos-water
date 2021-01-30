@@ -1,6 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
+const { channels } = require('../src/shared/constants');
 
 let mainWindow;
 
@@ -15,7 +16,14 @@ const devHTMLFile = process.env.ELECTRON_START_URL;
 function createWindow() {
     const startUrl = devHTMLFile || productionHTMLFile;
 
-    mainWindow = new BrowserWindow({ width: 800, height: 600, frame: false });
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        frame: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
+    });
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -32,4 +40,14 @@ app.on('activate', function () {
     if (mainWindow === null) {
         createWindow();
     }
+});
+
+ipcMain.on(channels.APP_INFO, (event, arg) => {
+    console.log('receive app info message');
+    event.sender.send(channels.APP_INFO, {
+        appName: app.getName(),
+        appVersion: app.getVersion(),
+        production: productionHTMLFile,
+        development: devHTMLFile,
+    });
 });

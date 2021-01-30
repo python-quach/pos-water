@@ -11,6 +11,7 @@
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "react-scripts": "4.0.1",
+        "sqlite3": "^5.0.1",
         "web-vitals": "^0.2.4"
     },
     "scripts": {
@@ -18,6 +19,8 @@
         "start-win": "set BROWSER=none && react-scripts start",
         "start-electron-mac": "export ELECTRON_START_URL=http://localhost:3000 && electron .",
         "start-electron-win": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
+        "rebuild-sqlite3": "electron-rebuild -f -w sqlite3",
+        "postinstall": "electron-builder install-app-deps",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
@@ -41,6 +44,8 @@
         ]
     },
     "devDependencies": {
-        "electron": "^11.2.1"
+        "electron": "^11.2.1",
+        "electron-builder": "^22.9.1",
+        "electron-rebuild": "^2.3.4"
     }
 }

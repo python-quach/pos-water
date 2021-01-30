@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { channels } from '../shared/constants';
 const { ipcRenderer } = window;
@@ -16,18 +15,21 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (data) console.log({ data });
+        !data || console.log({ data });
     });
 
-    const { appName, appVersion, production, development } = data;
+    // const { appName, appVersion, production, development } = data;
+    const { appName } = data;
 
     return (
         <div className='App'>
             <header className='App-header'>
                 <pre>{appName}</pre>
-                <pre>{appVersion}</pre>
+                {/* <pre>{row.id + '' + row.info}</pre> */}
+                {/* <pre>{row}</pre> */}
+                {/* <pre>{appVersion}</pre>
                 <pre>{production}</pre>
-                <pre>{development}</pre>
+                <pre>{development}</pre> */}
             </header>
         </div>
     );

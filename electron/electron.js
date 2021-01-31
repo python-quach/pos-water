@@ -22,35 +22,35 @@ const productionHTMLFile = url.format({
 
 const devHTMLFile = process.env.ELECTRON_START_URL;
 
-app.whenReady().then(() => {
-    const startUrl = devHTMLFile || productionHTMLFile;
-    const displays = screen.getAllDisplays();
-    const externalDisplay = displays.find((display) => {
-        return display.bounds.x !== 0 || display.bounds.y !== 0;
-    });
+// app.whenReady().then(() => {
+//     const startUrl = devHTMLFile || productionHTMLFile;
+//     const displays = screen.getAllDisplays();
+//     const externalDisplay = displays.find((display) => {
+//         return display.bounds.x !== 0 || display.bounds.y !== 0;
+//     });
 
-    if (externalDisplay) {
-        mainWindow = new BrowserWindow({
-            frame: false,
-            x:
-                externalDisplay.bounds.x +
-                (externalDisplay.bounds.width - 800) / 2,
-            y:
-                externalDisplay.bounds.y +
-                (externalDisplay.bounds.height - 600) / 2,
-            webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
-            },
-        });
-        mainWindow.loadURL(startUrl);
-    } else {
-        createWindow();
-    }
+//     if (externalDisplay) {
+//         mainWindow = new BrowserWindow({
+//             frame: false,
+//             x:
+//                 externalDisplay.bounds.x +
+//                 (externalDisplay.bounds.width - 800) / 2,
+//             y:
+//                 externalDisplay.bounds.y +
+//                 (externalDisplay.bounds.height - 600) / 2,
+//             webPreferences: {
+//                 preload: path.join(__dirname, 'preload.js'),
+//             },
+//         });
+//         mainWindow.loadURL(startUrl);
+//     } else {
+//         createWindow();
+//     }
 
-    mainWindow.on('closed', function () {
-        mainWindow = null;
-    });
-});
+//     mainWindow.on('closed', function () {
+//         mainWindow = null;
+//     });
+// });
 
 function createWindow() {
     const startUrl = devHTMLFile || productionHTMLFile;
@@ -58,7 +58,7 @@ function createWindow() {
         width: 800,
         height: 600,
         center: true,
-        frame: false,
+        // frame: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         },
@@ -69,6 +69,8 @@ function createWindow() {
         mainWindow = null;
     });
 }
+
+app.on('ready', createWindow);
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
@@ -82,7 +84,7 @@ app.on('activate', function () {
 });
 
 ipcMain.on(channels.APP_INFO, (event, arg) => {
-    console.log('receive app info message');
+    console.log('receive app info message', { arg });
     db.all(`SELECT * FROM users`, (err, rows) => {
         if (err) return console.log(err.message);
         event.sender.send(channels.APP_INFO, {

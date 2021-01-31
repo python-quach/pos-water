@@ -2,6 +2,7 @@ import { Form, Divider, Message } from 'semantic-ui-react';
 import Username from '../Field/Username';
 import Password from '../Field/Password';
 import LoginButton from './LoginButton';
+import FormDebug from '../Debug/FormDebug';
 
 const LoginForm = (props) => {
     const {
@@ -28,11 +29,7 @@ const LoginForm = (props) => {
                 />
             </Form>
             <Divider hidden />
-            <Message>
-                <Message.Content>
-                    {JSON.stringify({ username, password }, 0, 2)}
-                </Message.Content>
-            </Message>
+            <FormDebug data={{ username, password }} />
         </>
     );
 };

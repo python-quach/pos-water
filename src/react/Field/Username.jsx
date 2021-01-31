@@ -1,15 +1,14 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Username = (props) => {
-    const { iconColor } = props;
-    return (
-        <>
-            <Field
+const Username = ({ iconColor }) => (
+    <Field
+        name='username'
+        render={({ input, meta }) => (
+            <Form.Input
+                {...input}
                 id='username'
-                name='username'
                 placeholder='username'
-                component={Form.Input}
                 className={iconColor}
                 type='text'
                 size='massive'
@@ -20,8 +19,8 @@ const Username = (props) => {
                 transparent
                 inverted
             />
-        </>
-    );
-};
+        )}
+    />
+);
 
 export default Username;

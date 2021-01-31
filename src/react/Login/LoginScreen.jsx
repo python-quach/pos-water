@@ -13,6 +13,7 @@ const { ipcRenderer } = window;
 
 const LoginScreen = (props) => {
     const [appVersion, setAppVersion] = useState('');
+
     const onSubmit = async (values) => {
         console.log(values);
         ipcRenderer.send(channels.APP_INFO, values);
@@ -62,7 +63,10 @@ const LoginScreen = (props) => {
                                     component={Login.Input}
                                     type='password'
                                 />
-                                <button className='ui button' type='submit'>
+                                <button
+                                    className='ui button'
+                                    type='submit'
+                                    disabled={submitting || pristine}>
                                     Login
                                 </button>
                             </Login>

@@ -1,28 +1,43 @@
-import { useState } from 'react';
-import {
-    Header,
-    Icon,
-    Grid,
-    Divider,
-    Form as Login,
-    Message,
-} from 'semantic-ui-react';
-import { Form, Field } from 'react-final-form';
+import { useState, useEffect } from 'react';
+import { Grid } from 'semantic-ui-react';
 import { channels } from '../../shared/constants';
+import { Form } from 'react-final-form';
+import LoginForm from './LoginForm';
+import LoginHeader from './LoginHeader';
 const { ipcRenderer } = window;
 
 const LoginScreen = (props) => {
+    console.log(props);
     const [appVersion, setAppVersion] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [iconColor, setIconColor] = useState('blueIcon');
 
-    const onSubmit = async (values) => {
-        console.log(values);
-        ipcRenderer.send(channels.APP_INFO, values);
-        ipcRenderer.on(channels.APP_INFO, (event, arg) => {
+    const clearInvalidLoginButton = () => {
+        if (errorMessage) setErrorMessage('');
+    };
+
+    const renderLoginForm = ({ handleSubmit, form, values }) => (
+        <LoginForm
+            form={form}
+            handleSubmit={handleSubmit}
+            values={values}
+            onSubmit={onSubmit}
+            iconColor={iconColor}
+            errorMessage={errorMessage}
+        />
+    );
+
+    const onSubmit = async ({ password, username }) => {
+        ipcRenderer.send(channels.APP_INFO, { username, password });
+        ipcRenderer.on(channels.APP_INFO, (event, { appVersion }) => {
             ipcRenderer.removeAllListeners(channels.APP_INFO);
-            const { appVersion } = arg;
             setAppVersion(appVersion);
         });
     };
+
+    useEffect(() => {
+        errorMessage ? setIconColor('whiteIcon') : setIconColor('blueIcon');
+    }, [errorMessage]);
 
     return (
         <Grid
@@ -30,53 +45,12 @@ const LoginScreen = (props) => {
             style={{ height: '100vh' }}
             verticalAlign='middle'>
             <Grid.Column style={{ maxWidth: 450 }}>
-                <Header as='h1' inverted size='huge' textAlign='left'>
-                    <Icon name='braille' color='blue' />
-                    <Header.Content>
-                        Mckee Pure Water
-                        <Header.Subheader>
-                            Version {appVersion}
-                        </Header.Subheader>
-                    </Header.Content>
-                </Header>
-                <Divider />
-                <Divider hidden />
+                <LoginHeader title='Mckee Pure Water' appVersion={appVersion} />
                 <Form
                     onSubmit={onSubmit}
                     initialValues={{ username: '', password: '' }}
-                    render={({
-                        handleSubmit,
-                        form,
-                        submitting,
-                        pristine,
-                        values,
-                    }) => (
-                        <>
-                            <Login onSubmit={handleSubmit}>
-                                <Field
-                                    name='username'
-                                    component={Login.Input}
-                                    type='text'
-                                />
-                                <Field
-                                    name='password'
-                                    component={Login.Input}
-                                    type='password'
-                                />
-                                <button
-                                    className='ui button'
-                                    type='submit'
-                                    disabled={submitting || pristine}>
-                                    Login
-                                </button>
-                            </Login>
-                            <Message>
-                                <Message.Content>
-                                    {JSON.stringify(values, 0, 2)}
-                                </Message.Content>
-                            </Message>
-                        </>
-                    )}></Form>
+                    render={renderLoginForm}
+                />
             </Grid.Column>
         </Grid>
     );

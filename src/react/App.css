@@ -36,3 +36,29 @@
         transform: rotate(360deg);
     }
 }
+
+/* LOGIN SCREEN CSS */
+.field.whiteIcon i.icon {
+    color: white;
+}
+.field.blueIcon i.icon {
+    color: #40b2ff;
+}
+.field.blueIcon div.input input[type='text']::-webkit-input-placeholder {
+    color: #fff;
+}
+.field.blueIcon div.input input[type='password']::-webkit-input-placeholder {
+    color: #fff;
+}
+.ui.fluid.left.icon.input input[type='text'] {
+    background-color: rgb(87 194 226 / 20%);
+    font-weight: bold;
+    font-size: x-large;
+    color: #fff;
+}
+.ui.fluid.left.icon.input input[type='password'] {
+    background-color: rgb(87 194 226 / 20%);
+    font-weight: bold;
+    font-size: x-large;
+    color: #fff;
+}

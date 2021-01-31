@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './react/App';
 import reportWebVitals from './react/reportWebVitals';
+import { channels } from './shared/constants';
+const { ipcRenderer } = window;
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <App ipcRenderer={ipcRenderer} channels={channels} />
     </React.StrictMode>,
     document.getElementById('root')
 );

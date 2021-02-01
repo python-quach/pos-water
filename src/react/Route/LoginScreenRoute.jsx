@@ -1,9 +1,7 @@
 import { Route } from 'react-router-dom';
 import LoginScreen from '../Login/LoginScreen';
 
-const LoginScreenRoute = (props) => {
-    console.log(props);
-    const { channels, ipcRenderer, exact, path } = props;
+const LoginScreenRoute = ({ channels, ipcRenderer, exact, path }) => {
     return (
         <Route
             exact={exact}

@@ -7,6 +7,8 @@ import LoginHeader from './LoginHeader';
 const { ipcRenderer } = window;
 
 const LoginScreen = (props) => {
+    const { history } = props;
+
     console.log(props);
     const [appVersion, setAppVersion] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -32,6 +34,7 @@ const LoginScreen = (props) => {
         ipcRenderer.on(channels.APP_INFO, (event, { appVersion }) => {
             ipcRenderer.removeAllListeners(channels.APP_INFO);
             setAppVersion(appVersion);
+            history.push({ pathname: '/dashboard', state: { appVersion } });
         });
     };
 

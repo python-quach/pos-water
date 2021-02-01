@@ -1,4 +1,5 @@
-import { Form, Divider, Message } from 'semantic-ui-react';
+import React from 'react';
+import { Form, Divider } from 'semantic-ui-react';
 import Username from '../Field/Username';
 import Password from '../Field/Password';
 import LoginButton from './LoginButton';

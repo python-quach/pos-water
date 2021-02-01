@@ -98,3 +98,14 @@ ipcMain.on(channels.APP_INFO, (event, arg) => {
         });
     });
 });
+
+ipcMain.on(channels.LOGIN, (event, { username, password }) => {
+    console.log('login', { username, password });
+    const sql = 'SELECT * FROM users WHERE username = ? AND password = ? ';
+    db.get(sql, [username, password], (err, row) => {
+        if (err) return console.log(err.message);
+
+        console.log({ row });
+        event.sender.send(channels.LOGIN, { login: row });
+    });
+});

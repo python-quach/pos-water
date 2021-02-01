@@ -19,7 +19,7 @@ const Username = ({ iconColor }) => (
                 transparent
                 inverted
                 autoComplete='off'
-                spellcheck='false'
+                spellCheck='false'
             />
         )}
     />

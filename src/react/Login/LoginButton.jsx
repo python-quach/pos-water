@@ -1,7 +1,8 @@
 import { Form, Transition } from 'semantic-ui-react';
+import React from 'react';
 
-const LoginButton = ({ errorMessage, username, password }) =>
-    !errorMessage ? (
+const LoginButton = ({ errorMessage, username, password }) => {
+    return !errorMessage ? (
         <Form.Button
             content='Login'
             className='LoginButton'
@@ -36,5 +37,17 @@ const LoginButton = ({ errorMessage, username, password }) =>
             />
         </Transition>
     );
+};
 
 export default LoginButton;
+
+//  <div className='disabled field LoginButton'>
+//             <button
+//                 type='submit'
+//                 id='LoginButton'
+//                 className='ui blue huge circular fluid icon primary disabled right labeled button'
+//                 disabled=''
+//                 tabIndex='-1'>
+//                 <i aria-hidden='true' className='sign in icon'></i>Login
+//             </button>
+//         </div>

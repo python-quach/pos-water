@@ -1,4 +1,4 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 import {
     TransitionablePortal,
     Segment,
@@ -11,13 +11,13 @@ import {
 import FindForm from '../Form/FindForm';
 
 const DashBoardScreen = (props) => {
-    // const [open, setOpen] = useState(props.user_id ? true : false);
-    // const [open, setOpen] = useState(props.user_id ? false : true);
+    const user_id = props.location.state ? props.location.state.user_id : false;
+    const [open, setOpen] = useState(user_id ? true : false);
 
     return (
         <TransitionablePortal
-            // open={open}
-            open={true}
+            onClose={() => setOpen(false)}
+            open={open}
             transition={{ animation: 'vertical flip', duration: 500 }}>
             <Segment
                 style={{
@@ -39,10 +39,10 @@ const DashBoardScreen = (props) => {
                                 <Header.Subheader>Version 1.0</Header.Subheader>
                             </Header.Content>
                         </Header>
-                        {/* <Button
+                        <Button
                             content='Back'
                             onClick={() => props.history.push('/')}
-                        /> */}
+                        />
                         <Divider />
                         <FindForm />
                     </Grid.Column>

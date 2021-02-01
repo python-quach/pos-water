@@ -1,7 +1,7 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Username = ({ iconColor }) => (
+const Username = ({ iconColor, errorMessage, clear }) => (
     <Field
         name='username'
         render={({ input, meta }) => (

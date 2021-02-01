@@ -4,19 +4,10 @@ import { channels } from '../../shared/constants';
 import { Form } from 'react-final-form';
 import LoginForm from './LoginForm';
 import LoginHeader from './LoginHeader';
-const { ipcRenderer } = window;
 
-const LoginScreen = (props) => {
-    const { history } = props;
-
-    console.log(props);
-    const [appVersion, setAppVersion] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+const LoginScreen = ({ history, ipcRenderer }) => {
+    const [errorMessage, setErrorMessage] = useState(false);
     const [iconColor, setIconColor] = useState('blueIcon');
-
-    const clearInvalidLoginButton = () => {
-        if (errorMessage) setErrorMessage('');
-    };
 
     const renderLoginForm = ({ handleSubmit, form, values }) => (
         <LoginForm
@@ -26,15 +17,22 @@ const LoginScreen = (props) => {
             onSubmit={onSubmit}
             iconColor={iconColor}
             errorMessage={errorMessage}
+            clear={setErrorMessage}
         />
     );
 
     const onSubmit = async ({ password, username }) => {
-        ipcRenderer.send(channels.APP_INFO, { username, password });
-        ipcRenderer.on(channels.APP_INFO, (event, { appVersion }) => {
-            ipcRenderer.removeAllListeners(channels.APP_INFO);
-            setAppVersion(appVersion);
-            history.push({ pathname: '/dashboard', state: { appVersion } });
+        ipcRenderer.send(channels.LOGIN, { username, password });
+        ipcRenderer.on(channels.LOGIN, (event, { login }) => {
+            ipcRenderer.removeAllListeners(channels.LOGIN);
+            if (!login) {
+                setErrorMessage(true);
+            } else {
+                history.push({
+                    pathname: '/dashboard',
+                    state: { user_id: login.user_id },
+                });
+            }
         });
     };
 
@@ -48,7 +46,7 @@ const LoginScreen = (props) => {
             style={{ height: '100vh' }}
             verticalAlign='middle'>
             <Grid.Column style={{ maxWidth: 450 }}>
-                <LoginHeader title='Mckee Pure Water' appVersion={appVersion} />
+                <LoginHeader title='Mckee Pure Water' />
                 <Form
                     onSubmit={onSubmit}
                     initialValues={{ username: '', password: '' }}

@@ -1,8 +1,19 @@
+import { useState, useEffect } from 'react';
 import { Form, Transition } from 'semantic-ui-react';
 import React from 'react';
 
-const LoginButton = ({ errorMessage, username, password }) => {
-    return !errorMessage ? (
+const LoginButton = ({ errorMessage, username, password, clear }) => {
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        if (errorMessage) {
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+    }, [errorMessage]);
+
+    return !errorMessage || username || password ? (
         <Form.Button
             content='Login'
             className='LoginButton'
@@ -18,10 +29,15 @@ const LoginButton = ({ errorMessage, username, password }) => {
             disabled={!username || !password}
             onClick={() => {
                 document.getElementById('username').focus();
+                clear(false);
             }}
         />
     ) : (
-        <Transition animation='shake' duration={500} unmountOnHide={true}>
+        <Transition
+            animation='shake'
+            duration={500}
+            visible={visible}
+            unmountOnHide={true}>
             <Form.Button
                 content='Invalid Login'
                 circular
@@ -31,23 +47,13 @@ const LoginButton = ({ errorMessage, username, password }) => {
                 color='red'
                 icon='warning sign'
                 labelPosition='right'
-                onClick={(event) => {
-                    event.preventDefault();
-                }}
+                // onClick={(event) => {
+                //     event.preventDefault();
+                //     clear(false);
+                // }}
             />
         </Transition>
     );
 };
 
 export default LoginButton;
-
-//  <div className='disabled field LoginButton'>
-//             <button
-//                 type='submit'
-//                 id='LoginButton'
-//                 className='ui blue huge circular fluid icon primary disabled right labeled button'
-//                 disabled=''
-//                 tabIndex='-1'>
-//                 <i aria-hidden='true' className='sign in icon'></i>Login
-//             </button>
-//         </div>

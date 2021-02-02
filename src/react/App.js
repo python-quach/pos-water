@@ -1,16 +1,29 @@
-import { HashRouter as Router, Switch } from 'react-router-dom';
-import { Route } from './Route';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import LoginScreen from './Login/LoginScreen';
+import DashBoardScreen from './Dashboard/Dashboard';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
-const App = (props) => (
+const App = ({ api }) => (
     <Router>
         <Switch>
-            <Route.Login exact path='/' {...props} />
-            <Route.Add exact path='/add' {...props} />
-            <Route.Buy exact path='/buy' {...props} />
-            <Route.Account exact path='/account' {...props} />
-            <Route.Dashboard exact path='/dashboard' {...props} />
+            <Route
+                exact
+                path='/'
+                render={(routeProps) => (
+                    <LoginScreen {...routeProps} api={api} />
+                )}
+            />
+            <Route
+                exact
+                path='/dashboard'
+                render={(routeProps) => (
+                    <DashBoardScreen {...routeProps} api={api} />
+                )}
+            />
+            {/* <Route.Add exact path='/add' {...props} /> */}
+            {/* <Route.Buy exact path='/buy' {...props} /> */}
+            {/* <Route.Account exact path='/account' {...props} /> */}
         </Switch>
     </Router>
 );

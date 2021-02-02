@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './react/App';
 import reportWebVitals from './react/reportWebVitals';
-import { channels } from './shared/constants';
-const { ipcRenderer } = window;
+import { api } from './api/index';
+// import { channels } from './shared/constants';
+// const { ipcRenderer } = window;
 
 ReactDOM.render(
     <React.StrictMode>
-        <App ipcRenderer={ipcRenderer} channels={channels} />
+        {/* <App ipcRenderer={ipcRenderer} channels={channels} api={api} /> */}
+        <App api={api} />
     </React.StrictMode>,
     document.getElementById('root')
 );

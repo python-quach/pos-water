@@ -7,12 +7,8 @@ import FirstName from '../Field/FirstName';
 import LastName from '../Field/LastName';
 
 const FindForm = () => {
-    // const onSubmit = async (props) => {
     const onSubmit = async ({ phone, account, firstName, lastName }) => {
-        // console.log(props);
-        // const { phone, account, firstName, lastName } = props;
         console.log({ phone, account, firstName, lastName });
-        // document.getElementById('phone').focus();
     };
 
     return (

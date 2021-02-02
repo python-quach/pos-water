@@ -1,18 +1,12 @@
 import { Route } from 'react-router-dom';
 import LoginScreen from '../Login/LoginScreen';
 
-const LoginScreenRoute = ({ channels, ipcRenderer, exact, path }) => {
+const LoginScreenRoute = ({ exact, path, api }) => {
     return (
         <Route
             exact={exact}
             path={path}
-            render={(routeProps) => (
-                <LoginScreen
-                    {...routeProps}
-                    channels={channels}
-                    ipcRenderer={ipcRenderer}
-                />
-            )}
+            render={(routeProps) => <LoginScreen {...routeProps} api={api} />}
         />
     );
 };

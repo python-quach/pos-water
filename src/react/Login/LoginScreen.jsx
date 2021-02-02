@@ -1,36 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
-import { channels } from '../../shared/constants';
 import { Form } from 'react-final-form';
 import LoginForm from './LoginForm';
 import LoginHeader from './LoginHeader';
 
-const LoginScreen = ({ history, ipcRenderer }) => {
+const LoginScreen = ({ history, api }) => {
     const [errorMessage, setErrorMessage] = useState(false);
     const [iconColor, setIconColor] = useState('blueIcon');
 
-    const renderLoginForm = ({ handleSubmit, form, values }) => (
-        <LoginForm
-            form={form}
-            handleSubmit={handleSubmit}
-            values={values}
-            onSubmit={onSubmit}
-            iconColor={iconColor}
-            errorMessage={errorMessage}
-            clear={setErrorMessage}
-        />
-    );
-
     const onSubmit = async ({ password, username }) => {
-        ipcRenderer.send(channels.LOGIN, { username, password });
-        ipcRenderer.on(channels.LOGIN, (event, { login }) => {
-            ipcRenderer.removeAllListeners(channels.LOGIN);
-            if (!login) {
+        api.login({ username, password }, (auth) => {
+            if (!auth) {
                 setErrorMessage(true);
             } else {
                 history.push({
                     pathname: '/dashboard',
-                    state: { user_id: login.user_id },
+                    state: { user_id: auth.user_id },
                 });
             }
         });
@@ -50,7 +35,16 @@ const LoginScreen = ({ history, ipcRenderer }) => {
                 <Form
                     onSubmit={onSubmit}
                     initialValues={{ username: '', password: '' }}
-                    render={renderLoginForm}
+                    render={({ handleSubmit, form, values }) => (
+                        <LoginForm
+                            form={form}
+                            handleSubmit={handleSubmit}
+                            values={values}
+                            iconColor={iconColor}
+                            errorMessage={errorMessage}
+                            clear={setErrorMessage}
+                        />
+                    )}
                 />
             </Grid.Column>
         </Grid>

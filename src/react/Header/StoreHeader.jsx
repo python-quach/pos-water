@@ -1,6 +1,6 @@
 import { Header, Icon, Divider } from 'semantic-ui-react';
 
-const LoginHeader = (props) => {
+const StoreHeader = (props) => {
     const { title } = props;
     return (
         <>
@@ -17,4 +17,4 @@ const LoginHeader = (props) => {
     );
 };
 
-export default LoginHeader;
+export default StoreHeader;

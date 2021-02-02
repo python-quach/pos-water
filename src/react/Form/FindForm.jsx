@@ -5,12 +5,11 @@ import Account from '../Field/Account';
 import FirstName from '../Field/FirstName';
 import LastName from '../Field/LastName';
 
-const FindForm = ({ api, history, setOpen }) => {
+const FindForm = ({ api, history }) => {
     const onSubmit = async ({ phone, account, firstName, lastName }) => {
         api.find({ phone, account, firstName, lastName }, (data) => {
             console.table(data);
             if (data) {
-                setOpen(false);
                 history.push({
                     pathname: '/buy',
                     state: { data },

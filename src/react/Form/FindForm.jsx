@@ -1,11 +1,15 @@
-import { Form, Button } from 'semantic-ui-react';
+import { useState, useEffect } from 'react';
+import { Form } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
 import Phone from '../Field/Phone';
 import Account from '../Field/Account';
 import FirstName from '../Field/FirstName';
 import LastName from '../Field/LastName';
+import FindButton from '../Button/FindButton';
 
 const FindForm = ({ api, history }) => {
+    const [errorMessage, setErrorMessage] = useState(null);
+
     const onSubmit = async ({ phone, account, firstName, lastName }) => {
         api.find({ phone, account, firstName, lastName }, (data) => {
             console.table(data);
@@ -14,6 +18,9 @@ const FindForm = ({ api, history }) => {
                     pathname: '/buy',
                     state: { data },
                 });
+            } else {
+                setErrorMessage(true);
+                document.getElementById('phone').focus();
             }
         });
     };
@@ -39,28 +46,35 @@ const FindForm = ({ api, history }) => {
                             form={form}
                             initialValues={initialValues}
                             values={values}
+                            setErrorMessage={setErrorMessage}
+                            errorMessage={errorMessage}
                         />
                         <Account
                             form={form}
                             initialValues={initialValues}
                             values={values}
+                            setErrorMessage={setErrorMessage}
+                            errorMessage={errorMessage}
                         />
                         <FirstName
                             form={form}
                             initialValues={initialValues}
                             values={values}
+                            setErrorMessage={setErrorMessage}
+                            errorMessage={errorMessage}
                             placeholder='first name'
                         />
                         <LastName
                             form={form}
                             initialValues={initialValues}
                             values={values}
+                            setErrorMessage={setErrorMessage}
+                            errorMessage={errorMessage}
                             placeholder='last name'
                         />
-                        <Form.Button content='Find' />
-                        <Button
-                            content='Back'
-                            onClick={() => history.push('/')}
+                        <FindButton
+                            errorMessage={errorMessage}
+                            values={values}
                         />
                     </Form>
                 )}

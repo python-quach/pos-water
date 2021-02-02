@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import LoginPortal from '../Portal/Portal';
 import LoginHeader from '../Header/StoreHeader';
 import LoginForm from '../Form/LoginForm';
-
+import ReportButton from '../Button/ReportButton';
 const LoginScreen = ({ history, api }) => {
     const [errorMessage, setErrorMessage] = useState(false);
     const [iconColor, setIconColor] = useState('blueIcon');
@@ -12,7 +12,7 @@ const LoginScreen = ({ history, api }) => {
     }, [errorMessage]);
 
     return (
-        <LoginPortal>
+        <LoginPortal open={true}>
             <LoginHeader title='Mckee Pure Water' />
             <LoginForm
                 api={api}
@@ -21,6 +21,7 @@ const LoginScreen = ({ history, api }) => {
                 errorMessage={errorMessage}
                 setErrorMessage={setErrorMessage}
             />
+            <ReportButton />
         </LoginPortal>
     );
 };

@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
+import BuyPortal from '../Portal/Portal';
 
-const BuyScreen = ({ history }) => {
+const BuyScreen = ({ api, history }) => {
     useEffect(() => {
         if (!history.location.state) {
             history.push('/dashboard');
+        } else {
+            console.log(history.location.state);
         }
     });
 
     return (
-        <div>
-            <pre>{JSON.stringify(history, null, 2)}</pre>
-        </div>
+        <BuyPortal open={true}>{JSON.stringify(history, null, 2)}</BuyPortal>
     );
 };
 

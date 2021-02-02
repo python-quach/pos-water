@@ -1,12 +1,13 @@
-import { useState } from 'react';
 import { TransitionablePortal, Segment, Grid } from 'semantic-ui-react';
 
-const Portal = ({ children }) => {
-    const [open, setOpen] = useState(true);
+const Portal = ({ children, open }) => {
     return (
         <TransitionablePortal
-            onClose={() => setOpen(false)}
             open={open}
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
+            closeOnDimmerClick={false}
+            closeOnPortalMouseLeave={false}
             transition={{ animation: 'zoom', duration: 500 }}>
             <Segment
                 style={{

@@ -1,7 +1,16 @@
+import { useEffect } from 'react';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const LastName = ({ name, placeholder, form, initialValue, values }) => {
+const LastName = ({ placeholder, setErrorMessage, values, form }) => {
+    useEffect(() => {
+        const { phone, account, firstName, lastName } = values;
+        if (phone || account || firstName || lastName) {
+            setErrorMessage((error) => {
+                if (error) return false;
+            });
+        }
+    });
     return (
         <Field
             name='lastName'
@@ -19,19 +28,25 @@ const LastName = ({ name, placeholder, form, initialValue, values }) => {
                     inverted
                     spellCheck='false'
                     onFocus={() => {
-                        const { firstName, lastName, phone, account } = values;
-                        console.log(values);
-                        // form.reset({
-                        //     phone: '',
-                        //     account: '',
-                        //     // firstName,
-                        //     // lastName,
-
-                        //     // lastName,
-                        //     // phone: '',
-                        //     // account: '',
-                        // });
+                        const { phone, account } = values;
+                        if (phone || account) {
+                            form.reset({ phone: '', account: '' });
+                        }
                     }}
+                    // onFocus={() => {
+                    //     const { firstName, lastName, phone, account } = values;
+                    //     console.log(values);
+                    //     // form.reset({
+                    //     //     phone: '',
+                    //     //     account: '',
+                    //     //     // firstName,
+                    //     //     // lastName,
+
+                    //     //     // lastName,
+                    //     //     // phone: '',
+                    //     //     // account: '',
+                    //     // });
+                    // }}
                 />
             )}
         />

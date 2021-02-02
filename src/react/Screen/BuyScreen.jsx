@@ -2,12 +2,10 @@ import { useEffect } from 'react';
 import BuyPortal from '../Portal/Portal';
 
 const BuyScreen = ({ api, history }) => {
+    const { state } = history.location;
+
     useEffect(() => {
-        if (!history.location.state) {
-            history.push('/dashboard');
-        } else {
-            console.log(history.location.state);
-        }
+        if (!state) history.push('/dashboard');
     });
 
     return (

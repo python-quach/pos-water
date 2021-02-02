@@ -13,7 +13,7 @@ const LoginScreen = ({ history, api }) => {
 
     return (
         <LoginPortal open={true}>
-            <LoginHeader title='Mckee Pure Water' />
+            <LoginHeader title='Mckee Pure Water' content='User Login' />
             <LoginForm
                 api={api}
                 history={history}

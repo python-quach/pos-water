@@ -2,8 +2,7 @@ import React from 'react';
 import { Form, Divider } from 'semantic-ui-react';
 import Username from '../Field/Username';
 import Password from '../Field/Password';
-import LoginButton from './LoginButton';
-import FormDebug from '../Debug/FormDebug';
+import LoginButton from '../Button/LoginButton';
 
 const LoginForm = (props) => {
     const {
@@ -32,8 +31,6 @@ const LoginForm = (props) => {
                     clear={clear}
                 />
             </Form>
-            <Divider hidden />
-            <FormDebug data={{ username, password }} />
         </>
     );
 };

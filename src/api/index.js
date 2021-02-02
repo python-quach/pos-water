@@ -1,7 +1,7 @@
 import { channels } from '../shared/constants';
 const { ipcRenderer } = window;
 
-const login = async ({ password, username }, callback) => {
+const login = ({ password, username }, callback) => {
     ipcRenderer.send(channels.LOGIN, { username, password });
     ipcRenderer.on(channels.LOGIN, (event, { login }) => {
         ipcRenderer.removeAllListeners(channels.LOGIN);
@@ -9,6 +9,15 @@ const login = async ({ password, username }, callback) => {
     });
 };
 
+const find = ({ phone, account, firstName, lastName }, callback) => {
+    ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
+    ipcRenderer.on(channels.FIND, (event, { membership }) => {
+        ipcRenderer.removeAllListeners(channels.FIND);
+        callback(membership);
+    });
+};
+
 export const api = {
     login,
+    find,
 };

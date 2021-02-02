@@ -10,15 +10,14 @@ import {
 } from 'semantic-ui-react';
 import FindForm from '../Form/FindForm';
 
-const DashBoardScreen = (props) => {
-    const user_id = props.location.state ? props.location.state.user_id : false;
-    const [open, setOpen] = useState(user_id ? true : false);
+const DashBoardScreen = ({ api, history }) => {
+    const [open, setOpen] = useState(true);
 
     return (
         <TransitionablePortal
             onClose={() => setOpen(false)}
             open={open}
-            transition={{ animation: 'vertical flip', duration: 500 }}>
+            transition={{ animation: 'zoom', duration: 500 }}>
             <Segment
                 style={{
                     margin: 0,
@@ -41,10 +40,14 @@ const DashBoardScreen = (props) => {
                         </Header>
                         <Button
                             content='Back'
-                            onClick={() => props.history.push('/')}
+                            onClick={() => history.push('/')}
                         />
                         <Divider />
-                        <FindForm />
+                        <FindForm
+                            api={api}
+                            history={history}
+                            setOpen={setOpen}
+                        />
                     </Grid.Column>
                 </Grid>
             </Segment>

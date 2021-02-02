@@ -99,6 +99,7 @@ ipcMain.on(channels.APP_INFO, (event, arg) => {
     });
 });
 
+// LOGIN USER
 ipcMain.on(channels.LOGIN, (event, { username, password }) => {
     console.log('login', { username, password });
     const sql = 'SELECT * FROM users WHERE username = ? AND password = ? ';
@@ -107,5 +108,50 @@ ipcMain.on(channels.LOGIN, (event, { username, password }) => {
 
         console.log({ row });
         event.sender.send(channels.LOGIN, { login: row });
+    });
+});
+
+// FIND MEMBERSHIP
+ipcMain.on(channels.FIND, (event, { phone, account, firstName, lastName }) => {
+    console.log('find', { phone, account, firstName, lastName });
+    const fullname = phone || account ? '' : firstName + '%' + lastName;
+    const sql = `SELECT * FROM 
+                    ( SELECT DISTINCT
+    		            field22 account,
+    		            field1 firstName,
+    		            field2 lastName,
+    		            field4 fullname,
+    		            field8 phone
+                    FROM 
+                        mckee
+                    WHERE
+    		            phone = ?
+    		            OR account =  ?
+    		            OR fullname like ?
+    		        ORDER BY
+    		            fullname
+                    ) 
+                WHERE 
+                    account IS NOT NULL 
+                    AND phone IS NOT NULL`;
+
+    db.all(sql, [phone, account, fullname], (err, rows) => {
+        if (err) return console.log(err.message);
+        console.log(rows);
+        if (rows === undefined || rows.length === 0) {
+            event.sender.send(channels.FIND, {
+                membership: null,
+            });
+        } else {
+            // if (rows.length === 1) {
+            event.sender.send(channels.FIND, {
+                membership: rows,
+            });
+            // } else {
+            //     event.sender.send(channels.FIND, {
+            //         membership: rows,
+            //     });
+            // }
+        }
     });
 });

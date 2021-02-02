@@ -3,5 +3,6 @@ module.exports = {
         APP_INFO: 'APP_INFO',
         LOGIN: 'LOGIN',
         LOGOUT: 'LOGOUT',
+        FIND: 'FIND',
     },
 };

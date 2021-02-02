@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TransitionablePortal, Segment, Grid } from 'semantic-ui-react';
 
-const Portal = (props) => {
+const Portal = ({ children }) => {
     const [open, setOpen] = useState(true);
     return (
         <TransitionablePortal
@@ -21,7 +21,7 @@ const Portal = (props) => {
                     style={{ height: '100vh' }}
                     verticalAlign='middle'>
                     <Grid.Column style={{ maxWidth: 450 }}>
-                        {props.children}
+                        {children}
                     </Grid.Column>
                 </Grid>
             </Segment>

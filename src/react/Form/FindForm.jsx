@@ -1,4 +1,4 @@
-import { Form } from 'semantic-ui-react';
+import { Form, Button } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
 import Phone from '../Field/Phone';
 import Account from '../Field/Account';
@@ -58,6 +58,10 @@ const FindForm = ({ api, history }) => {
                             placeholder='last name'
                         />
                         <Form.Button content='Find' />
+                        <Button
+                            content='Back'
+                            onClick={() => history.push('/')}
+                        />
                     </Form>
                 )}
             />

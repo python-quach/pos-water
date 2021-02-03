@@ -1,14 +1,11 @@
+import { useEffect } from 'react';
 import { Form } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
 import { currentDate, getCurrentTime } from '../../helpers/helpers';
-import Date from '../Field/Buy/Date';
-import Time from '../Field/Buy/Time';
-import MemberSince from '../Field/Buy/MemberSince';
-import Account from '../Field/Buy/Account';
-import Record from '../Field/Buy/Record';
+import { Field } from '../Field/Field';
 
-const BuyForm = ({ onSubmit, state }) => {
-    console.log(state);
+const BuyForm = ({ api, history }) => {
+    const { state } = history.location;
     const {
         memberSince,
         account,
@@ -21,6 +18,15 @@ const BuyForm = ({ onSubmit, state }) => {
         gallonCurrent,
         gallonRemain,
     } = state || {};
+
+    const onSubmit = async (data) => {
+        console.log(data, api);
+    };
+
+    useEffect(() => {
+        if (!state) history.push('/dashboard');
+    });
+
     return (
         <>
             <FinalForm
@@ -52,12 +58,12 @@ const BuyForm = ({ onSubmit, state }) => {
                             });
                         }}>
                         <Form.Group>
-                            <Date />
-                            <Time />
+                            <Field.BuyDate />
+                            <Field.BuyTime />
                             <Form.Input type='hidden' width={6} />
-                            <MemberSince />
-                            <Account />
-                            <Record />
+                            <Field.BuyMemberSince />
+                            <Field.BuyAccount />
+                            <Field.BuyRecord />
                         </Form.Group>
                     </Form>
                 )}></FinalForm>

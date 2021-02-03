@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const FirstName = ({ placeholder, form, setErrorMessage, values }) => {
+const Name = ({ name, placeholder, form, setErrorMessage, values }) => {
     useEffect(() => {
         const { phone, account, firstName, lastName } = values;
         if (phone || account || firstName || lastName) {
@@ -13,7 +13,7 @@ const FirstName = ({ placeholder, form, setErrorMessage, values }) => {
     });
     return (
         <Field
-            name='firstName'
+            name={name}
             render={({ input, meta }) => (
                 <Form.Input
                     {...input}
@@ -33,10 +33,21 @@ const FirstName = ({ placeholder, form, setErrorMessage, values }) => {
                             form.reset({ phone: '', account: '' });
                         }
                     }}
+                    // onFocus={() => {
+                    //     const { firstName, lastName, phone, account } = values;
+                    //     console.log(values);
+                    //     form.reset({
+                    //         ...initialValue,
+                    //         firstName,
+                    //         lastName,
+                    //         // phone: '',
+                    //         // account: '',
+                    //     });
+                    // }}
                 />
             )}
         />
     );
 };
 
-export default FirstName;
+export default Name;

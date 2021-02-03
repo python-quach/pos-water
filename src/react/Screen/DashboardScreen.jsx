@@ -6,7 +6,7 @@ import ReportButton from '../Button/ReportButton';
 import LogoutButton from '../Button/LogoutButton';
 
 const DashBoardScreen = ({ api, history }) => (
-    <DashboardPortal open={true}>
+    <DashboardPortal>
         <DashBoardHeader title='Mckee Pure Water' content='Dashboard' />
         <FindForm api={api} history={history} />
         <AddButton />

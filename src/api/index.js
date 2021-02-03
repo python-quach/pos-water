@@ -13,6 +13,7 @@ const find = ({ phone, account, firstName, lastName }, callback) => {
     ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
     ipcRenderer.on(channels.FIND, (event, { membership }) => {
         ipcRenderer.removeAllListeners(channels.FIND);
+        console.table(membership);
         callback(membership);
     });
 };

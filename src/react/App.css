@@ -62,3 +62,32 @@
     font-size: x-large;
     color: #fff;
 }
+
+/* BUY SCREEN CSS */
+
+/* TodayDate Buy */
+.two.wide.field.TodayDate label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.two.wide.field.TodayDate div.ui.inverted.left.icon.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+.two.wide.field.two.wide.field.TodayDate div.ui.inverted.left.icon.input i {
+    color: #00bcd4;
+}
+
+/* BuyAccount */
+.two.wide.field.BuyAccount label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.two.wide.field.BuyAccount div.ui.inverted.left.icon.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+.two.wide.field.BuyAccount div.ui.inverted.left.icon.input i {
+    color: #00bcd4;
+}

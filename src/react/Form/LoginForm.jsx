@@ -1,8 +1,8 @@
 import React from 'react';
 import { Form, Divider } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
-import Username from '../Field/Username';
-import Password from '../Field/Password';
+import Username from '../Field/Login/Username';
+import Password from '../Field/Login/Password';
 import LoginButton from '../Button/LoginButton';
 
 const LoginForm = ({

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Form } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
-import Phone from '../Field/Phone';
-import Account from '../Field/Account';
-import FirstName from '../Field/FirstName';
-import LastName from '../Field/LastName';
+import Phone from '../Field/Find/Phone';
+import Account from '../Field/Find/Account';
+// import FirstName from '../Field/FirstName';
+// import LastName from '../Field/LastName';
+import Name from '../Field/Find/Name';
 import FindButton from '../Button/FindButton';
 
 const FindForm = ({ api, history }) => {
@@ -12,11 +13,15 @@ const FindForm = ({ api, history }) => {
 
     const onSubmit = async ({ phone, account, firstName, lastName }) => {
         api.find({ phone, account, firstName, lastName }, (data) => {
-            console.table(data);
-            if (data) {
+            if (data && data.length === 1) {
                 history.push({
                     pathname: '/buy',
-                    state: { data },
+                    state: { ...data[0] },
+                });
+            } else if (data && data.length > 1) {
+                history.push({
+                    pathname: '/account',
+                    state: { ...data },
                 });
             } else {
                 setErrorMessage(true);
@@ -56,7 +61,21 @@ const FindForm = ({ api, history }) => {
                             setErrorMessage={setErrorMessage}
                             errorMessage={errorMessage}
                         />
-                        <FirstName
+                        <Name
+                            name='firstName'
+                            form={form}
+                            values={values}
+                            setErrorMessage={setErrorMessage}
+                            placeholder='first name'
+                        />
+                        <Name
+                            name='lastName'
+                            form={form}
+                            values={values}
+                            setErrorMessage={setErrorMessage}
+                            placeholder='last name'
+                        />
+                        {/* <FirstName
                             form={form}
                             initialValues={initialValues}
                             values={values}
@@ -71,7 +90,7 @@ const FindForm = ({ api, history }) => {
                             setErrorMessage={setErrorMessage}
                             errorMessage={errorMessage}
                             placeholder='last name'
-                        />
+                        /> */}
                         <FindButton
                             errorMessage={errorMessage}
                             values={values}

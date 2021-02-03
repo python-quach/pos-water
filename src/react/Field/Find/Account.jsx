@@ -40,11 +40,7 @@ const Account = ({ form, setErrorMessage, values }) => {
                     spellCheck='false'
                     inverted
                     onFocus={() => {
-                        console.log('Account');
                         const { account } = values;
-                        // setErrorMessage((previousValue) => {
-                        //     if (previousValue) return false;
-                        // });
                         form.reset({
                             phone: '',
                             account,

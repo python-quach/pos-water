@@ -115,29 +115,71 @@ ipcMain.on(channels.LOGIN, (event, { username, password }) => {
 ipcMain.on(channels.FIND, (event, { phone, account, firstName, lastName }) => {
     console.log('find', { phone, account, firstName, lastName });
     const fullname = phone || account ? '' : firstName + '%' + lastName;
+
     const sql = `SELECT * FROM 
-                    ( SELECT DISTINCT
-    		            field22 account,
-    		            field1 firstName,
-    		            field2 lastName,
-    		            field4 fullname,
-    		            field8 phone
+                    ( SELECT 
+						ROWID,
+    		            field22 account, 
+						field20 record_id, 
+						field15 invoiceDate, 
+						field32 invoiceTime, 
+						field1 firstName, 
+						field2 lastName, 
+					    field4 fullname,
+						field5 areaCode, 
+						field6 threeDigit, 
+						field7 fourDigit,
+						field8 phone,
+						field9 fee,
+						field10 memberSince, 
+						field31 gallonCurrent, 
+						field19 gallonBuy, 
+						field12 gallonRemain, 
+						field12 afterBuyGallonTotal, 
+						field12 overGallon, 
+						field28 lastRenewGallon, 
+						field28 renew, 
+						field9 renewFee 
                     FROM 
                         mckee
                     WHERE
-    		            phone = ?
-    		            OR account =  ?
-    		            OR fullname like ?
+    		            phone = ? 
+    		            OR account =  ? 
+    		            OR fullname like ? 
     		        ORDER BY
     		            fullname
                     ) 
                 WHERE 
                     account IS NOT NULL 
-                    AND phone IS NOT NULL`;
+                    AND phone IS NOT NULL
+				ORDER BY
+					ROWID DESC LIMIT  1`;
+
+    // const sql = `SELECT * FROM
+    //                 ( SELECT DISTINCT
+    // 		            field22 account,
+    // 		            field1 firstName,
+    // 		            field2 lastName,
+    // 		            field4 fullname,
+    //                     field8 phone,
+    //                     field10 memberSince
+    //                 FROM
+    //                     mckee
+    //                 WHERE
+    // 		            phone = ?
+    // 		            OR account =  ?
+    // 		            OR fullname like ?
+    // 		        ORDER BY
+    // 		            fullname
+    //                 )
+    //             WHERE
+    //                 account IS NOT NULL
+    //                 AND phone IS NOT NULL`;
 
     db.all(sql, [phone, account, fullname], (err, rows) => {
         if (err) return console.log(err.message);
-        console.log(rows);
+        console.log(rows, rows.length);
+
         if (rows === undefined || rows.length === 0) {
             event.sender.send(channels.FIND, {
                 membership: null,

@@ -26,17 +26,33 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
     const [edited, setEdited] = useState(false);
 
     const onSubmit = async (data) => {
-        console.log(data, api);
+        const {
+            previousGallon,
+            gallonBuy,
+            remain,
+            account,
+            todayTime,
+            todayDate,
+            record_id,
+        } = data;
+        console.log('buy data sent to backend', {
+            account,
+            previous: previousGallon,
+            buy: gallonBuy,
+            remain,
+            date: todayDate,
+            time: todayTime,
+            record_id,
+        });
     };
 
-    const WhenFieldChanges = ({ field, becomes, set, to, reset }) => (
+    const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
             {({ input: { onChange } }) => (
                 <FormSpy subscription={{}}>
                     {({ form }) => (
                         <OnChange name={field}>
                             {(value) => {
-                                console.log(value);
                                 if (becomes) {
                                     onChange(to);
                                 } else {
@@ -49,6 +65,26 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
             )}
         </FinalField>
     );
+
+    const updateForm = (form, values) => {
+        form.initialize({
+            account: values.account,
+            record_id: values.record_id + 1 || '',
+            areaCode: values.areaCode,
+            phone: values.phone,
+            fullname: values.fullname,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            memberSince: values.memberSince,
+            previousGallon: values.remain,
+            gallonBuy: 0,
+            remain: values.remain,
+            renewalFee: 0,
+            renewalAmount: 0,
+            todayDate: currentDate(),
+            todayTime: getCurrentTime(),
+        });
+    };
 
     useEffect(() => {
         if (!state) history.push('/dashboard');
@@ -69,60 +105,31 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
                     fullname: fullname,
                     firstName: firstName,
                     lastName: lastName,
-                    currentGallon: gallonRemain,
+                    previousGallon: gallonRemain,
                     gallonBuy: 0,
                     remain: gallonRemain,
                     renewalFee: 0,
                     renewalAmount: 0,
                 }}
-                render={({
-                    handleSubmit,
-                    form,
-                    values: { gallonBuy, record_id, remain, currentGallon },
-                }) => (
+                render={({ handleSubmit, form, values }) => (
                     <Form
                         onSubmit={(event) => {
-                            handleSubmit(event)
-                                .then(() => {
-                                    form.initialize({
-                                        todayDate: currentDate(),
-                                        todayTime: getCurrentTime(),
-                                        memberSince: memberSince,
-                                        account: account,
-                                        record_id: record_id + 1 || '',
-                                        areaCode: areaCode,
-                                        phone: phone,
-                                        fullname: fullname,
-                                        firstName: firstName,
-                                        lastName: lastName,
-                                        currentGallon: remain,
-                                        gallonBuy: 0,
-                                        remain: remain,
-                                        renewalFee: 0,
-                                        renewalAmount: 0,
-                                    });
-                                })
-                                .then(() => {
-                                    // setTimeout(
-                                    console.log('update buy form and print', {
-                                        current: currentGallon,
-                                        buy: gallonBuy,
-                                        remain,
-                                    });
-                                    // );
-                                })
-                                .then(form.reset);
+                            handleSubmit(event).then(() => {
+                                updateForm(form, values);
+                            });
                         }}>
-                        <WhenFieldChanges
+                        <WhenBuyFieldChanges
                             field='gallonBuy'
-                            becomes={gallonBuy > 0}
-                            set='remain'
-                            to={parseInt(currentGallon) - parseInt(gallonBuy)}
-                            reset={
-                                currentGallon === remain
-                                    ? gallonRemain
-                                    : currentGallon
+                            becomes={
+                                values.gallonBuy > 0 ||
+                                values.previousGallon !== values.remain
                             }
+                            set='remain'
+                            to={
+                                parseInt(values.previousGallon) -
+                                parseInt(values.gallonBuy)
+                            }
+                            reset={gallonRemain}
                         />
                         <Form.Group>
                             <Field.BuyDate />
@@ -137,11 +144,11 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
                             <Field.BuyPhone edited={edited} />
                             <Field.BuyName edited={edited} />
                             <Form.Input type='hidden' width={!edited ? 6 : 3} />
-                            <Field.BuyCurrentGallon edited={edited} />
+                            <Field.BuyPreviousGallon edited={edited} />
                             <Field.BuyGallon
                                 disable={disable}
                                 setDisable={setDisable}
-                                currentGallon={currentGallon}
+                                previousGallon={values.previousGallon}
                             />
                             <Field.BuyRemain edited={edited} />
                             <Form.Button
@@ -150,7 +157,7 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
                                     marginTop: '30px',
                                 }}
                                 color='green'
-                                disabled={gallonBuy <= 0 || disable}
+                                disabled={values.gallonBuy <= 0 || disable}
                             />
                         </Form.Group>
                     </Form>

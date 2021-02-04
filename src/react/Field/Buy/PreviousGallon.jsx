@@ -1,15 +1,17 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const CurrentGallon = ({ edited }) => {
+const PreviousGallon = ({ edited }) => {
     return (
         <Field
-            name='currentGallon'
+            // name='currentGallon'
+            name='previousGallon'
             render={({ input }) => (
                 <Form.Input
                     {...input}
                     floated='right'
-                    label='Current'
+                    // label='Current'
+                    label='Previous'
                     className='AreaCode'
                     readOnly
                     inverted
@@ -23,4 +25,4 @@ const CurrentGallon = ({ edited }) => {
     );
 };
 
-export default CurrentGallon;
+export default PreviousGallon;

@@ -3,8 +3,6 @@ import { Form } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
 import Phone from '../Field/Find/Phone';
 import Account from '../Field/Find/Account';
-// import FirstName from '../Field/FirstName';
-// import LastName from '../Field/LastName';
 import Name from '../Field/Find/Name';
 import FindButton from '../Button/FindButton';
 

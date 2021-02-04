@@ -6,7 +6,7 @@ import BuyTime from './Buy/Time';
 import BuyAreaCode from './Buy/AreaCode';
 import BuyPhone from './Buy/Phone';
 import BuyName from './Buy/Name';
-import BuyCurrentGallon from './Buy/CurrentGallon';
+import BuyPreviousGallon from './Buy/PreviousGallon';
 import BuyGallon from './Buy/BuyGallon';
 import BuyRemain from './Buy/GallonRemain';
 import RenewFee from './Renew/Fee';
@@ -21,7 +21,7 @@ export const Field = {
     BuyAreaCode,
     BuyPhone,
     BuyName,
-    BuyCurrentGallon,
+    BuyPreviousGallon,
     BuyGallon,
     BuyRemain,
     RenewFee,

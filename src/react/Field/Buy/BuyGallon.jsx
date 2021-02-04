@@ -21,7 +21,6 @@ const BuyGallon = ({ disable, setDisable }) => {
                     inverted
                     width={1}
                     onFocus={() => {
-                        console.log('buy');
                         if (disable) {
                             setDisable(false);
                         }

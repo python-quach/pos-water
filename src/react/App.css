@@ -91,3 +91,42 @@
 .two.wide.field.BuyAccount div.ui.inverted.left.icon.input i {
     color: #00bcd4;
 }
+
+/* BuyAreaCode */
+.one.wide.field.AreaCode label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.one.wide.field.one.wide.field.AreaCode div.ui.inverted.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+
+/* Phone Number */
+.two.wide.field.PhoneNumber label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.two.wide.field.two.wide.field.PhoneNumber div.ui.inverted.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+
+/* Name */
+.three.wide.field.Name label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.three.wide.field.three.wide.field.Name div.ui.inverted.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+
+.four.wide.field.Name label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.four.wide.field.four.wide.field.Name div.ui.inverted.input input {
+    color: white;
+    background-color: #d5c1c124;
+}

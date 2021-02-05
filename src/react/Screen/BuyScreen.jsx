@@ -6,8 +6,12 @@ import { Form } from '../Form/Form';
 
 const BuyScreen = ({ api, history }) => {
     const [disable, setDisable] = useState(false);
+    const [edit, setEdit] = useState(false);
 
     const handleDone = () => history.push('/dashboard');
+    const handleEdit = (form, values) => {
+        console.log('handleEdit', { form, values });
+    };
 
     useEffect(() => {
         document.getElementById('buy').focus();
@@ -18,7 +22,10 @@ const BuyScreen = ({ api, history }) => {
             <Form.Buy
                 history={history}
                 api={api}
+                edit={edit}
+                setEdit={setEdit}
                 disable={disable}
+                handleEdit={handleEdit}
                 setDisable={setDisable}
             />
             <Form.Renew
@@ -28,6 +35,11 @@ const BuyScreen = ({ api, history }) => {
                 setDisable={setDisable}
             />
             <Button.Done handleDone={handleDone} />
+            <Button.Edit
+                edit={edit}
+                setEdit={setEdit}
+                handleEdit={handleEdit}
+            />
         </Portal>
     );
 };

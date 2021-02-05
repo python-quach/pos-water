@@ -7,7 +7,7 @@ const normalizeGallon = (value) => {
     return parseInt(onlyNums);
 };
 
-const BuyGallon = ({ disable, setDisable }) => {
+const BuyGallon = ({ disable, setDisable, edit }) => {
     return (
         <Field
             name='gallonBuy'
@@ -20,6 +20,7 @@ const BuyGallon = ({ disable, setDisable }) => {
                     className='AreaCode'
                     inverted
                     width={1}
+                    disabled={edit}
                     onFocus={() => {
                         if (disable) {
                             setDisable(false);

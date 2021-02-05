@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form } from 'semantic-ui-react';
+import { Form, Button } from 'semantic-ui-react';
 import {
     Form as FinalForm,
     FormSpy,
@@ -9,7 +9,7 @@ import { OnChange } from 'react-final-form-listeners';
 import { currentDate, getCurrentTime } from '../../helpers/helpers';
 import { Field } from '../Field/Field';
 
-const BuyForm = ({ api, history, disable, setDisable }) => {
+const BuyForm = ({ api, history, disable, setDisable, edit }) => {
     const { state } = history.location;
     const {
         memberSince,
@@ -23,7 +23,7 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
         gallonRemain,
     } = state || {};
 
-    const [edited, setEdited] = useState(false);
+    // const [edit, setEdit] = useState(false);
 
     const onSubmit = async (data) => {
         const {
@@ -31,19 +31,27 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
             gallonBuy,
             remain,
             account,
+            firstName,
+            lastName,
+            fullname,
             todayTime,
             todayDate,
             record_id,
         } = data;
-        console.log('buy data sent to backend', {
-            account,
-            previous: previousGallon,
-            buy: gallonBuy,
-            remain,
-            date: todayDate,
-            time: todayTime,
-            record_id,
-        });
+        console.table([
+            {
+                record_id,
+                account,
+                firstName,
+                lastName,
+                fullname,
+                previous: previousGallon,
+                buy: gallonBuy,
+                remain,
+                date: todayDate,
+                time: todayTime,
+            },
+        ]);
     };
 
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
@@ -93,6 +101,7 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
     return (
         <>
             <FinalForm
+                // keepDirtyOnReinitialize={true}
                 onSubmit={onSubmit}
                 initialValues={{
                     todayDate: currentDate(),
@@ -140,17 +149,18 @@ const BuyForm = ({ api, history, disable, setDisable }) => {
                             <Field.BuyRecord />
                         </Form.Group>
                         <Form.Group>
-                            <Field.BuyAreaCode edited={edited} />
-                            <Field.BuyPhone edited={edited} />
-                            <Field.BuyName edited={edited} />
-                            <Form.Input type='hidden' width={!edited ? 6 : 3} />
-                            <Field.BuyPreviousGallon edited={edited} />
+                            <Field.BuyAreaCode edit={edit} />
+                            <Field.BuyPhone edit={edit} />
+                            <Field.BuyName edit={edit} />
+                            <Form.Input type='hidden' width={!edit ? 6 : 3} />
+                            <Field.BuyPreviousGallon edited={edit} />
                             <Field.BuyGallon
+                                edit={edit}
                                 disable={disable}
                                 setDisable={setDisable}
                                 previousGallon={values.previousGallon}
                             />
-                            <Field.BuyRemain edited={edited} />
+                            <Field.BuyRemain edited={edit} />
                             <Form.Button
                                 content='Buy'
                                 style={{

@@ -3,12 +3,12 @@ import { Form } from 'semantic-ui-react';
 
 const normalizeName = (value) => {
     if (!value) return value;
-    const onlyWords = value.replace(/[^/w]/g, '');
+    const onlyWords = value.replace(/[^\w]/g, '');
     return onlyWords.toUpperCase();
 };
 
-const Name = ({ edited }) => {
-    return !edited ? (
+const Name = ({ edit }) => {
+    return !edit ? (
         <Field
             name='fullname'
             render={({ input }) => (
@@ -33,7 +33,7 @@ const Name = ({ edited }) => {
                         id='firstName'
                         label='First Name'
                         className='Name'
-                        error={edited}
+                        error={edit}
                         inverted
                         width={3}
                     />
@@ -47,7 +47,7 @@ const Name = ({ edited }) => {
                         {...input}
                         label='Last Name'
                         className='Name'
-                        error={edited}
+                        error={edit}
                         inverted
                         width={3}
                     />

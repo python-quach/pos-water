@@ -1,7 +1,7 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const AreaCode = ({ edited }) => {
+const AreaCode = ({ edit }) => {
     return (
         <Field
             name='areaCode'
@@ -14,8 +14,8 @@ const AreaCode = ({ edited }) => {
                     inverted
                     placeholder='xxx'
                     width={1}
-                    error={!edited ? false : true}
-                    readOnly={!edited}
+                    error={!edit ? false : true}
+                    readOnly={!edit}
                 />
             )}
         />

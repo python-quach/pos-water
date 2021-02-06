@@ -1,9 +1,9 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Time = (props) => (
+const Time = ({ name, edit }) => (
     <Field
-        name='todayTime'
+        name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}
@@ -14,6 +14,7 @@ const Time = (props) => (
                 icon='time'
                 iconPosition='left'
                 readOnly
+                disabled={edit}
                 width={2}
             />
         )}

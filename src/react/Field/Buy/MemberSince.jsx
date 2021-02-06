@@ -1,9 +1,9 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const MemberSince = (props) => (
+const MemberSince = ({ name, edit }) => (
     <Field
-        name='memberSince'
+        name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}
@@ -12,9 +12,10 @@ const MemberSince = (props) => (
                 placeholder='mm/dd/yyy'
                 iconPosition='left'
                 icon='calendar'
+                disabled={edit}
+                width={2}
                 readOnly
                 inverted
-                width={2}
             />
         )}
     />

@@ -4,5 +4,9 @@ module.exports = {
         LOGIN: 'LOGIN',
         LOGOUT: 'LOGOUT',
         FIND: 'FIND',
+        BUY: 'BUY',
+        EDIT: 'EDIT',
+        RENEW: 'RENEW',
+        ADD: 'ADD',
     },
 };

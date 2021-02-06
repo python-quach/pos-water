@@ -1,14 +1,16 @@
 import { Button } from 'semantic-ui-react';
 
-const EditButton = ({ edit, setEdit }) => {
+const EditButton = ({ edit, setEdit, loading, setLoading }) => {
     return (
         <>
             {edit ? (
                 <Button
                     floated='right'
                     content='Cancel Edit'
+                    // color='vk'
                     color='blue'
                     onClick={() => {
+                        setEdit(false);
                         // resetBuyForm();
                         // setEdited(false);
                     }}
@@ -16,9 +18,9 @@ const EditButton = ({ edit, setEdit }) => {
             ) : null}
             <Button
                 // loading={edit}
-                // loading={loadingEdited}
+                // loading={loa}
                 // loading
-                // floated='right'
+                floated='right'
                 color={!edit ? 'vk' : 'google plus'}
                 content={!edit ? 'Edit Customer' : 'Save'}
                 onClick={() => {
@@ -30,6 +32,7 @@ const EditButton = ({ edit, setEdit }) => {
                         //     setLoadingEdited(false);
                         // });
                     } else {
+                        console.log('save button click');
                         setEdit(false);
                     }
                 }}

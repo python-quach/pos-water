@@ -1,11 +1,12 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const PreviousGallon = ({ edited }) => {
+const PreviousGallon = ({ edited, name }) => {
     return (
         <Field
             // name='currentGallon'
-            name='previousGallon'
+            // name='previousGallon'
+            name={name}
             render={({ input }) => (
                 <Form.Input
                     {...input}

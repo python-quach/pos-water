@@ -1,9 +1,10 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Record = (props) => (
+const Record = ({ name, edit }) => (
     <Field
-        name='record_id'
+        // name='record_id'
+        name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}
@@ -12,6 +13,7 @@ const Record = (props) => (
                 placeholder='xxxxxxx'
                 icon='hashtag'
                 iconPosition='left'
+                disabled={edit}
                 readOnly
                 inverted
                 width={2}

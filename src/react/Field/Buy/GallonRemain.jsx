@@ -1,9 +1,10 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const GallonRemain = ({ edited }) => (
+const GallonRemain = ({ edited, name }) => (
     <Field
-        name='remain'
+        // name='remain'
+        name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}

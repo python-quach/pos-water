@@ -1,10 +1,11 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const AreaCode = ({ edit }) => {
+const AreaCode = ({ edit, name }) => {
     return (
         <Field
-            name='areaCode'
+            // name='areaCode'
+            name={name}
             render={({ input }) => (
                 <Form.Input
                     {...input}

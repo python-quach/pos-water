@@ -9,10 +9,11 @@ const normalizePhone = (value) => {
     return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
 };
 
-const Phone = ({ edit }) => {
+const Phone = ({ edit, name }) => {
     return (
         <Field
-            name='phone'
+            // name='phone'
+            name={name}
             parse={normalizePhone}
             render={({ input }) => (
                 <Form.Input

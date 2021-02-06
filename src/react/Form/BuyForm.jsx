@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Form, Button } from 'semantic-ui-react';
+import { useEffect } from 'react';
+import { Form } from 'semantic-ui-react';
 import {
     Form as FinalForm,
     FormSpy,
@@ -11,33 +11,42 @@ import { Field } from '../Field/Field';
 
 const BuyForm = ({ api, history, disable, setDisable, edit }) => {
     const { state } = history.location;
+
     const {
-        memberSince,
-        account,
         record_id,
+        account,
         firstName,
         lastName,
         fullname,
         areaCode,
+        threeDigit,
+        fourDigit,
         phone,
-        gallonRemain,
+        memberSince,
+        remain,
     } = state || {};
-
-    // const [edit, setEdit] = useState(false);
 
     const onSubmit = async (data) => {
         const {
-            previousGallon,
-            gallonBuy,
-            remain,
+            record_id,
             account,
             firstName,
             lastName,
             fullname,
-            todayTime,
-            todayDate,
-            record_id,
+            areaCode,
+            threeDigit,
+            fourDigit,
+            phone,
+            memberSince,
+            prev,
+            buy,
+            remain,
+            fee,
+            renew,
+            invoiceDate,
+            invoiceTime,
         } = data;
+
         console.table([
             {
                 record_id,
@@ -45,14 +54,28 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
                 firstName,
                 lastName,
                 fullname,
-                previous: previousGallon,
-                buy: gallonBuy,
+                areaCode,
+                threeDigit,
+                fourDigit,
+                phone,
+                memberSince,
+                prev,
+                buy,
                 remain,
-                date: todayDate,
-                time: todayTime,
+                fee,
+                renew,
+                invoiceDate,
+                invoiceTime,
             },
         ]);
+        api.buy(data, (result) => {});
     };
+
+    // useEffect(() => {
+    //     if (!edit) {
+    //         console.log('we need to send edit here', { edit });
+    //     }
+    // }, [edit]);
 
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
@@ -61,6 +84,7 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
                     {({ form }) => (
                         <OnChange name={field}>
                             {(value) => {
+                                // console.log({ becomes });
                                 if (becomes) {
                                     onChange(to);
                                 } else {
@@ -76,21 +100,23 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
 
     const updateForm = (form, values) => {
         form.initialize({
-            account: values.account,
+            account,
             record_id: values.record_id + 1 || '',
             areaCode: values.areaCode,
             phone: values.phone,
             fullname: values.fullname,
             firstName: values.firstName,
             lastName: values.lastName,
-            memberSince: values.memberSince,
-            previousGallon: values.remain,
-            gallonBuy: 0,
+            memberSince,
+            prev: values.remain,
+            buy: 0,
+            threeDigit: values.threeDigit,
+            fourDigit: values.fourDigit,
             remain: values.remain,
-            renewalFee: 0,
-            renewalAmount: 0,
-            todayDate: currentDate(),
-            todayTime: getCurrentTime(),
+            fee: 0,
+            renew: null,
+            invoiceDate: currentDate(),
+            invoiceTime: getCurrentTime(),
         });
     };
 
@@ -101,24 +127,26 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
     return (
         <>
             <FinalForm
-                // keepDirtyOnReinitialize={true}
+                initialValuesEqual={() => true}
                 onSubmit={onSubmit}
                 initialValues={{
-                    todayDate: currentDate(),
-                    todayTime: getCurrentTime(),
-                    memberSince: memberSince,
-                    account: account,
                     record_id: record_id + 1 || '',
-                    areaCode: areaCode,
-                    phone: phone,
-                    fullname: fullname,
+                    account: account,
                     firstName: firstName,
                     lastName: lastName,
-                    previousGallon: gallonRemain,
-                    gallonBuy: 0,
-                    remain: gallonRemain,
-                    renewalFee: 0,
-                    renewalAmount: 0,
+                    fullname: fullname,
+                    areaCode: areaCode,
+                    threeDigit: threeDigit,
+                    fourDigit: fourDigit,
+                    phone: phone,
+                    memberSince: memberSince,
+                    prev: remain,
+                    buy: 0,
+                    remain: remain,
+                    fee: 0,
+                    renew: null,
+                    invoiceDate: currentDate(),
+                    invoiceTime: getCurrentTime(),
                 }}
                 render={({ handleSubmit, form, values }) => (
                     <Form
@@ -128,50 +156,70 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
                             });
                         }}>
                         <WhenBuyFieldChanges
-                            field='gallonBuy'
-                            becomes={
-                                values.gallonBuy > 0 ||
-                                values.previousGallon !== values.remain
-                            }
-                            set='remain'
-                            to={
-                                parseInt(values.previousGallon) -
-                                parseInt(values.gallonBuy)
-                            }
-                            reset={gallonRemain}
+                            field='firstName'
+                            becomes={edit}
+                            set='fullname'
+                            to={values.firstName + ' ' + values.lastName}
                         />
+                        <WhenBuyFieldChanges
+                            field='lastName'
+                            becomes={edit}
+                            set='fullname'
+                            to={values.firstName + ' ' + values.lastName}
+                        />
+
+                        <WhenBuyFieldChanges
+                            field='buy'
+                            becomes={values.buy > 0}
+                            set='remain'
+                            to={parseInt(values.prev - values.buy)}
+                            reset={values.prev}
+                        />
+
                         <Form.Group>
-                            <Field.BuyDate />
-                            <Field.BuyTime />
+                            <Field.BuyDate name='invoiceDate' edit={edit} />
+                            <Field.BuyTime name='invoiceTime' edit={edit} />
                             <Form.Input type='hidden' width={6} />
-                            <Field.BuyMemberSince />
-                            <Field.BuyAccount />
-                            <Field.BuyRecord />
+                            <Field.BuyMemberSince
+                                name='memberSince'
+                                edit={edit}
+                            />
+                            <Field.BuyAccount name='account' edit={edit} />
+                            <Field.BuyRecord name='record_id' edit={edit} />
                         </Form.Group>
                         <Form.Group>
-                            <Field.BuyAreaCode edit={edit} />
-                            <Field.BuyPhone edit={edit} />
-                            <Field.BuyName edit={edit} />
-                            <Form.Input type='hidden' width={!edit ? 6 : 3} />
-                            <Field.BuyPreviousGallon edited={edit} />
+                            <Field.BuyAreaCode edit={edit} name='areaCode' />
+                            <Field.BuyPhone edit={edit} name='phone' />
+                            <Field.BuyName edit={edit} name='fullname' />
+                            <Form.Input type='hidden' width={!edit ? 6 : 4} />
+                            <Field.BuyPreviousGallon
+                                edited={edit}
+                                name='prev'
+                            />
                             <Field.BuyGallon
+                                name='buy'
                                 edit={edit}
                                 disable={disable}
                                 setDisable={setDisable}
-                                previousGallon={values.previousGallon}
+                                previous={values.previousGallon}
+                                form={form}
+                                gallonBuy={values.gallonBuy}
+                                renewAmount={values.renewalAmount}
+                                remain={remain}
                             />
-                            <Field.BuyRemain edited={edit} />
+                            <Field.BuyRemain edited={edit} name='remain' />
                             <Form.Button
                                 content='Buy'
                                 style={{
                                     marginTop: '30px',
                                 }}
                                 color='green'
-                                disabled={values.gallonBuy <= 0 || disable}
+                                disabled={values.buy <= 0 || disable}
                             />
                         </Form.Group>
                     </Form>
-                )}></FinalForm>
+                )}
+            />
         </>
     );
 };

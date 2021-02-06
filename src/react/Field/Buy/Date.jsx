@@ -1,21 +1,22 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Date = (props) => (
+const Date = ({ name, edit }) => (
     <Field
-        name='todayDate'
+        name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}
                 id='todayDate'
                 label='Today Date'
                 className='TodayDate'
-                inverted
-                icon='calendar'
                 placeholder='mm/dd/yyyy'
+                icon='calendar'
                 iconPosition='left'
-                readOnly
+                disabled={edit}
                 width={2}
+                inverted
+                readOnly
             />
         )}
     />

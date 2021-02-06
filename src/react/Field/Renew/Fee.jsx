@@ -13,7 +13,7 @@ const normalizeFee = (value) => {
     }
 };
 
-const Fee = ({ disable, setDisable }) => {
+const Fee = ({ disable, setDisable, form, remain, previous }) => {
     return (
         <Field
             name='renewalFee'
@@ -27,7 +27,12 @@ const Fee = ({ disable, setDisable }) => {
                     inverted
                     width={1}
                     onFocus={() => {
-                        console.log('renew');
+                        console.log('renew fee');
+                        // form.change('gallonBuy', 0);
+                        // form.change('remain', previous);
+                        // form.change('previousGallon', previous);
+                        // form.change('remain', previous);
+                        // form.change('previousGallon', previous);
                         setDisable(true);
                     }}
                 />

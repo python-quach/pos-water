@@ -10,7 +10,7 @@ const normalizeGallon = (value) => {
 const BuyGallon = ({ disable, setDisable, edit }) => {
     return (
         <Field
-            name='gallonBuy'
+            name='buy'
             parse={normalizeGallon}
             render={({ input }) => (
                 <Form.Input

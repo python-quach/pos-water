@@ -7,6 +7,44 @@ const normalizeName = (value) => {
     return onlyWords.toUpperCase();
 };
 
+// const Name = ({ edit }) => {
+//     return (
+//         <>
+//             <Field
+//                 name='firstName'
+//                 parse={normalizeName}
+//                 render={({ input }) => (
+//                     <Form.Input
+//                         {...input}
+//                         id='firstName'
+//                         label='First Name'
+//                         className='Name'
+//                         readOnly={!edit}
+//                         error={edit}
+//                         inverted
+//                         width={3}
+//                     />
+//                 )}
+//             />
+//             <Field
+//                 name='lastName'
+//                 parse={normalizeName}
+//                 render={({ input }) => (
+//                     <Form.Input
+//                         {...input}
+//                         label='Last Name'
+//                         className='Name'
+//                         readOnly={!edit}
+//                         error={edit}
+//                         inverted
+//                         width={3}
+//                     />
+//                 )}
+//             />
+//         </>
+//     );
+// };
+
 const Name = ({ edit }) => {
     return !edit ? (
         <Field
@@ -17,6 +55,7 @@ const Name = ({ edit }) => {
                     className='Name'
                     label='Customer Name'
                     readOnly
+                    error={edit}
                     inverted
                     width={4}
                 />

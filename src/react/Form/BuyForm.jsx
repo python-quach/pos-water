@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Form } from 'semantic-ui-react';
 import {
     Form as FinalForm,
@@ -8,9 +8,36 @@ import {
 import { OnChange } from 'react-final-form-listeners';
 import { currentDate, getCurrentTime } from '../../helpers/helpers';
 import { Field } from '../Field/Field';
+import { Button } from '../Button/Button';
 
-const BuyForm = ({ api, history, disable, setDisable, edit }) => {
+const BuyForm = ({
+    api,
+    history,
+    disable,
+    setDisable,
+    edit,
+    handleDone,
+    setEdit,
+}) => {
+    const [save, setSave] = useState(false);
+    const [cancel, setCancel] = useState(false);
     const { state } = history.location;
+
+    const handleEdit = ({
+        account,
+        areaCode,
+        phone,
+        firstName,
+        lastName,
+        fullname,
+    }) => {
+        api.edit(
+            { account, areaCode, phone, firstName, lastName, fullname },
+            (data) => {
+                console.table(data);
+            }
+        );
+    };
 
     const {
         record_id,
@@ -127,6 +154,7 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
     return (
         <>
             <FinalForm
+                // keepDirtyOnReinitialize
                 initialValuesEqual={() => true}
                 onSubmit={onSubmit}
                 initialValues={{
@@ -148,7 +176,15 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
                     invoiceDate: currentDate(),
                     invoiceTime: getCurrentTime(),
                 }}
-                render={({ handleSubmit, form, values }) => (
+                render={({
+                    handleSubmit,
+                    form,
+                    values,
+                    initialValues,
+                    touched,
+                    pristine,
+                    dirty,
+                }) => (
                     <Form
                         onSubmit={(event) => {
                             handleSubmit(event).then(() => {
@@ -215,6 +251,29 @@ const BuyForm = ({ api, history, disable, setDisable, edit }) => {
                                 }}
                                 color='green'
                                 disabled={values.buy <= 0 || disable}
+                            />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Input type='hidden' width={15} />
+                            <Button.Done
+                                edit={edit}
+                                handleDone={handleDone}
+                                values={values}
+                            />
+                            <Button.Edit
+                                setCancel={setCancel}
+                                cancel={cancel}
+                                edit={edit}
+                                form={form}
+                                setSave={setSave}
+                                save={save}
+                                setEdit={setEdit}
+                                handleEdit={handleEdit}
+                                values={values}
+                                initialValues={initialValues}
+                                touched={touched}
+                                pristine={pristine}
+                                dirty={dirty}
                             />
                         </Form.Group>
                     </Form>

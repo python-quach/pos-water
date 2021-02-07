@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Divider } from 'semantic-ui-react';
 import { BuyPortalConfig as config } from '../../config/portal';
 import Portal from '../Portal/Portal';
-import { Button } from '../Button/Button';
+// import { Button } from '../Button/Button';
 import { Form } from '../Form/Form';
 
 const BuyScreen = ({ api, history }) => {
@@ -31,6 +31,7 @@ const BuyScreen = ({ api, history }) => {
                 disable={disable}
                 handleEdit={handleEdit}
                 setDisable={setDisable}
+                handleDone={handleDone}
             />
             {/* <Form.Renew
                 history={history}
@@ -39,14 +40,14 @@ const BuyScreen = ({ api, history }) => {
                 setDisable={setDisable}
             /> */}
             <Divider hidden />
-            <Button.Done handleDone={handleDone} edit={edit} />
+            {/* <Button.Done handleDone={handleDone} edit={edit} />
             <Button.Edit
                 edit={edit}
                 loading={loading}
                 setEdit={setEdit}
                 handleEdit={handleEdit}
                 setLoading={setLoading}
-            />
+            /> */}
         </Portal>
     );
 };

@@ -1,38 +1,53 @@
+import { useState } from 'react';
 import { Button } from 'semantic-ui-react';
 
-const EditButton = ({ edit, setEdit, loading, setLoading }) => {
+const EditButton = ({
+    edit,
+    setEdit,
+    loading,
+    setLoading,
+    setSave,
+    save,
+    setCancel,
+    handleEdit,
+    values,
+    cancel,
+    form,
+    initialValues,
+    touched,
+    pristine,
+    dirty,
+}) => {
+    const [oldValue, setOldValue] = useState(values);
     return (
         <>
             {edit ? (
                 <Button
                     floated='right'
-                    content='Cancel Edit'
-                    // color='vk'
+                    content='Cancel'
                     color='blue'
-                    onClick={() => {
+                    onClick={(event) => {
+                        event.preventDefault();
                         setEdit(false);
-                        // resetBuyForm();
-                        // setEdited(false);
+                        form.initialize({ ...values });
+                        console.table([{ ...values }]);
                     }}
                 />
             ) : null}
             <Button
-                // loading={edit}
-                // loading={loa}
-                // loading
                 floated='right'
                 color={!edit ? 'vk' : 'google plus'}
-                content={!edit ? 'Edit Customer' : 'Save'}
-                onClick={() => {
+                content={!edit ? 'Edit' : 'Save'}
+                onClick={(event) => {
+                    event.preventDefault();
                     if (!edit) {
-                        console.log('edit button click', edit);
+                        console.log('edit');
+                        console.table([{ ...values }]);
                         setEdit(true);
-                        // updateMembership(formBuy, (response) => {
-                        //     setEdited(false);
-                        //     setLoadingEdited(false);
-                        // });
                     } else {
-                        console.log('save button click');
+                        console.log('saver');
+                        console.table([{ ...values }]);
+                        handleEdit(values);
                         setEdit(false);
                     }
                 }}

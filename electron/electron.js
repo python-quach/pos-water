@@ -319,8 +319,8 @@ ipcMain.on(channels.BUY, (event, arg) => {
     const sql = `INSERT INTO mckee (
   	field20,
 	field22,
+	field1,
 	field2,
-	field3,
 	field4,
 	field5,
 	field6,
@@ -380,5 +380,5 @@ ipcMain.on(channels.EDIT, (event, arg) => {
                     field6 = ?,
                     field7 = ? 
                 WHERE field22 = ?`;
-    event.sender.send(channels.EDIT, { arg, sql });
+    event.sender.send(channels.EDIT, { response: arg });
 });

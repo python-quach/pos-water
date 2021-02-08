@@ -7,7 +7,7 @@ const normalizeGallon = (value) => {
     return parseInt(onlyNums);
 };
 
-const BuyGallon = ({ disable, setDisable, edit }) => {
+const BuyGallon = ({ disable, setDisable, edit, form, reset }) => {
     return (
         <Field
             name='buy'
@@ -22,6 +22,9 @@ const BuyGallon = ({ disable, setDisable, edit }) => {
                     width={1}
                     disabled={edit}
                     onFocus={() => {
+                        reset(form);
+                        // form.change('fee', 0);
+                        // form.change('renew', 0);
                         if (disable) {
                             setDisable(false);
                         }

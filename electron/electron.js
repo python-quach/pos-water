@@ -260,15 +260,9 @@ ipcMain.on(channels.FIND, (event, { phone, account, firstName, lastName }) => {
                 membership: null,
             });
         } else {
-            // if (rows.length === 1) {
             event.sender.send(channels.FIND, {
                 membership: rows,
             });
-            // } else {
-            //     event.sender.send(channels.FIND, {
-            //         membership: rows,
-            //     });
-            // }
         }
     });
 });
@@ -360,8 +354,100 @@ ipcMain.on(channels.BUY, (event, arg) => {
         if (err) return console.log(err.message);
         db.get(sql_lastRecord, this.lastID, (err, row) => {
             if (err) return console.log(err.message);
-            console.log(`A row has been inserted with rowid ${this.lastID}`);
+            console.log(`BUY: ${this.lastID}`);
             event.sender.send(channels.BUY, { row });
+        });
+    });
+});
+// RENEW
+ipcMain.on(channels.RENEW, (event, arg) => {
+    console.log('RENEW', arg);
+    const {
+        record_id,
+        account,
+        firstName,
+        lastName,
+        fullname,
+        areaCode,
+        threeDigit,
+        fourDigit,
+        phone,
+        memberSince,
+        prev,
+        buy,
+        remain,
+        fee,
+        renew,
+        invoiceDate,
+        invoiceTime,
+    } = arg;
+
+    const data = [
+        record_id,
+        account,
+        firstName,
+        lastName,
+        fullname,
+        areaCode,
+        threeDigit,
+        fourDigit,
+        phone,
+        memberSince,
+        prev,
+        buy,
+        remain,
+        fee,
+        renew,
+        invoiceDate,
+        invoiceTime,
+    ];
+
+    const sql = `INSERT INTO mckee (
+  	field20,
+	field22,
+	field1,
+	field2,
+	field4,
+	field5,
+	field6,
+	field7,
+	field8,
+	field10,
+	field31,
+	field19,
+	field12,
+	field9,
+	field28,
+	field15,
+	field32 
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    const sql_lastRecord = `SELECT 
+    rowid,
+    field20 record_id,
+	field22 account,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field10 memberSince,
+	field31 prev,
+	field19 buy,
+	field12 remain,
+	field9 fee,
+	field28 renew,
+	field15 invoiceDate,
+    field32 invoiceTime FROM mckee WHERE rowid = ? `;
+
+    db.run(sql, data, function (err) {
+        if (err) return console.log(err.message);
+        db.get(sql_lastRecord, this.lastID, (err, row) => {
+            if (err) return console.log(err.message);
+            console.log(`RENEW: ${this.lastID}`);
+            event.sender.send(channels.RENEW, { row });
         });
     });
 });

@@ -10,34 +10,30 @@ import { currentDate, getCurrentTime } from '../../helpers/helpers';
 import { Field } from '../Field/Field';
 import { Button } from '../Button/Button';
 
-const BuyForm = ({
-    api,
-    history,
-    disable,
-    setDisable,
-    edit,
-    handleDone,
-    setEdit,
-}) => {
-    const [save, setSave] = useState(false);
-    const [cancel, setCancel] = useState(false);
+const BuyForm = ({ api, history }) => {
     const { state } = history.location;
 
-    const handleEdit = ({
-        account,
-        areaCode,
-        phone,
-        firstName,
-        lastName,
-        fullname,
-    }) => {
-        api.edit(
-            { account, areaCode, phone, firstName, lastName, fullname },
-            (data) => {
-                console.table(data);
-            }
-        );
+    const [disable, setDisable] = useState(false);
+    const [edit, setEdit] = useState(false);
+
+    const handleDone = () => {
+        history.push('/dashboard');
+        console.clear();
     };
+
+    const resetRenewForm = (form) => {
+        form.change('fee', 0);
+        form.change('renew', 0);
+    };
+
+    const resetBuyForm = (form, previous) => {
+        form.change('buy', 0);
+        form.change('remain', previous);
+    };
+
+    useEffect(() => {
+        document.getElementById('buy').focus();
+    }, []);
 
     const {
         record_id,
@@ -54,55 +50,23 @@ const BuyForm = ({
     } = state || {};
 
     const onSubmit = async (data) => {
-        const {
-            record_id,
-            account,
-            firstName,
-            lastName,
-            fullname,
-            areaCode,
-            threeDigit,
-            fourDigit,
-            phone,
-            memberSince,
-            prev,
-            buy,
-            remain,
-            fee,
-            renew,
-            invoiceDate,
-            invoiceTime,
-        } = data;
-
-        console.table([
-            {
-                record_id,
-                account,
-                firstName,
-                lastName,
-                fullname,
-                areaCode,
-                threeDigit,
-                fourDigit,
-                phone,
-                memberSince,
-                prev,
-                buy,
-                remain,
-                fee,
-                renew,
-                invoiceDate,
-                invoiceTime,
-            },
-        ]);
-        api.buy(data, (result) => {});
+        const { buy, renew, prev } = data;
+        if (buy) {
+            api.buy({ ...data, renew: null }, (result) => {
+                console.table([{ name: 'Buy Receipt', ...result.row }]);
+            });
+        }
+        if (renew) {
+            api.renew(
+                // { ...data, prev: prev + renew, remain: prev + renew },
+                // { ...data, remain: prev + renew },
+                { ...data, buy: null, remain: prev + renew },
+                (result) => {
+                    console.table([{ name: 'Renew Receipt', ...result.row }]);
+                }
+            );
+        }
     };
-
-    // useEffect(() => {
-    //     if (!edit) {
-    //         console.log('we need to send edit here', { edit });
-    //     }
-    // }, [edit]);
 
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
@@ -111,7 +75,6 @@ const BuyForm = ({
                     {({ form }) => (
                         <OnChange name={field}>
                             {(value) => {
-                                // console.log({ becomes });
                                 if (becomes) {
                                     onChange(to);
                                 } else {
@@ -126,25 +89,31 @@ const BuyForm = ({
     );
 
     const updateForm = (form, values) => {
-        form.initialize({
-            account,
-            record_id: values.record_id + 1 || '',
-            areaCode: values.areaCode,
-            phone: values.phone,
-            fullname: values.fullname,
-            firstName: values.firstName,
-            lastName: values.lastName,
-            memberSince,
-            prev: values.remain,
-            buy: 0,
-            threeDigit: values.threeDigit,
-            fourDigit: values.fourDigit,
-            remain: values.remain,
-            fee: 0,
-            renew: null,
-            invoiceDate: currentDate(),
-            invoiceTime: getCurrentTime(),
-        });
+        const { buy, renew, remain, record_id } = values;
+        if (buy) {
+            form.initialize({
+                ...values,
+                record_id: record_id + 1,
+                prev: remain,
+                buy: 0,
+                invoiceDate: currentDate(),
+                invoiceTime: getCurrentTime(),
+            });
+        }
+
+        if (renew) {
+            form.initialize({
+                ...values,
+                record_id: values.record_id + 1 || '',
+                // prev: remain + renew,
+                prev: remain + renew,
+                remain: remain + renew,
+                fee: 0,
+                renew: 0,
+                invoiceDate: currentDate(),
+                invoiceTime: getCurrentTime(),
+            });
+        }
     };
 
     useEffect(() => {
@@ -154,7 +123,6 @@ const BuyForm = ({
     return (
         <>
             <FinalForm
-                // keepDirtyOnReinitialize
                 initialValuesEqual={() => true}
                 onSubmit={onSubmit}
                 initialValues={{
@@ -172,19 +140,11 @@ const BuyForm = ({
                     buy: 0,
                     remain: remain,
                     fee: 0,
-                    renew: null,
+                    renew: 0,
                     invoiceDate: currentDate(),
                     invoiceTime: getCurrentTime(),
                 }}
-                render={({
-                    handleSubmit,
-                    form,
-                    values,
-                    initialValues,
-                    touched,
-                    pristine,
-                    dirty,
-                }) => (
+                render={({ handleSubmit, form, values }) => (
                     <Form
                         onSubmit={(event) => {
                             handleSubmit(event).then(() => {
@@ -242,6 +202,7 @@ const BuyForm = ({
                                 gallonBuy={values.gallonBuy}
                                 renewAmount={values.renewalAmount}
                                 remain={remain}
+                                reset={resetRenewForm}
                             />
                             <Field.BuyRemain edited={edit} name='remain' />
                             <Form.Button
@@ -254,26 +215,51 @@ const BuyForm = ({
                             />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Input type='hidden' width={15} />
+                            <Button.Edit
+                                edit={edit}
+                                form={form}
+                                setEdit={setEdit}
+                                handleEdit={api.edit}
+                                values={values}
+                            />
                             <Button.Done
                                 edit={edit}
                                 handleDone={handleDone}
                                 values={values}
                             />
-                            <Button.Edit
-                                setCancel={setCancel}
-                                cancel={cancel}
+                            <Form.Input type='hidden' width={14} />
+                            <Field.RenewFee
+                                name='fee'
                                 edit={edit}
+                                disable={disable}
+                                previous={values.prev}
+                                fee={values.fee}
+                                renew={values.renew}
+                                setDisable={setDisable}
                                 form={form}
-                                setSave={setSave}
-                                save={save}
-                                setEdit={setEdit}
-                                handleEdit={handleEdit}
+                                reset={resetBuyForm}
                                 values={values}
-                                initialValues={initialValues}
-                                touched={touched}
-                                pristine={pristine}
-                                dirty={dirty}
+                                updateForm={updateForm}
+                            />
+                            <Field.RenewAmount
+                                name='renew'
+                                edit={edit}
+                                disable={disable}
+                                previous={values.prev}
+                                fee={values.fee}
+                                renew={values.renew}
+                                setDisable={setDisable}
+                                form={form}
+                                reset={resetBuyForm}
+                                values={values}
+                                updateForm={updateForm}
+                            />
+                            <Form.Button
+                                type='submit'
+                                content='Renew'
+                                color='facebook'
+                                style={{ marginTop: '30px' }}
+                                disabled={!values.fee || !values.renew}
                             />
                         </Form.Group>
                     </Form>

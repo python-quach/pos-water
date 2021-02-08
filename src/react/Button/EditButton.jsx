@@ -1,54 +1,47 @@
-import { useState } from 'react';
-import { Button } from 'semantic-ui-react';
+import { useState, useEffect } from 'react';
+import { Form } from 'semantic-ui-react';
 
-const EditButton = ({
-    edit,
-    setEdit,
-    loading,
-    setLoading,
-    setSave,
-    save,
-    setCancel,
-    handleEdit,
-    values,
-    cancel,
-    form,
-    initialValues,
-    touched,
-    pristine,
-    dirty,
-}) => {
-    const [oldValue, setOldValue] = useState(values);
+const EditButton = ({ edit, setEdit, handleEdit, values, form }) => {
+    const [original, setOriginal] = useState({});
+
+    // Store the previous value, just in case user cancel edit
+    useEffect(() => {
+        if (!edit) setOriginal(values);
+    }, [edit, values]);
+
     return (
         <>
             {edit ? (
-                <Button
-                    floated='right'
+                <Form.Button
+                    type='button'
                     content='Cancel'
+                    style={{
+                        marginTop: '30px',
+                    }}
                     color='blue'
                     onClick={(event) => {
                         event.preventDefault();
                         setEdit(false);
-                        form.initialize({ ...values });
-                        console.table([{ ...values }]);
+                        form.reset({ ...original });
                     }}
                 />
             ) : null}
-            <Button
-                floated='right'
+            <Form.Button
+                type='button'
                 color={!edit ? 'vk' : 'google plus'}
+                style={{
+                    marginTop: '30px',
+                }}
                 content={!edit ? 'Edit' : 'Save'}
                 onClick={(event) => {
                     event.preventDefault();
                     if (!edit) {
-                        console.log('edit');
-                        console.table([{ ...values }]);
                         setEdit(true);
                     } else {
-                        console.log('saver');
-                        console.table([{ ...values }]);
-                        handleEdit(values);
-                        setEdit(false);
+                        handleEdit(values, (result) => {
+                            console.table({ ...result });
+                            setEdit(false);
+                        });
                     }
                 }}
             />

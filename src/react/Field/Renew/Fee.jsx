@@ -13,26 +13,45 @@ const normalizeFee = (value) => {
     }
 };
 
-const Fee = ({ disable, setDisable, form, remain, previous }) => {
+const Fee = ({
+    name,
+    disable,
+    setDisable,
+    form,
+    remain,
+    previous,
+    edit,
+    reset,
+    fee,
+    renew,
+    updateForm,
+    values,
+}) => {
     return (
         <Field
-            name='renewalFee'
+            name={name}
             parse={normalizeFee}
             render={({ input }) => (
                 <Form.Input
                     {...input}
+                    disabled={edit}
                     id='renew'
                     label='Renew Fee'
                     className='AreaCode'
                     inverted
                     width={1}
+                    onKeyPress={(e) =>
+                        (e.key === 'Enter' || e.keyCode === 13) &&
+                        fee > 0 &&
+                        renew > 0
+                            ? form.submit().then(() => {
+                                  updateForm(form, values);
+                                  document.getElementById('buy').focus();
+                              })
+                            : null
+                    }
                     onFocus={() => {
-                        console.log('renew fee');
-                        // form.change('gallonBuy', 0);
-                        // form.change('remain', previous);
-                        // form.change('previousGallon', previous);
-                        // form.change('remain', previous);
-                        // form.change('previousGallon', previous);
+                        reset(form, previous);
                         setDisable(true);
                     }}
                 />

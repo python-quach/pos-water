@@ -12,18 +12,45 @@ const normalizeRenewAmount = (value) => {
     }
 };
 
-const RenewAmount = () => {
+const RenewAmount = ({
+    name,
+    edit,
+    disable,
+    form,
+    previous,
+    reset,
+    fee,
+    renew,
+    updateForm,
+    values,
+}) => {
     return (
         <Field
-            name='renewalAmount'
+            name={name}
             parse={normalizeRenewAmount}
             render={({ input }) => (
                 <Form.Input
                     {...input}
+                    disabled={edit}
                     label='Gallon'
                     className='AreaCode'
                     inverted={true}
                     width={1}
+                    onKeyPress={(e) =>
+                        (e.key === 'Enter' || e.keyCode === 13) &&
+                        fee > 0 &&
+                        renew > 0
+                            ? form.submit().then(() => {
+                                  updateForm(form, values);
+                                  document.getElementById('buy').focus();
+                              })
+                            : null
+                    }
+                    onFocus={() => {
+                        reset(form, previous);
+                        // form.change('buy', 0);
+                        // form.change('remain', previous);
+                    }}
                 />
             )}
         />

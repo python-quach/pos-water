@@ -1,6 +1,6 @@
 export const BuyPortalConfig = {
     animation: 'zoom',
-    duration: 1000,
+    duration: 500,
     segment: {
         width: '100%',
         height: '100%',

@@ -65,6 +65,7 @@ function createWindow() {
         },
     });
 
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -453,18 +454,62 @@ ipcMain.on(channels.RENEW, (event, arg) => {
 });
 
 // EDIT
-ipcMain.on(channels.EDIT, (event, arg) => {
-    console.log('edit', { arg });
-    const sql = `UPDATE 
-                    mckee 
-                SET 
+ipcMain.on(
+    channels.EDIT,
+    (event, { firstName, lastName, fullname, areaCode, phone, account }) => {
+        const newPhone = phone.replace(/[^\d+]/g, '');
+        const threeDigit = newPhone.slice(0, 3);
+        const fourDigit = newPhone.slice(3, 7);
+
+        const sql = `UPDATE
+                    mckee
+                SET
                     field5 = ?,
                     field8 = ?,
                     field1 = ?,
                     field2 = ?,
                     field4 = ?,
                     field6 = ?,
-                    field7 = ? 
+                    field7 = ?
                 WHERE field22 = ?`;
-    event.sender.send(channels.EDIT, { response: arg });
-});
+
+        const data = [
+            areaCode,
+            phone,
+            firstName,
+            lastName,
+            fullname,
+            threeDigit,
+            fourDigit,
+            account,
+        ];
+
+        console.log({ data });
+
+        // if(areaCode.match(/^\d{3}/)) {
+        //     console.log('match')
+        // } else {
+
+        // }
+
+        // console.log(data);
+
+        // if (areaCode.length < 3) {
+        //     console.log({ areaCode, length: areaCode.length });
+        // } else {
+        //     db.run(sql, data, function (err) {
+        //         if (err) {
+        //             return console.error(err.message);
+        //         }
+        //         event.sender.send(channels.EDIT, data);
+        //     });
+        // }
+
+        db.run(sql, data, function (err) {
+            if (err) {
+                return console.error(err.message);
+            }
+            event.sender.send(channels.EDIT, data);
+        });
+    }
+);

@@ -10,7 +10,7 @@ export const BuyPortalConfig = {
     },
     grid: {
         style: { height: '100vh' },
-        verticalAlign: 'middle',
+        // verticalAlign: 'middle',
     },
     gridColumn: {},
 };

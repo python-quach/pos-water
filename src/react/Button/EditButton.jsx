@@ -4,7 +4,6 @@ import { Form } from 'semantic-ui-react';
 const EditButton = ({ edit, setEdit, handleEdit, values, form }) => {
     const [original, setOriginal] = useState({});
 
-    // Store the previous value, just in case user cancel edit
     useEffect(() => {
         if (!edit) setOriginal(values);
     }, [edit, values]);
@@ -32,6 +31,11 @@ const EditButton = ({ edit, setEdit, handleEdit, values, form }) => {
                 style={{
                     marginTop: '30px',
                 }}
+                disabled={
+                    values.areaCode && values.phone
+                        ? values.areaCode.length < 3 || values.phone.length < 8
+                        : true
+                }
                 content={!edit ? 'Edit' : 'Save'}
                 onClick={(event) => {
                     event.preventDefault();

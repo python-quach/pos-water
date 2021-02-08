@@ -15,6 +15,11 @@ export const find = ({ phone, account, firstName, lastName }, callback) => {
         ipcRenderer.removeAllListeners(channels.FIND);
         console.table(membership);
         callback(membership);
+        // if (!membership.renew) {
+        //     callback({ ...membership, renew: 0 });
+        // } else {
+        //     callback(membership);
+        // }
     });
 };
 

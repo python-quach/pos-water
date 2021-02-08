@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form } from 'semantic-ui-react';
+import { Form, Table, Divider } from 'semantic-ui-react';
 import {
     Form as FinalForm,
     FormSpy,
@@ -15,6 +15,7 @@ const BuyForm = ({ api, history }) => {
 
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
+    const [receipt, setReceipt] = useState(history.location.state || {});
 
     const handleDone = () => {
         history.push('/dashboard');
@@ -30,6 +31,8 @@ const BuyForm = ({ api, history }) => {
         form.change('buy', 0);
         form.change('remain', previous);
     };
+
+    // Final Form Validation
 
     useEffect(() => {
         document.getElementById('buy').focus();
@@ -54,6 +57,7 @@ const BuyForm = ({ api, history }) => {
         if (buy) {
             api.buy({ ...data, renew: null }, (result) => {
                 console.table([{ name: 'Buy Receipt', ...result.row }]);
+                setReceipt(result.row);
             });
         }
         if (renew) {
@@ -63,6 +67,7 @@ const BuyForm = ({ api, history }) => {
                 { ...data, buy: null, remain: prev + renew },
                 (result) => {
                     console.table([{ name: 'Renew Receipt', ...result.row }]);
+                    setReceipt(result.row);
                 }
             );
         }
@@ -105,7 +110,6 @@ const BuyForm = ({ api, history }) => {
             form.initialize({
                 ...values,
                 record_id: values.record_id + 1 || '',
-                // prev: remain + renew,
                 prev: remain + renew,
                 remain: remain + renew,
                 fee: 0,
@@ -122,6 +126,118 @@ const BuyForm = ({ api, history }) => {
 
     return (
         <>
+            {!receipt.renew ? (
+                <Table celled striped>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Last Receipt</Table.HeaderCell>
+                            <Table.HeaderCell>Account</Table.HeaderCell>
+                            <Table.HeaderCell>Phone</Table.HeaderCell>
+                            <Table.HeaderCell>First Name</Table.HeaderCell>
+                            <Table.HeaderCell>Last Name</Table.HeaderCell>
+                            <Table.HeaderCell>Prev </Table.HeaderCell>
+                            <Table.HeaderCell>Buy</Table.HeaderCell>
+                            <Table.HeaderCell>Remain</Table.HeaderCell>
+                            <Table.HeaderCell>Date</Table.HeaderCell>
+                            <Table.HeaderCell>Time</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>
+                                {receipt ? receipt.record_id : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.account : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt
+                                    ? receipt.areaCode + '-' + receipt.phone
+                                    : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.firstName : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.lastName : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.prev : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.buy : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.remain : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.invoiceDate : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.invoiceTime : ''}
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
+            ) : (
+                <Table celled striped>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Last Receipt</Table.HeaderCell>
+                            <Table.HeaderCell>Account</Table.HeaderCell>
+                            <Table.HeaderCell>Phone</Table.HeaderCell>
+                            <Table.HeaderCell>First Name</Table.HeaderCell>
+                            <Table.HeaderCell>Last Name</Table.HeaderCell>
+                            <Table.HeaderCell>Fee</Table.HeaderCell>
+                            <Table.HeaderCell>Renew</Table.HeaderCell>
+                            <Table.HeaderCell>Prev </Table.HeaderCell>
+                            <Table.HeaderCell>Remain</Table.HeaderCell>
+                            <Table.HeaderCell>Date</Table.HeaderCell>
+                            <Table.HeaderCell>Time</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>
+                                {receipt ? receipt.record_id : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.account : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt
+                                    ? receipt.areaCode + '-' + receipt.phone
+                                    : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.firstName : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.lastName : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.fee : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.renew : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.prev : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.remain : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.invoiceDate : ''}
+                            </Table.Cell>
+                            <Table.Cell>
+                                {receipt ? receipt.invoiceTime : ''}
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
+            )}
+            <Divider />
             <FinalForm
                 initialValuesEqual={() => true}
                 onSubmit={onSubmit}
@@ -187,7 +303,15 @@ const BuyForm = ({ api, history }) => {
                             <Field.BuyAreaCode edit={edit} name='areaCode' />
                             <Field.BuyPhone edit={edit} name='phone' />
                             <Field.BuyName edit={edit} name='fullname' />
-                            <Form.Input type='hidden' width={!edit ? 6 : 4} />
+                            <Button.Edit
+                                edit={edit}
+                                form={form}
+                                setEdit={setEdit}
+                                handleEdit={api.edit}
+                                values={values}
+                            />
+                            {/* <Form.Input type='hidden' width={!edit ? 6 : 4} /> */}
+                            <Form.Input type='hidden' width={!edit ? 5 : 4} />
                             <Field.BuyPreviousGallon
                                 edited={edit}
                                 name='prev'
@@ -209,25 +333,28 @@ const BuyForm = ({ api, history }) => {
                                 content='Buy'
                                 style={{
                                     marginTop: '30px',
+                                    width: '100px',
                                 }}
                                 color='green'
                                 disabled={values.buy <= 0 || disable}
                             />
                         </Form.Group>
                         <Form.Group>
-                            <Button.Edit
+                            {/* <Button.Edit
                                 edit={edit}
                                 form={form}
                                 setEdit={setEdit}
                                 handleEdit={api.edit}
                                 values={values}
-                            />
-                            <Button.Done
+                            /> */}
+                            {/* <Button.Done
                                 edit={edit}
                                 handleDone={handleDone}
                                 values={values}
-                            />
+                            /> */}
                             <Form.Input type='hidden' width={14} />
+                            {/* <Form.Input type='hidden' width={13} /> */}
+                            {/* <Form.Input type='hidden' width={12} /> */}
                             <Field.RenewFee
                                 name='fee'
                                 edit={edit}
@@ -258,10 +385,23 @@ const BuyForm = ({ api, history }) => {
                                 type='submit'
                                 content='Renew'
                                 color='facebook'
-                                style={{ marginTop: '30px' }}
+                                style={{ marginTop: '30px', width: '100px' }}
                                 disabled={!values.fee || !values.renew}
                             />
+                            {/* <Button.Done
+                                edit={edit}
+                                handleDone={handleDone}
+                                values={values}
+                            /> */}
                         </Form.Group>
+                        {/* <Form.Group> */}
+                        {/* <Form.Input type='hidden' width={14} /> */}
+                        <Button.Done
+                            edit={edit}
+                            handleDone={handleDone}
+                            values={values}
+                        />
+                        {/* </Form.Group> */}
                     </Form>
                 )}
             />

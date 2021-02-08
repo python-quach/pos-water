@@ -36,7 +36,7 @@ const Fee = ({
                     {...input}
                     disabled={edit}
                     id='renew'
-                    label='Renew Fee'
+                    label='Fee'
                     className='AreaCode'
                     inverted
                     width={1}

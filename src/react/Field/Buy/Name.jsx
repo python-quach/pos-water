@@ -3,47 +3,9 @@ import { Form } from 'semantic-ui-react';
 
 const normalizeName = (value) => {
     if (!value) return value;
-    const onlyWords = value.replace(/[^\w]/g, '');
+    const onlyWords = value.replace(/[^A-Za-z]/g, '');
     return onlyWords.toUpperCase();
 };
-
-// const Name = ({ edit }) => {
-//     return (
-//         <>
-//             <Field
-//                 name='firstName'
-//                 parse={normalizeName}
-//                 render={({ input }) => (
-//                     <Form.Input
-//                         {...input}
-//                         id='firstName'
-//                         label='First Name'
-//                         className='Name'
-//                         readOnly={!edit}
-//                         error={edit}
-//                         inverted
-//                         width={3}
-//                     />
-//                 )}
-//             />
-//             <Field
-//                 name='lastName'
-//                 parse={normalizeName}
-//                 render={({ input }) => (
-//                     <Form.Input
-//                         {...input}
-//                         label='Last Name'
-//                         className='Name'
-//                         readOnly={!edit}
-//                         error={edit}
-//                         inverted
-//                         width={3}
-//                     />
-//                 )}
-//             />
-//         </>
-//     );
-// };
 
 const Name = ({ edit }) => {
     return !edit ? (

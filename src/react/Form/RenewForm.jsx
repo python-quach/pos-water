@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Form } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
-import { currentDate, getCurrentTime } from '../../helpers/helpers';
+import { currentDate, currentTime } from '../../helpers/helpers';
 import { Field } from '../Field/Field';
 
 const RenewForm = ({ api, history, disable, setDisable }) => {
@@ -32,7 +32,7 @@ const RenewForm = ({ api, history, disable, setDisable }) => {
                 onSubmit={onSubmit}
                 initialValues={{
                     todayDate: currentDate(),
-                    todayTime: getCurrentTime(),
+                    todayTime: currentTime(),
                     memberSince: memberSince,
                     account: account,
                     record_id: record_id + 1 || '',

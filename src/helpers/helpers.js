@@ -1,4 +1,4 @@
-export const getCurrentTime = () => {
+export const currentTime = () => {
     const time = new Date();
     return time.toLocaleString('en-US', {
         hour: 'numeric',

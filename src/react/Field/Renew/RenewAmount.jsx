@@ -15,7 +15,6 @@ const normalizeRenewAmount = (value) => {
 const RenewAmount = ({
     name,
     edit,
-    disable,
     form,
     previous,
     reset,
@@ -48,8 +47,6 @@ const RenewAmount = ({
                     }
                     onFocus={() => {
                         reset(form, previous);
-                        // form.change('buy', 0);
-                        // form.change('remain', previous);
                     }}
                 />
             )}

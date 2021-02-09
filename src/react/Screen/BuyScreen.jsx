@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import { Divider } from 'semantic-ui-react';
 import { BuyPortalConfig as config } from '../../config/portal';
 import Portal from '../Portal/Portal';
 import { Form } from '../Form/Form';
 import BuyReceipt from '../Receipt/BuyReceipt';
 import RenewReceipt from '../Receipt/RenewReceipt';
 import { Button } from '../Button/Button';
-import { getCurrentTime, currentDate } from '../../helpers/helpers';
+import { currentTime, currentDate } from '../../helpers/helpers';
+import Receipt from '../Receipt/Receipt';
 
 const BuyScreen = ({ api, history }) => {
     const [receipt, setReceipt] = useState(history.location.state || {});
@@ -51,7 +53,7 @@ const BuyScreen = ({ api, history }) => {
                 prev: remain,
                 buy: 0,
                 invoiceDate: currentDate(),
-                invoiceTime: getCurrentTime(),
+                invoiceTime: currentTime(),
             });
         }
 
@@ -64,7 +66,7 @@ const BuyScreen = ({ api, history }) => {
                 fee: 0,
                 renew: 0,
                 invoiceDate: currentDate(),
-                invoiceTime: getCurrentTime(),
+                invoiceTime: currentTime(),
             });
         }
     };
@@ -79,6 +81,8 @@ const BuyScreen = ({ api, history }) => {
 
     return (
         <Portal {...config}>
+            <Receipt receipt={receipt} />
+            <Divider />
             <Form.Buy
                 history={history}
                 api={api}
@@ -95,7 +99,6 @@ const BuyScreen = ({ api, history }) => {
                 state={history.location.state}
                 updateForm={updateForm}
             />
-
             <Button.Done edit={edit} handleDone={handleDone} />
         </Portal>
     );

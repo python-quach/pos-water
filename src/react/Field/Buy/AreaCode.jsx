@@ -1,5 +1,5 @@
 import { Field } from 'react-final-form';
-import { Form, Popup } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 
 const normalizeAreaCode = (value) => {
     if (!value) return value;

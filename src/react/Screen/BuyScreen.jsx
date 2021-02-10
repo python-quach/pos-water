@@ -14,6 +14,8 @@ const BuyScreen = ({ api, history }) => {
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
 
+    const state = history.location.state;
+
     const renderReceipt = () => {
         if (receipt.renew) return <RenewReceipt receipt={receipt} />;
         if (receipt.buy) return <BuyReceipt receipt={receipt} />;
@@ -79,6 +81,17 @@ const BuyScreen = ({ api, history }) => {
         }
     };
 
+    const initialValues = {
+        ...state,
+        record_id: state ? state.record_id + 1 : '',
+        prev: state ? state.remain : '',
+        buy: 0,
+        fee: 0,
+        renew: 0,
+        invoiceDate: currentDate(),
+        invoiceTime: currentTime(),
+    };
+
     useEffect(() => {
         if (!history.location.state) history.push('/dashboard');
     });
@@ -94,7 +107,8 @@ const BuyScreen = ({ api, history }) => {
             <Form.Buy
                 history={history}
                 api={api}
-                receipt={receipt}
+                // receipt={receipt}
+                initialValues={initialValues}
                 disable={disable}
                 edit={edit}
                 state={history.location.state}

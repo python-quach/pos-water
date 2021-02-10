@@ -5,7 +5,7 @@ import {
     Field as FinalField,
 } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
-import { currentDate, currentTime } from '../../helpers/helpers';
+// import { currentDate, currentTime } from '../../helpers/helpers';
 import { Field } from '../Field/Field';
 import SaveButton from '../Button/SaveButton';
 import EditButton from '../Button/EditButton';
@@ -16,6 +16,7 @@ const BuyForm = ({
     edit,
     disable,
     state,
+    initialValues,
     onSubmit,
     setEdit,
     resetBuyForm,
@@ -23,16 +24,16 @@ const BuyForm = ({
     setDisable,
     updateForm,
 }) => {
-    const initialValues = {
-        ...state,
-        record_id: state ? state.record_id + 1 : '',
-        prev: state ? state.remain : '',
-        buy: 0,
-        fee: 0,
-        renew: 0,
-        invoiceDate: currentDate(),
-        invoiceTime: currentTime(),
-    };
+    // const initialValues = {
+    //     ...state,
+    //     record_id: state ? state.record_id + 1 : '',
+    //     prev: state ? state.remain : '',
+    //     buy: 0,
+    //     fee: 0,
+    //     renew: 0,
+    //     invoiceDate: currentDate(),
+    //     invoiceTime: currentTime(),
+    // };
 
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>

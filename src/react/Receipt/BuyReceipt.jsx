@@ -1,5 +1,5 @@
 import { Table } from 'semantic-ui-react';
-import data from './data';
+import data from './data/lastRecord';
 
 const BuyReceipt = ({ receipt }) => (
     <Table

@@ -1,40 +1,29 @@
-import { Form } from 'semantic-ui-react';
+import { useState } from 'react';
+import {
+    Form,
+    TransitionablePortal,
+    Segment,
+    Header,
+    Button,
+} from 'semantic-ui-react';
 import {
     Form as FinalForm,
     FormSpy,
     Field as FinalField,
 } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
-// import { currentDate, currentTime } from '../../helpers/helpers';
 import { Field } from '../Field/Field';
 import SaveButton from '../Button/SaveButton';
 import EditButton from '../Button/EditButton';
 import CancelButton from '../Button/CancelButton';
 
+// const BuyForm = ({ api, edit, disable, state, initialValues, handle }) => {
 const BuyForm = ({
     api,
-    edit,
-    disable,
-    state,
+    state: { edit, disable, data },
     initialValues,
-    onSubmit,
-    setEdit,
-    resetBuyForm,
-    resetRenewForm,
-    setDisable,
-    updateForm,
+    handle,
 }) => {
-    // const initialValues = {
-    //     ...state,
-    //     record_id: state ? state.record_id + 1 : '',
-    //     prev: state ? state.remain : '',
-    //     buy: 0,
-    //     fee: 0,
-    //     renew: 0,
-    //     invoiceDate: currentDate(),
-    //     invoiceTime: currentTime(),
-    // };
-
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
             {({ input: { onChange } }) => (
@@ -58,13 +47,13 @@ const BuyForm = ({
     return (
         <FinalForm
             initialValuesEqual={() => true}
-            onSubmit={onSubmit}
+            onSubmit={handle.onSubmit}
             initialValues={initialValues}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
                     onSubmit={(event) => {
                         handleSubmit(event).then(() => {
-                            updateForm(form, values);
+                            handle.updateForm(form, values);
                             document.getElementById('buy').focus();
                         });
                     }}>
@@ -103,7 +92,7 @@ const BuyForm = ({
                             <EditButton
                                 edit={edit}
                                 form={form}
-                                setEdit={setEdit}
+                                setEdit={handle.setEdit}
                                 handleEdit={api.edit}
                                 values={values}
                                 initialValues={initialValues}
@@ -113,7 +102,7 @@ const BuyForm = ({
                                 <CancelButton
                                     edit={edit}
                                     form={form}
-                                    setEdit={setEdit}
+                                    setEdit={handle.setEdit}
                                     handleEdit={api.edit}
                                     values={values}
                                     initialValues={initialValues}
@@ -121,7 +110,7 @@ const BuyForm = ({
                                 <SaveButton
                                     edit={edit}
                                     form={form}
-                                    setEdit={setEdit}
+                                    setEdit={handle.setEdit}
                                     handleEdit={api.edit}
                                     values={values}
                                     initialValues={initialValues}
@@ -134,13 +123,13 @@ const BuyForm = ({
                             name='buy'
                             edit={edit}
                             disable={disable}
-                            setDisable={setDisable}
+                            setDisable={handle.setDisable}
                             previous={values.previousGallon}
                             form={form}
                             gallonBuy={values.gallonBuy}
                             renewAmount={values.renewalAmount}
-                            remain={state ? state.remain : ''}
-                            reset={resetRenewForm}
+                            remain={data ? data.remain : ''}
+                            reset={handle.resetRenewForm}
                         />
                         <Field.BuyRemain edited={edit} name='remain' />
                         <Form.Button
@@ -164,9 +153,9 @@ const BuyForm = ({
                             previous={values.prev}
                             renew={values.renew}
                             values={values}
-                            reset={resetBuyForm}
-                            setDisable={setDisable}
-                            updateForm={updateForm}
+                            reset={handle.resetBuyForm}
+                            setDisable={handle.setDisable}
+                            updateForm={handle.updateForm}
                         />
                         <Field.RenewAmount
                             name='renew'
@@ -177,9 +166,9 @@ const BuyForm = ({
                             renew={values.renew}
                             previous={values.prev}
                             values={values}
-                            reset={resetBuyForm}
-                            setDisable={setDisable}
-                            updateForm={updateForm}
+                            reset={handle.resetBuyForm}
+                            setDisable={handle.setDisable}
+                            updateForm={handle.updateForm}
                         />
                         <Form.Button
                             type='submit'

@@ -8,5 +8,6 @@ module.exports = {
         EDIT: 'EDIT',
         RENEW: 'RENEW',
         ADD: 'ADD',
+        HISTORY: 'HISTORY',
     },
 };

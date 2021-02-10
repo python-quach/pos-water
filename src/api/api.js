@@ -46,10 +46,21 @@ export const renew = (data, callback) => {
     });
 };
 
+// History
+export const history = ({ account, limit, offset }, callback) => {
+    ipcRenderer.send(channels.HISTORY, { account, limit, offset });
+    ipcRenderer.on(channels.HISTORY, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.HISTORY);
+        console.table(response);
+        callback(response);
+    });
+};
+
 export const api = {
     login,
     find,
     buy,
     edit,
     renew,
+    history,
 };

@@ -7,6 +7,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     -ms-overflow-style: scrollbar;
     -webkit-app-region: drag;
+    overflow: hidden;
 }
 
 code {
@@ -17,4 +18,12 @@ code {
 .titlebar {
     -webkit-user-select: none;
     -webkit-app-region: drag;
+}
+
+#invoices {
+    cursor: move;
+    position: absolute;
+    z-index: 9000;
+    top: 30%;
+    left: 20px;
 }

@@ -8,13 +8,26 @@ import RenewReceipt from '../Receipt/RenewReceipt';
 import { Button } from '../Button/Button';
 import { currentTime, currentDate } from '../../helpers/helpers';
 import Receipt from '../Receipt/Receipt';
+import Record from '../Portal/RecordPortal';
 
 const BuyScreen = ({ api, history }) => {
     const [receipt, setReceipt] = useState(history.location.state || {});
+    const [records, setRecord] = useState([]);
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
+    const [open, setOpenPortal] = useState(false);
 
-    const state = history.location.state;
+    const data = history.location.state;
+    const initialValues = {
+        ...data,
+        record_id: data ? data.record_id + 1 : '',
+        prev: data ? data.remain : '',
+        buy: 0,
+        fee: 0,
+        renew: 0,
+        invoiceDate: currentDate(),
+        invoiceTime: currentTime(),
+    };
 
     const renderReceipt = () => {
         if (receipt.renew) return <RenewReceipt receipt={receipt} />;
@@ -41,6 +54,12 @@ const BuyScreen = ({ api, history }) => {
         if (buy) {
             api.buy({ ...data, renew: null }, ({ row }) => {
                 setReceipt(row);
+                api.history(
+                    { account: data.account, limit: 10, offset: 0 },
+                    (response) => {
+                        setRecord(response);
+                    }
+                );
             });
         }
 
@@ -49,6 +68,12 @@ const BuyScreen = ({ api, history }) => {
                 { ...data, buy: null, remain: prev + renew },
                 ({ row }) => {
                     setReceipt(row);
+                    api.history(
+                        { account: data.account, limit: 10, offset: 0 },
+                        (response) => {
+                            setRecord(response);
+                        }
+                    );
                 }
             );
         }
@@ -81,17 +106,6 @@ const BuyScreen = ({ api, history }) => {
         }
     };
 
-    const initialValues = {
-        ...state,
-        record_id: state ? state.record_id + 1 : '',
-        prev: state ? state.remain : '',
-        buy: 0,
-        fee: 0,
-        renew: 0,
-        invoiceDate: currentDate(),
-        invoiceTime: currentTime(),
-    };
-
     useEffect(() => {
         if (!history.location.state) history.push('/dashboard');
     });
@@ -107,24 +121,31 @@ const BuyScreen = ({ api, history }) => {
             <Form.Buy
                 history={history}
                 api={api}
-                // receipt={receipt}
+                state={{
+                    initialValues,
+                    disable,
+                    edit,
+                    data,
+                }}
                 initialValues={initialValues}
                 disable={disable}
                 edit={edit}
-                state={history.location.state}
-                onSubmit={onSubmit}
-                renderReceipt={renderReceipt}
-                handleDone={handleDone}
-                resetBuyForm={resetBuyForm}
-                resetRenewForm={resetRenewForm}
-                setEdit={setEdit}
-                setDisable={setDisable}
-                updateForm={updateForm}
+                handle={{
+                    onSubmit,
+                    renderReceipt,
+                    handleDone,
+                    resetBuyForm,
+                    resetRenewForm,
+                    setEdit,
+                    setDisable,
+                    updateForm,
+                }}
             />
+            <Divider />
             <Button.Done edit={edit} handleDone={handleDone} />
             <Button.History
-                content='History'
-                color='teal'
+                content={open ? 'Close' : 'History'}
+                color={open ? 'red' : 'teal'}
                 disabled={edit}
                 floated='right'
                 type='button'
@@ -132,7 +153,21 @@ const BuyScreen = ({ api, history }) => {
                     marginTop: '10px',
                     width: '100px',
                 }}
+                onClick={() => {
+                    setOpenPortal((prev) => !prev);
+                    api.history(
+                        {
+                            account: data.account,
+                            limit: 10,
+                            offset: 0,
+                        },
+                        (response) => {
+                            setRecord(response);
+                        }
+                    );
+                }}
             />
+            <Record edit={edit} records={records} open={open} />
         </Portal>
     );
 };

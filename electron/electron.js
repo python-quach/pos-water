@@ -513,3 +513,31 @@ ipcMain.on(
         });
     }
 );
+// HISTORY
+ipcMain.on(channels.HISTORY, (event, arg) => {
+    const { account, limit, offset } = arg;
+    console.log('HISTORY:', { account, limit, offset });
+    const sql = `SELECT   
+                    field20 record_id,
+                    field22 account,
+                    field1 firstName,
+                    field2 lastName,
+                    field4 fullname,
+                    field5 areaCode,
+                    field6 threeDigit,
+                    field7 fourDigit,
+                    field8 phone,
+                    field10 memberSince,
+                    field31 prev,
+                    field19 buy,
+                    field12 remain,
+                    field9 fee,
+                    field28 renew,
+                    field15 invoiceDate,
+                    field32 invoiceTime  
+                FROM mckee WHERE field22 = ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
+    db.all(sql, [account, limit, offset], (err, rows) => {
+        if (err) return console.log(err.message);
+        event.sender.send(channels.HISTORY, rows);
+    });
+});

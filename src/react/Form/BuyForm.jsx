@@ -23,6 +23,17 @@ const BuyForm = ({
     setDisable,
     updateForm,
 }) => {
+    const initialValues = {
+        ...state,
+        record_id: state ? state.record_id + 1 : '',
+        prev: state ? state.remain : '',
+        buy: 0,
+        fee: 0,
+        renew: 0,
+        invoiceDate: currentDate(),
+        invoiceTime: currentTime(),
+    };
+
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
             {({ input: { onChange } }) => (
@@ -47,16 +58,7 @@ const BuyForm = ({
         <FinalForm
             initialValuesEqual={() => true}
             onSubmit={onSubmit}
-            initialValues={{
-                ...state,
-                record_id: state ? state.record_id + 1 : '',
-                prev: state ? state.remain : '',
-                buy: 0,
-                fee: 0,
-                renew: 0,
-                invoiceDate: currentDate(),
-                invoiceTime: currentTime(),
-            }}
+            initialValues={initialValues}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
                     onSubmit={(event) => {
@@ -157,25 +159,25 @@ const BuyForm = ({
                             edit={edit}
                             form={form}
                             disable={disable}
-                            setDisable={setDisable}
-                            updateForm={updateForm}
-                            values={values}
                             fee={values.fee}
                             previous={values.prev}
                             renew={values.renew}
+                            values={values}
                             reset={resetBuyForm}
+                            setDisable={setDisable}
+                            updateForm={updateForm}
                         />
                         <Field.RenewAmount
                             name='renew'
                             edit={edit}
+                            form={form}
                             disable={disable}
-                            previous={values.prev}
                             fee={values.fee}
                             renew={values.renew}
-                            setDisable={setDisable}
-                            form={form}
-                            reset={resetBuyForm}
+                            previous={values.prev}
                             values={values}
+                            reset={resetBuyForm}
+                            setDisable={setDisable}
                             updateForm={updateForm}
                         />
                         <Form.Button

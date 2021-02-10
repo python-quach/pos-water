@@ -4,7 +4,8 @@ import { Form } from 'semantic-ui-react';
 const normalizeGallon = (value) => {
     if (!value) return 0;
     const onlyNums = value.replace(/[^\d]/g, '');
-    return parseInt(onlyNums);
+    if (onlyNums.length < 6) return parseInt(onlyNums);
+    return parseInt(onlyNums.slice(0, 5));
 };
 
 const BuyGallon = ({ disable, setDisable, edit, form, reset }) => {

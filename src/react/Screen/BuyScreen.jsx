@@ -36,12 +36,20 @@ const BuyScreen = ({ api, history }) => {
     const onSubmit = async (data) => {
         const { buy, renew, prev } = data;
 
-        if (buy)
-            api.buy({ ...data, renew: null }, ({ row }) => setReceipt(row));
-        if (renew)
-            api.renew({ ...data, buy: null, remain: prev + renew }, ({ row }) =>
-                setReceipt(row)
+        if (buy) {
+            api.buy({ ...data, renew: null }, ({ row }) => {
+                setReceipt(row);
+            });
+        }
+
+        if (renew) {
+            api.renew(
+                { ...data, buy: null, remain: prev + renew },
+                ({ row }) => {
+                    setReceipt(row);
+                }
             );
+        }
     };
 
     const updateForm = (form, values) => {
@@ -86,20 +94,31 @@ const BuyScreen = ({ api, history }) => {
             <Form.Buy
                 history={history}
                 api={api}
-                onSubmit={onSubmit}
                 receipt={receipt}
+                disable={disable}
+                edit={edit}
+                state={history.location.state}
+                onSubmit={onSubmit}
                 renderReceipt={renderReceipt}
                 handleDone={handleDone}
                 resetBuyForm={resetBuyForm}
                 resetRenewForm={resetRenewForm}
-                disable={disable}
-                setDisable={setDisable}
-                edit={edit}
                 setEdit={setEdit}
-                state={history.location.state}
+                setDisable={setDisable}
                 updateForm={updateForm}
             />
             <Button.Done edit={edit} handleDone={handleDone} />
+            <Button.History
+                content='History'
+                color='teal'
+                disabled={edit}
+                floated='right'
+                type='button'
+                style={{
+                    marginTop: '10px',
+                    width: '100px',
+                }}
+            />
         </Portal>
     );
 };

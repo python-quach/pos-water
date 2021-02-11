@@ -9,11 +9,25 @@ export const login = ({ password, username }, callback) => {
     });
 };
 
+// Add Membership
+export const add = (data, callback) => {
+    console.table([{ ...data }]);
+    ipcRenderer.send(channels.ADD, data);
+    ipcRenderer.on(channels.ADD, (event, arg) => {
+        ipcRenderer.removeAllListeners(channels.ADD);
+        console.table(arg);
+        callback(arg);
+    });
+};
+
+// Find Membership
 export const find = ({ phone, account, firstName, lastName }, callback) => {
+    console.log('Find', account);
     ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
     ipcRenderer.on(channels.FIND, (_, { membership }) => {
         ipcRenderer.removeAllListeners(channels.FIND);
         // console.table(membership);
+        // We need to check of there are many accounts with the search
         callback(membership);
     });
 };

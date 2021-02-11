@@ -13,10 +13,18 @@ const FindForm = ({ api, history }) => {
         api.find({ phone, account, firstName, lastName }, (data) => {
             // If we only find one member
             if (data && data.length === 1) {
-                history.push({
-                    pathname: '/buy',
-                    state: { ...data[0] },
+                api.lastRecord(({ record_id }) => {
+                    console.log({ record_id });
+                    history.push({
+                        pathname: '/buy',
+                        state: { ...data[0], newRecordID: record_id },
+                    });
                 });
+
+                // history.push({
+                //     pathname: '/buy',
+                //     state: { ...data[0] },
+                // });
             } else if (data && data.length > 1) {
                 console.log(data.renew);
                 history.push({

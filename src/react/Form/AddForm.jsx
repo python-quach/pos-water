@@ -1,7 +1,48 @@
+import { useState } from 'react';
 import { Form } from 'semantic-ui-react';
 import { Form as FinalForm, Field } from 'react-final-form';
+import { add, find } from '../../api/api';
 
-const AddForm = ({ api, state, history, initialValues, onSubmit }) => {
+const AddForm = ({ api, state, history, initialValues }) => {
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const onSubmit = async (data) => {
+        console.table([{ ...data }]);
+
+        const { phone, firstName, lastName, renew } = data;
+
+        add(
+            {
+                ...data,
+                fullname: firstName + ' ' + lastName,
+                threeDigit: phone.slice(0, 3),
+                fourDigit: phone.slice(4, 8),
+                prev: renew,
+                renew: null,
+                buy: 0,
+                remain: renew,
+            },
+            (response) => {
+                console.log({ response });
+                if (response.error) {
+                    setError(true);
+                    setErrorMessage(response.error);
+                } else {
+                    find({ account: data.account }, (data) => {
+                        api.lastRecord(({ record_id }) => {
+                            console.log({ record_id });
+                            history.push({
+                                pathname: '/buy',
+                                state: { ...data[0], newRecordID: record_id },
+                            });
+                        });
+                    });
+                }
+            }
+        );
+    };
+
     return (
         <>
             <FinalForm
@@ -10,7 +51,9 @@ const AddForm = ({ api, state, history, initialValues, onSubmit }) => {
                 render={({ handleSubmit, form, values, initialValues }) => (
                     <Form
                         onSubmit={(event) => {
-                            handleSubmit(event).then(() => {});
+                            handleSubmit(event).then(() => {
+                                console.log('form submit');
+                            });
                         }}>
                         <Form.Group>
                             <Field
@@ -90,14 +133,14 @@ const AddForm = ({ api, state, history, initialValues, onSubmit }) => {
                                         /[^\d]/g,
                                         ''
                                     );
-                                    if (onlyNums.length < 10)
-                                        return parseInt(onlyNums);
+                                    if (onlyNums.length < 10) return onlyNums;
                                     return parseInt(onlyNums.slice(0, 9));
                                 }}
                                 render={({ input }) => (
                                     <Form.Input
                                         {...input}
                                         id='account'
+                                        error={error ? errorMessage : false}
                                         label='Account'
                                         className='BuyAccount'
                                         placeholder='xxxxxx'
@@ -105,20 +148,32 @@ const AddForm = ({ api, state, history, initialValues, onSubmit }) => {
                                         iconPosition='left'
                                         inverted
                                         width={2}
+                                        onFocus={() => {
+                                            setError(false);
+                                            setErrorMessage('');
+                                        }}
                                     />
                                 )}
                             />
                             <Field
                                 name='areaCode'
                                 parse={(value) => {
+                                    // if (!value) return value;
+                                    // const onlyNums = value.replace(
+                                    //     /[^\d]/g,
+                                    //     ''
+                                    // );
+                                    // if (onlyNums.length < 3)
+                                    //     return parseInt(onlyNums);
+                                    // return parseInt(onlyNums.slice(0, 3));
+
                                     if (!value) return value;
                                     const onlyNums = value.replace(
                                         /[^\d]/g,
                                         ''
                                     );
-                                    if (onlyNums.length < 3)
-                                        return parseInt(onlyNums);
-                                    return parseInt(onlyNums.slice(0, 3));
+                                    if (onlyNums.length < 4) return onlyNums;
+                                    return onlyNums.slice(0, 3);
                                 }}
                                 render={({ input, meta }) => (
                                     <Form.Input

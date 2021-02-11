@@ -18,6 +18,8 @@ const BuyScreen = ({ api, history }) => {
     const [edit, setEdit] = useState(false);
     const [open, setOpenPortal] = useState(false);
 
+    const [record, setLastRecord] = useState(null);
+
     // Pagination;
     const [totalPages, setTotalPages] = useState(0);
     const [offset, setOffset] = useState(0);
@@ -31,7 +33,10 @@ const BuyScreen = ({ api, history }) => {
     const data = history.location.state;
     const initialValues = {
         ...data,
-        record_id: data ? data.record_id + 1 : '',
+        record_id: data ? data.newRecordID : '',
+        // record_id: data ? data.record_id + 1 : '',
+        // record_id: data ? data.record_id : '',
+        // record_id: record,
         prev: data ? data.remain : '',
         buy: 0,
         fee: 0,
@@ -122,6 +127,14 @@ const BuyScreen = ({ api, history }) => {
     useEffect(() => {
         if (!history.location.state) history.push('/dashboard');
     });
+
+    // useEffect(() => {
+    //     if (!record)
+    //         api.lastRecord(({ record_id }) => {
+    //             console.log({ record_id });
+    //             setLastRecord(record_id);
+    //         });
+    // }, [record, api]);
 
     useEffect(() => {
         if (!totalPages && data)

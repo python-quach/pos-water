@@ -85,6 +85,92 @@ app.on('activate', function () {
     }
 });
 
+// Listen for incoming request from ipcRenderer aka REACT FrontEND
+
+ipcMain.on(channels.ADD, (event, arg) => {
+    console.log('Add', { arg });
+    const sql_findDuplicateAccount = `SELECT * FROM mckee WHERE field22 = ?`;
+    const sql_addNewAccount = `INSERT INTO mckee (
+		            field20,
+                    field22,
+                    field1,
+                    field2,
+                    field4,
+                    field5,
+                    field6,
+                    field7,
+                    field8,
+                    field10,
+                    field31,
+                    field28,
+                    field19,
+                    field12,
+                    field9,
+                    field15,
+                    field32 
+		        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
+    const sql_lastRecord = `SELECT * FROM mckee WHERE rowid = ?`;
+    const {
+        record_id,
+        account,
+        firstName,
+        lastName,
+        fullname,
+        areaCode,
+        threeDigit,
+        fourDigit,
+        phone,
+        memberSince,
+        prev,
+        renew,
+        buy,
+        remain,
+        fee,
+        invoiceDate,
+        invoiceTime,
+    } = arg;
+
+    const data = [
+        record_id,
+        account,
+        firstName,
+        lastName,
+        fullname,
+        areaCode,
+        threeDigit,
+        fourDigit,
+        phone,
+        memberSince,
+        prev,
+        renew,
+        buy,
+        remain,
+        fee,
+        invoiceDate,
+        invoiceTime,
+    ];
+
+    db.get(sql_findDuplicateAccount, account, (err, duplicate) => {
+        if (!duplicate) {
+            db.run(sql_addNewAccount, data, function (err) {
+                if (err) return console.log('add', err.message);
+                console.log('last', this.lastID);
+                db.get(sql_lastRecord, this.lastID, (err, row) => {
+                    if (err) return console.log('last', err.message);
+                    console.log(
+                        `A row has been inserted with rowid ${this.lastID}`
+                    );
+                    event.sender.send(channels.ADD, row);
+                });
+            });
+        } else {
+            event.sender.send(channels.ADD, {
+                error: `${account} already existed, Please use another account`,
+            });
+        }
+    });
+});
+
 ipcMain.on(channels.APP_INFO, (event, arg) => {
     console.log('receive app info message', { arg });
     db.all(`SELECT * FROM users`, (err, rows) => {

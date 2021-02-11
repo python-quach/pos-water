@@ -472,32 +472,42 @@ ipcMain.on(
             account,
         ];
 
-        console.log({ data });
+        const sql_getLastAccountRecord = `SELECT   
+        field20 record_id,
+	    field22 account,
+	    field1 firstName,
+	    field2 lastName,
+	    field4 fullname,
+	    field5 areaCode,
+	    field6 threeDigit,
+	    field7 fourDigit,
+	    field8 phone,
+	    field10 memberSince,
+	    field31 prev,
+	    field19 buy,
+	    field12 remain,
+	    field9 fee,
+	    field28 renew,
+	    field15 invoiceDate,
+        field32 invoiceTime 
+    FROM 
+        mckee 
+    WHERE 
+        account = ? ORDER BY record_id DESC LIMIT 1 `;
 
-        // if(areaCode.match(/^\d{3}/)) {
-        //     console.log('match')
-        // } else {
-
-        // }
-
-        // console.log(data);
-
-        // if (areaCode.length < 3) {
-        //     console.log({ areaCode, length: areaCode.length });
-        // } else {
-        //     db.run(sql, data, function (err) {
-        //         if (err) {
-        //             return console.error(err.message);
-        //         }
-        //         event.sender.send(channels.EDIT, data);
-        //     });
-        // }
+        // console.log({ data });
 
         db.run(sql, data, function (err) {
-            if (err) {
-                return console.error(err.message);
-            }
-            event.sender.send(channels.EDIT, data);
+            if (err) return console.log(err.message);
+
+            db.get(
+                sql_getLastAccountRecord,
+                account,
+                (err, lastAccountRecord) => {
+                    if (err) return console.log(err.message);
+                    event.sender.send(channels.EDIT, lastAccountRecord);
+                }
+            );
         });
     }
 );

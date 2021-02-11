@@ -1,4 +1,4 @@
-import { Table, Pagination, Header } from 'semantic-ui-react';
+import { Table, Pagination } from 'semantic-ui-react';
 
 const cellData = [
     'Record',

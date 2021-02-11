@@ -1,7 +1,7 @@
 import { Table } from 'semantic-ui-react';
 
 const cellData = [
-    'Last Buy Receipt',
+    'Buy Receipt',
     'Account',
     'Phone',
     'First Name',

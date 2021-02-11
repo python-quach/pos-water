@@ -18,7 +18,7 @@ const BuyScreen = ({ api, history }) => {
     const [edit, setEdit] = useState(false);
     const [open, setOpenPortal] = useState(false);
 
-    const [record, setLastRecord] = useState(null);
+    // const [record, setLastRecord] = useState(null);
 
     // Pagination;
     const [totalPages, setTotalPages] = useState(0);
@@ -128,6 +128,19 @@ const BuyScreen = ({ api, history }) => {
         if (!history.location.state) history.push('/dashboard');
     });
 
+    const updateHistory = () => {
+        api.history(
+            {
+                account: data.account,
+                limit: 10,
+                offset: 0,
+            },
+            (response) => {
+                setRecord(response);
+            }
+        );
+    };
+
     // useEffect(() => {
     //     if (!record)
     //         api.lastRecord(({ record_id }) => {
@@ -189,6 +202,7 @@ const BuyScreen = ({ api, history }) => {
                     disable,
                     edit,
                     data,
+                    receipt,
                 }}
                 initialValues={initialValues}
                 disable={disable}
@@ -202,6 +216,8 @@ const BuyScreen = ({ api, history }) => {
                     setEdit,
                     setDisable,
                     updateForm,
+                    setReceipt,
+                    updateHistory,
                 }}
             />
             <Divider />

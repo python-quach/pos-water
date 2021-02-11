@@ -1,3 +1,4 @@
+// import { useState } from 'react';
 import { Form } from 'semantic-ui-react';
 import {
     Form as FinalForm,
@@ -9,9 +10,27 @@ import { Field } from '../Field/Field';
 import SaveButton from '../Button/SaveButton';
 import EditButton from '../Button/EditButton';
 import CancelButton from '../Button/CancelButton';
+// import { edit as saveEdit } from '../../api/api';
 
 const BuyForm = ({ api, state, initialValues, handle }) => {
     const { edit, disable, data } = state;
+    // const { disable, data } = state;
+    // const [edit, setEdit] = useState(false);
+
+    // const handleSave = (event) => {
+    //     event.preventDefault();
+    //     if (!edit) {
+    //         setEdit(true);
+    //     } else {
+    //         // handleEdit(values, (result) => {
+    //         saveEdit(values, (result) => {
+    //             console.log('handleEdit', result);
+    //             console.log(result);
+    //             setEdit(false);
+    //         });
+    //     }
+    // };
+
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
             {({ input: { onChange } }) => (
@@ -102,6 +121,8 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                                     handleEdit={api.edit}
                                     values={values}
                                     initialValues={initialValues}
+                                    updateReceipt={handle.setReceipt}
+                                    updateHistory={handle.updateHistory}
                                 />
                             </>
                         )}

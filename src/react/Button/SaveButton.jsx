@@ -1,6 +1,13 @@
 import { Form } from 'semantic-ui-react';
 
-const SaveButton = ({ edit, values, setEdit, handleEdit }) => (
+const SaveButton = ({
+    edit,
+    values,
+    setEdit,
+    handleEdit,
+    updateReceipt,
+    updateHistory,
+}) => (
     <Form.Button
         type='button'
         color='google plus'
@@ -19,7 +26,8 @@ const SaveButton = ({ edit, values, setEdit, handleEdit }) => (
                 setEdit(true);
             } else {
                 handleEdit(values, (result) => {
-                    console.table({ ...result });
+                    updateReceipt(result);
+                    updateHistory();
                     setEdit(false);
                 });
             }

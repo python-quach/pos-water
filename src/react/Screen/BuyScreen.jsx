@@ -12,10 +12,20 @@ import Record from '../Portal/RecordPortal';
 
 const BuyScreen = ({ api, history }) => {
     const [receipt, setReceipt] = useState(history.location.state || {});
-    const [records, setRecord] = useState([]);
+    const [records, setRecord] = useState(0);
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
     const [open, setOpenPortal] = useState(false);
+
+    // Pagination;
+    const [totalPages, setTotalPages] = useState(0);
+    const [offset, setOffset] = useState(0);
+    const [activePage, setActivePage] = useState(1);
+
+    const onChange = (e, pageInfo) => {
+        setActivePage(pageInfo.activePage);
+        setOffset(pageInfo.activePage * 10 - 10);
+    };
 
     const data = history.location.state;
     const initialValues = {
@@ -58,6 +68,7 @@ const BuyScreen = ({ api, history }) => {
                     { account: data.account, limit: 10, offset: 0 },
                     (response) => {
                         setRecord(response);
+                        setActivePage(1);
                     }
                 );
             });
@@ -72,6 +83,7 @@ const BuyScreen = ({ api, history }) => {
                         { account: data.account, limit: 10, offset: 0 },
                         (response) => {
                             setRecord(response);
+                            setActivePage(1);
                         }
                     );
                 }
@@ -111,8 +123,34 @@ const BuyScreen = ({ api, history }) => {
     });
 
     useEffect(() => {
+        if (open)
+            api.history(
+                {
+                    account: data.account,
+                    limit: 10,
+                    offset: offset,
+                },
+                (response) => {
+                    setRecord(response);
+                }
+            );
+
+        if (!open) {
+            setOffset(0);
+            setActivePage(1);
+        }
+    }, [offset, data, api, open]);
+
+    useEffect(() => {
         document.getElementById('buy').focus();
     }, []);
+
+    useEffect(() => {
+        if (!totalPages && data.account)
+            api.totalInvoices({ account: data.account }, (response) => {
+                setTotalPages(response);
+            });
+    }, [totalPages, api, setTotalPages, data]);
 
     return (
         <Portal {...config}>
@@ -155,19 +193,27 @@ const BuyScreen = ({ api, history }) => {
                 }}
                 onClick={() => {
                     setOpenPortal((prev) => !prev);
-                    api.history(
-                        {
-                            account: data.account,
-                            limit: 10,
-                            offset: 0,
-                        },
-                        (response) => {
-                            setRecord(response);
-                        }
-                    );
+                    if (open)
+                        api.history(
+                            {
+                                account: data.account,
+                                limit: 10,
+                                offset: 0,
+                            },
+                            (response) => {
+                                setRecord(response);
+                            }
+                        );
                 }}
             />
-            <Record edit={edit} records={records} open={open} />
+            <Record
+                // edit={edit}
+                records={records}
+                totalPages={totalPages}
+                open={open}
+                onChange={onChange}
+                activePage={activePage}
+            />
         </Portal>
     );
 };

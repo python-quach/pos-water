@@ -21,9 +21,8 @@ code {
 }
 
 #invoices {
-    cursor: move;
+    /* cursor: pointer; */
     position: absolute;
     z-index: 9000;
     top: 30%;
-    left: 20px;
 }

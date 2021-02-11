@@ -9,5 +9,6 @@ module.exports = {
         RENEW: 'RENEW',
         ADD: 'ADD',
         HISTORY: 'HISTORY',
+        TOTAL: 'TOTAL',
     },
 };

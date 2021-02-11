@@ -56,6 +56,16 @@ export const history = ({ account, limit, offset }, callback) => {
     });
 };
 
+// Total Invoices
+export const totalInvoices = ({ account }, callback) => {
+    ipcRenderer.send(channels.TOTAL, { account });
+    ipcRenderer.on(channels.TOTAL, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.TOTAL);
+        console.log({ response });
+        callback(response);
+    });
+};
+
 export const api = {
     login,
     find,
@@ -63,4 +73,5 @@ export const api = {
     edit,
     renew,
     history,
+    totalInvoices,
 };

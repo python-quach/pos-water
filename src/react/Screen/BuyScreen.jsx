@@ -205,6 +205,16 @@ const BuyScreen = ({ api, history }) => {
                 }}
                 onClick={() => {
                     setOpenPortal((prev) => !prev);
+                    api.history(
+                        {
+                            account: data.account,
+                            limit: 10,
+                            offset: offset,
+                        },
+                        (response) => {
+                            setRecord(response);
+                        }
+                    );
                 }}
             />
             <RecordPortal open={open}>

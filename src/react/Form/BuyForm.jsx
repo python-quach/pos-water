@@ -10,13 +10,7 @@ import SaveButton from '../Button/SaveButton';
 import EditButton from '../Button/EditButton';
 import CancelButton from '../Button/CancelButton';
 
-const BuyForm = ({
-    api,
-    state,
-    // state: { edit, disable, data },
-    initialValues,
-    handle,
-}) => {
+const BuyForm = ({ api, state, initialValues, handle }) => {
     const { edit, disable, data } = state;
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
@@ -111,7 +105,7 @@ const BuyForm = ({
                                 />
                             </>
                         )}
-                        <Form.Input type='hidden' width={!edit ? 5 : 4} />
+                        <Form.Input type='hidden' width={!edit ? 5 : 2} />
                         <Field.BuyPreviousGallon edited={edit} name='prev' />
                         <Field.BuyGallon
                             name='buy'
@@ -125,7 +119,11 @@ const BuyForm = ({
                             remain={data ? data.remain : ''}
                             reset={handle.resetRenewForm}
                         />
-                        <Field.BuyRemain edited={edit} name='remain' />
+                        <Field.BuyRemain
+                            edited={edit}
+                            name='remain'
+                            remain={values.remain}
+                        />
                         <Form.Button
                             content='Buy'
                             style={{

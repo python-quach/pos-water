@@ -1,25 +1,19 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const GallonRemain = ({ edited, name }) => (
+const GallonRemain = ({ edited, name, remain }) => (
     <Field
-        // name='remain'
         name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}
                 className='AreaCode'
                 label='Remain'
-                readOnly
-                width={1}
-                // className={
-                //     props.gallonBuy >= props.currentGallon
-                //         ? 'Remain'
-                //         : 'AreaCode'
-                // }
-                inverted
+                error={remain < 0 ? true : false}
                 disabled={edited}
-                // value={props.gallonAfterBuy || 0}
+                width={1}
+                inverted
+                readOnly
             />
         )}
     />

@@ -61,7 +61,7 @@ export const totalInvoices = ({ account }, callback) => {
     ipcRenderer.send(channels.TOTAL, { account });
     ipcRenderer.on(channels.TOTAL, (_, response) => {
         ipcRenderer.removeAllListeners(channels.TOTAL);
-        console.log({ response });
+        // console.log({ response });
         callback(response);
     });
 };

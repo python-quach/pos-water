@@ -113,6 +113,15 @@
 }
 
 /* Name */
+.two.wide.field.Name label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.two.wide.field.two.wide.field.Name div.ui.inverted.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+
 .three.wide.field.Name label {
     color: #fff;
     margin-bottom: 10px;

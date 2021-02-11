@@ -454,3 +454,16 @@ ipcMain.on(channels.TOTAL, (event, arg) => {
         event.sender.send(channels.TOTAL, count.count);
     });
 });
+
+// Get last Record
+ipcMain.on(channels.LAST_RECORD, (event, arg) => {
+    console.log('LAST RECORD');
+    const sql = `SELECT field20 record_id FROM mckee ORDER BY record_id DESC LIMIT 1`;
+    db.get(sql, (err, row) => {
+        const { record_id } = row;
+        console.log(record_id + 1);
+        event.sender.send(channels.LAST_RECORD, {
+            record_id: record_id + 1,
+        });
+    });
+});

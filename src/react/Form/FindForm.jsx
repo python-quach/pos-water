@@ -19,17 +19,6 @@ const FindForm = ({ api, history }) => {
                 });
             } else if (data && data.length > 1) {
                 console.log(data.renew);
-                // if (data.renew === null) {
-                //     history.push({
-                //         pathname: '/account',
-                //         state: { ...data, renew: 0 },
-                //     });
-                // } else {
-                //     history.push({
-                //         pathname: '/account',
-                //         state: { ...data },
-                //     });
-                // }
                 history.push({
                     pathname: '/account',
                     state: { ...data },

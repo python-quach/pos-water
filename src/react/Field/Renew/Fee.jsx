@@ -38,16 +38,6 @@ const Fee = ({ name, setDisable, form, edit, reset, updateForm, values }) => {
                     inverted
                     width={1}
                     onKeyDown={handleKeyPress}
-                    // onKeyPress={(e) =>
-                    //     (e.key === 'Enter' || e.keyCode === 13) &&
-                    //     values.fee > 0 &&
-                    //     values.renew > 0
-                    //         ? form.submit().then(() => {
-                    //               updateForm(form, values);
-                    //               document.getElementById('buy').focus();
-                    //           })
-                    //         : null
-                    // }
                     onFocus={() => {
                         reset(form, values.prev);
                         setDisable(true);

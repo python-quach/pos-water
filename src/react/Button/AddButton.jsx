@@ -1,6 +1,6 @@
 import { Button, Divider } from 'semantic-ui-react';
 
-const AddButton = ({ phone, account, firstName, lastName }) => (
+const AddButton = ({ phone, account, firstName, lastName, add }) => (
     <>
         <Divider hidden />
         <Button
@@ -13,12 +13,13 @@ const AddButton = ({ phone, account, firstName, lastName }) => (
             icon='add circle'
             labelPosition='right'
             content='New Membership'
-            onClick={() => {
-                console.log('Add New MemberShip');
-                // props.getLastRecord(() => {
-                //     props.history.push('/add');
-                // });
-            }}
+            onClick={add}
+            // onClick={() => {
+            //     console.log('Add New MemberShip');
+            //     // props.getLastRecord(() => {
+            //     //     props.history.push('/add');
+            //     // });
+            // }}
         />
     </>
 );

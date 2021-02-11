@@ -66,6 +66,16 @@ export const totalInvoices = ({ account }, callback) => {
     });
 };
 
+// Last Record
+export const lastRecord = (callback) => {
+    ipcRenderer.send(channels.LAST_RECORD);
+    ipcRenderer.on(channels.LAST_RECORD, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.LAST_RECORD);
+        console.log({ response });
+        callback(response);
+    });
+};
+
 export const api = {
     login,
     find,
@@ -74,4 +84,5 @@ export const api = {
     renew,
     history,
     totalInvoices,
+    lastRecord,
 };

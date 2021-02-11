@@ -10,5 +10,6 @@ module.exports = {
         ADD: 'ADD',
         HISTORY: 'HISTORY',
         TOTAL: 'TOTAL',
+        LAST_RECORD: 'LAST_RECORD',
     },
 };

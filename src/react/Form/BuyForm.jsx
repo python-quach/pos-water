@@ -1,11 +1,4 @@
-import { useState } from 'react';
-import {
-    Form,
-    TransitionablePortal,
-    Segment,
-    Header,
-    Button,
-} from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 import {
     Form as FinalForm,
     FormSpy,
@@ -17,13 +10,14 @@ import SaveButton from '../Button/SaveButton';
 import EditButton from '../Button/EditButton';
 import CancelButton from '../Button/CancelButton';
 
-// const BuyForm = ({ api, edit, disable, state, initialValues, handle }) => {
 const BuyForm = ({
     api,
-    state: { edit, disable, data },
+    state,
+    // state: { edit, disable, data },
     initialValues,
     handle,
 }) => {
+    const { edit, disable, data } = state;
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
             {({ input: { onChange } }) => (

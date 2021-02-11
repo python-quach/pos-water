@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Divider } from 'semantic-ui-react';
+import { Divider, Header } from 'semantic-ui-react';
+import { currentTime, currentDate } from '../../helpers/helpers';
 import { BuyPortalConfig as config } from '../../config/portal';
-import Portal from '../Portal/Portal';
 import { Form } from '../Form/Form';
+import { Button } from '../Button/Button';
+import Portal from '../Portal/Portal';
+import RecordPortal from '../Portal/RecordPortal';
 import BuyReceipt from '../Receipt/BuyReceipt';
 import RenewReceipt from '../Receipt/RenewReceipt';
-import { Button } from '../Button/Button';
-import { currentTime, currentDate } from '../../helpers/helpers';
 import Receipt from '../Receipt/Receipt';
-import Record from '../Portal/RecordPortal';
+import Record from '../Record/Record';
 
 const BuyScreen = ({ api, history }) => {
     const [receipt, setReceipt] = useState(history.location.state || {});
@@ -123,6 +124,23 @@ const BuyScreen = ({ api, history }) => {
     });
 
     useEffect(() => {
+        if (!totalPages && data)
+            api.totalInvoices({ account: data.account }, (response) => {
+                setTotalPages(response);
+                api.history(
+                    {
+                        account: data.account,
+                        limit: 10,
+                        offset: offset,
+                    },
+                    (response) => {
+                        setRecord(response);
+                    }
+                );
+            });
+    }, [totalPages, api, setTotalPages, data, offset]);
+
+    useEffect(() => {
         if (open)
             api.history(
                 {
@@ -138,19 +156,13 @@ const BuyScreen = ({ api, history }) => {
         if (!open) {
             setOffset(0);
             setActivePage(1);
+            setTotalPages(0);
         }
     }, [offset, data, api, open]);
 
     useEffect(() => {
         document.getElementById('buy').focus();
     }, []);
-
-    useEffect(() => {
-        if (!totalPages && data.account)
-            api.totalInvoices({ account: data.account }, (response) => {
-                setTotalPages(response);
-            });
-    }, [totalPages, api, setTotalPages, data]);
 
     return (
         <Portal {...config}>
@@ -193,27 +205,17 @@ const BuyScreen = ({ api, history }) => {
                 }}
                 onClick={() => {
                     setOpenPortal((prev) => !prev);
-                    if (open)
-                        api.history(
-                            {
-                                account: data.account,
-                                limit: 10,
-                                offset: 0,
-                            },
-                            (response) => {
-                                setRecord(response);
-                            }
-                        );
                 }}
             />
-            <Record
-                // edit={edit}
-                records={records}
-                totalPages={totalPages}
-                open={open}
-                onChange={onChange}
-                activePage={activePage}
-            />
+            <RecordPortal open={open}>
+                <Header>Customer Record History</Header>
+                <Record
+                    records={records}
+                    totalPages={totalPages}
+                    onChange={onChange}
+                    activePage={activePage}
+                />
+            </RecordPortal>
         </Portal>
     );
 };

@@ -1,5 +1,5 @@
 // import { useState } from 'react';
-import { Form } from 'semantic-ui-react';
+import { Form, Button } from 'semantic-ui-react';
 import {
     Form as FinalForm,
     FormSpy,
@@ -12,7 +12,15 @@ import EditButton from '../Button/EditButton';
 import CancelButton from '../Button/CancelButton';
 // import { edit as saveEdit } from '../../api/api';
 
-const BuyForm = ({ api, state, initialValues, handle }) => {
+const BuyForm = ({
+    api,
+    state,
+    initialValues,
+    handle,
+    totalFee,
+    totalBuy,
+    totalRenew,
+}) => {
     const { edit, disable, data } = state;
     // const { disable, data } = state;
     // const [edit, setEdit] = useState(false);
@@ -157,6 +165,84 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                     </Form.Group>
                     <Form.Group>
                         <Form.Input type='hidden' width={14} />
+
+                        {/* <Form.Input
+                            error
+                            value={`$${totalFee}`}
+                            id='areaCode'
+                            className='AreaCode'
+                            label='Total Fee'
+                            inverted
+                            placeholder='$0.00'
+                            width={1}
+                        />
+                        <Form.Input
+                            error
+                            value={totalRenew}
+                            id='areaCode'
+                            className='AreaCode'
+                            label='Total Renew'
+                            inverted
+                            placeholder='0'
+                            width={1}
+                        />
+                        <Form.Input
+                            error
+                            value={totalBuy}
+                            id='areaCode'
+                            className='AreaCode'
+                            label='Total Buy'
+                            inverted
+                            placeholder='0'
+                            width={1}
+                        /> */}
+                        {/* <Form.Input type='hidden' width={10} /> */}
+                        {/* <Button
+                            // as='input'
+                            // floated='right'
+                            floated='left'
+                            color='red'
+                            content='Total Fee'
+                            icon='dollar'
+                            label={{
+                                basic: true,
+                                color: 'red',
+                                pointing: 'left',
+                                content: totalFee,
+                            }}
+                        />
+                        <Button
+                            floated='left'
+                            // basic
+                            // floated='right'
+
+                            color='blue'
+                            content='Total Renew'
+                            icon='tint'
+                            label={{
+                                as: 'a',
+                                basic: true,
+                                color: 'blue',
+                                pointing: 'left',
+                                content: totalRenew,
+                            }}
+                        />
+                        <Button
+                            floated='left'
+                            // floated='right'
+                            // basic
+                            color='green'
+                            content='Total Buy'
+                            icon='cart'
+                            label={{
+                                as: 'a',
+                                basic: true,
+                                color: 'green',
+                                pointing: 'left',
+                                content: totalBuy,
+                            }}
+                        /> */}
+
                         <Field.RenewFee
                             name='fee'
                             edit={edit}
@@ -191,6 +277,39 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             disabled={!values.fee || !values.renew}
                         />
                     </Form.Group>
+                    {/* <Form.Group>
+                        <Form.Input type='hidden' width={13} />
+                        <Form.Input
+                            error
+                            value={`$${totalFee}`}
+                            id='areaCode'
+                            className='AreaCode'
+                            label='Total Fee'
+                            inverted
+                            placeholder='$0.00'
+                            width={1}
+                        />
+                        <Form.Input
+                            error
+                            value={totalRenew}
+                            id='areaCode'
+                            className='AreaCode'
+                            label='Total Renew'
+                            inverted
+                            placeholder='0'
+                            width={1}
+                        />
+                        <Form.Input
+                            error
+                            value={totalBuy}
+                            id='areaCode'
+                            className='AreaCode'
+                            label='Total Buy'
+                            inverted
+                            placeholder='0'
+                            width={1}
+                        />
+                    </Form.Group> */}
                 </Form>
             )}
         />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Divider, Header } from 'semantic-ui-react';
+import { Divider, Header, Button as SButton } from 'semantic-ui-react';
 import { currentTime, currentDate } from '../../helpers/helpers';
 import { BuyPortalConfig as config } from '../../config/portal';
 import { Form } from '../Form/Form';
@@ -17,8 +17,9 @@ const BuyScreen = ({ api, history }) => {
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
     const [open, setOpenPortal] = useState(false);
-
-    // const [record, setLastRecord] = useState(null);
+    const [totalFee, setTotalFee] = useState(0);
+    const [totalRenew, setTotalRenew] = useState(0);
+    const [totalBuy, setTotalBuy] = useState(0);
 
     // Pagination;
     const [totalPages, setTotalPages] = useState(0);
@@ -75,6 +76,19 @@ const BuyScreen = ({ api, history }) => {
                     (response) => {
                         setRecord(response);
                         setActivePage(1);
+                        api.totalFee(data.account, (response) => {
+                            console.log('totalFee', response);
+                            setTotalFee(response);
+                            api.totalRenew(data.account, (response) => {
+                                console.log('totalRenew', response);
+                                setTotalRenew(response);
+                                api.totalBuy(data.account, (response) => {
+                                    console.log('totalBuy', response);
+                                    setTotalBuy(response);
+                                    // setRecord(response);
+                                });
+                            });
+                        });
                     }
                 );
             });
@@ -90,6 +104,19 @@ const BuyScreen = ({ api, history }) => {
                         (response) => {
                             setRecord(response);
                             setActivePage(1);
+                            api.totalFee(data.account, (response) => {
+                                console.log('totalFee', response);
+                                setTotalFee(response);
+                                api.totalRenew(data.account, (response) => {
+                                    console.log('totalRenew', response);
+                                    setTotalRenew(response);
+                                    api.totalBuy(data.account, (response) => {
+                                        console.log('totalBuy', response);
+                                        setTotalBuy(response);
+                                        // setRecord(response);
+                                    });
+                                });
+                            });
                         }
                     );
                 }
@@ -153,6 +180,19 @@ const BuyScreen = ({ api, history }) => {
         if (!totalPages && data)
             api.totalInvoices({ account: data.account }, (response) => {
                 setTotalPages(response);
+                api.totalFee(data.account, (response) => {
+                    console.log('totalFee', response);
+                    setTotalFee(response);
+                    api.totalRenew(data.account, (response) => {
+                        console.log('totalRenew', response);
+                        setTotalRenew(response);
+                        api.totalBuy(data.account, (response) => {
+                            console.log('totalBuy', response);
+                            setTotalBuy(response);
+                            // setRecord(response);
+                        });
+                    });
+                });
                 api.history(
                     {
                         account: data.account,
@@ -175,6 +215,17 @@ const BuyScreen = ({ api, history }) => {
                     offset: offset,
                 },
                 (response) => {
+                    // api.totalFee(data.account, (response) => {
+                    //     console.log('totalFee', response);
+                    //     api.totalRenew(data.account, (response) => {
+                    //         console.log('totalRenew', response);
+                    //         api.totalBuy(data.account, (response) => {
+                    //             console.log('totalBuy', response);
+                    //             // setRecord(response);
+                    //         });
+                    //     });
+                    // });
+
                     setRecord(response);
                 }
             );
@@ -204,6 +255,9 @@ const BuyScreen = ({ api, history }) => {
                     data,
                     receipt,
                 }}
+                totalFee={totalFee}
+                totalRenew={totalRenew}
+                totalBuy={totalBuy}
                 initialValues={initialValues}
                 disable={disable}
                 edit={edit}
@@ -221,6 +275,7 @@ const BuyScreen = ({ api, history }) => {
                 }}
             />
             <Divider />
+
             <Button.Done edit={edit} handleDone={handleDone} />
             <Button.History
                 content={open ? 'Close' : 'History'}
@@ -229,7 +284,7 @@ const BuyScreen = ({ api, history }) => {
                 floated='right'
                 type='button'
                 style={{
-                    marginTop: '10px',
+                    // marginTop: '10px',
                     width: '100px',
                 }}
                 onClick={() => {
@@ -247,14 +302,63 @@ const BuyScreen = ({ api, history }) => {
                 }}
             />
             <RecordPortal open={open}>
-                <Header>Customer Record History</Header>
+                <Header>{data.fullname} Record History</Header>
+                <SButton
+                    // floated='right'
+                    // floated='left'
+                    color='red'
+                    content='Total Fee'
+                    icon='dollar'
+                    label={{
+                        basic: true,
+                        color: 'red',
+                        pointing: 'left',
+                        content: totalFee,
+                    }}
+                />
+                <SButton
+                    // floated='left'
+                    // basic
+                    // floated='right'
+                    color='blue'
+                    content='Total Renew'
+                    icon='tint'
+                    label={{
+                        as: 'a',
+                        basic: true,
+                        color: 'blue',
+                        pointing: 'left',
+                        content: totalRenew,
+                    }}
+                />
+                <SButton
+                    // floated='left'
+                    // floated='right'
+                    // basic
+                    color='green'
+                    content='Total Buy'
+                    icon='cart'
+                    label={{
+                        as: 'a',
+                        basic: true,
+                        color: 'green',
+                        pointing: 'left',
+                        content: totalBuy,
+                    }}
+                />
                 <Record
                     records={records}
                     totalPages={totalPages}
                     onChange={onChange}
                     activePage={activePage}
+                    totalFee={totalFee}
+                    totalRenew={totalRenew}
+                    totalBuy={totalBuy}
                 />
             </RecordPortal>
+            {/* <pre style={{ color: 'white' }}>
+                {JSON.stringify({ totalFee, totalRenew, totalBuy }, null, 2)}
+            </pre> */}
         </Portal>
     );
 };

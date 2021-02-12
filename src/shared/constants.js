@@ -11,5 +11,8 @@ module.exports = {
         HISTORY: 'HISTORY',
         TOTAL: 'TOTAL',
         LAST_RECORD: 'LAST_RECORD',
+        TOTAL_FEE: 'TOTAL_FEE',
+        TOTAL_BUY: 'TOTAL_BUY',
+        TOTAL_RENEW: 'TOTAL_RENEW',
     },
 };

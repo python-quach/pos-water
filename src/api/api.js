@@ -94,6 +94,37 @@ export const lastRecord = (callback) => {
     });
 };
 
+// GET TOTAL RENEWAL FEE
+export const getTotalRenewalFee = (account, callback) => {
+    console.log('total fee', account);
+    ipcRenderer.send(channels.TOTAL_FEE, { account });
+    ipcRenderer.on(channels.TOTAL_FEE, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.TOTAL_FEE);
+        const { totalRenewalFee } = response;
+        callback(totalRenewalFee);
+    });
+};
+
+// GET TOTAL RENEWAL GALLON
+export const getTotalRenewalGallon = (account, callback) => {
+    ipcRenderer.send(channels.TOTAL_RENEW, { account });
+    ipcRenderer.on(channels.TOTAL_RENEW, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.TOTAL_RENEW);
+        const { totalRenewalGallon } = response;
+        callback(totalRenewalGallon);
+    });
+};
+
+// GET TOTAL BUY GALLON
+export const getTotalBuyGallon = (account, callback) => {
+    ipcRenderer.send(channels.TOTAL_BUY, { account });
+    ipcRenderer.on(channels.TOTAL_BUY, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.TOTAL_BUY);
+        const { totalBuyGallon } = response;
+        callback(totalBuyGallon);
+    });
+};
+
 export const api = {
     login,
     find,
@@ -103,4 +134,7 @@ export const api = {
     history,
     totalInvoices,
     lastRecord,
+    totalFee: getTotalRenewalFee,
+    totalRenew: getTotalRenewalGallon,
+    totalBuy: getTotalBuyGallon,
 };

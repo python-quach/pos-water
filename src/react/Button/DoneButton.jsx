@@ -8,7 +8,7 @@ const DoneButton = ({ handleDone, edit }) => {
             type='button'
             content='Done'
             style={{
-                marginTop: '10px',
+                // marginTop: '10px',
                 width: '100px',
             }}
             onClick={handleDone}

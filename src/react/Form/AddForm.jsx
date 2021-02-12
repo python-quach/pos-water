@@ -27,11 +27,22 @@ const AddForm = ({ history, initialValues }) => {
                 } else {
                     find({ account: data.account }, (data) => {
                         lastRecord(({ record_id }) => {
+                            console.log({ data, record_id });
                             history.push({
                                 pathname: '/buy',
-                                state: { ...data[0], newRecordID: record_id },
+                                state: {
+                                    ...data.membership,
+                                    newRecordID: record_id,
+                                },
                             });
                         });
+
+                        // lastRecord(({ record_id }) => {
+                        //     history.push({
+                        //         pathname: '/buy',
+                        //         state: { ...data[0], newRecordID: record_id },
+                        //     });
+                        // });
                     });
                 }
             }
@@ -247,19 +258,21 @@ const AddForm = ({ history, initialValues }) => {
                         <Field
                             name='fee'
                             parse={(value) => {
-                                if (!value) return 0;
-
+                                if (!value) return '0';
                                 const onlyNums = value.replace(/[^\d]/g, '');
-
                                 if (onlyNums.length < 5) {
                                     return parseInt(onlyNums);
                                 } else {
-                                    return parseInt(
-                                        onlyNums.substring(
-                                            0,
-                                            onlyNums.length - 1
-                                        )
+                                    return onlyNums.substring(
+                                        0,
+                                        onlyNums.length - 1
                                     );
+                                    // return parseInt(
+                                    //     onlyNums.substring(
+                                    //         0,
+                                    //         onlyNums.length - 1
+                                    //     )
+                                    // );
                                 }
                             }}
                             render={({ input }) => (
@@ -276,18 +289,28 @@ const AddForm = ({ history, initialValues }) => {
                         <Field
                             name='renew'
                             parse={(value) => {
-                                if (!value) return 0;
+                                if (!value) return '0';
                                 const onlyNums = value.replace(/[^\d]/g, '');
 
                                 if (onlyNums.length < 5) {
                                     return parseInt(onlyNums);
                                 } else {
-                                    return parseInt(
-                                        onlyNums.substring(
-                                            0,
-                                            onlyNums.length - 1
-                                        )
+                                    return onlyNums.substring(
+                                        0,
+                                        onlyNums.length - 1
                                     );
+                                    // return parseInt(
+                                    //     onlyNums.substring(
+                                    //         0,
+                                    //         onlyNums.length - 1
+                                    //     )
+                                    // );
+                                    // return parseInt(
+                                    //     onlyNums.substring(
+                                    //         0,
+                                    //         onlyNums.length - 1
+                                    //     )
+                                    // );
                                 }
                             }}
                             render={({ input }) => (

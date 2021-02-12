@@ -1,11 +1,13 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { AccountPortalConfig as config } from '../../config/portal';
+import AccountPortal from '../Portal/Portal';
 import { Button, Table, Pagination } from 'semantic-ui-react';
 
 const AccountScreen = (props) => {
     const memberships = props.history.location.state;
-    const [account, setAccount] = React.useState(null);
-    const [offset, setOffset] = React.useState(0);
-    const [activePage, setActivePage] = React.useState(1);
+    const [account, setAccount] = useState(null);
+    const [offset, setOffset] = useState(0);
+    const [activePage, setActivePage] = useState(1);
 
     const Row = ({ account, firstName, lastName, fullname, phone }) => {
         return (
@@ -44,13 +46,13 @@ const AccountScreen = (props) => {
         setActivePage(pageInfo.activePage);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!memberships) {
             props.history.push('/dashboard');
         }
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         setAccount(
             memberships
                 ? memberships.slice((activePage - 1) * 10, activePage * 10)
@@ -59,14 +61,8 @@ const AccountScreen = (props) => {
     }, [setOffset, setAccount, activePage, offset, memberships]);
 
     return (
-        <>
-            <Table
-                celled
-                selectable
-                color='blue'
-                inverted
-                className='MemberTable'
-                size='large'>
+        <AccountPortal {...config}>
+            <Table celled selectable color='blue'>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell content='Account' />
@@ -90,7 +86,7 @@ const AccountScreen = (props) => {
                 content='Back'
                 onClick={() => props.history.push('/')}
             />
-        </>
+        </AccountPortal>
     );
 };
 export default AccountScreen;

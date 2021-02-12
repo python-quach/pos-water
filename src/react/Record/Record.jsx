@@ -1,4 +1,4 @@
-import { Table, Pagination } from 'semantic-ui-react';
+import { Table, Pagination, Button } from 'semantic-ui-react';
 
 const cellData = [
     'Record',
@@ -15,7 +15,15 @@ const cellData = [
     'Time',
 ];
 
-const Record = ({ records, totalPages, onChange, activePage }) => {
+const Record = ({
+    records,
+    totalPages,
+    onChange,
+    activePage,
+    totalFee,
+    totalRenew,
+    totalBuy,
+}) => {
     return records ? (
         <>
             <Table celled striped selectable color='teal'>

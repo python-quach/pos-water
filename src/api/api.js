@@ -22,13 +22,17 @@ export const add = (data, callback) => {
 
 // Find Membership
 export const find = ({ phone, account, firstName, lastName }, callback) => {
-    console.log('Find', account);
+    console.log('Find', phone, account, firstName, lastName);
     ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
-    ipcRenderer.on(channels.FIND, (_, { membership }) => {
+    // ipcRenderer.on(channels.FIND, (_, { membership }) => {
+    ipcRenderer.on(channels.FIND, (_, data) => {
         ipcRenderer.removeAllListeners(channels.FIND);
+        // console.log(membership);
+        console.log(data);
         // console.table(membership);
         // We need to check of there are many accounts with the search
-        callback(membership);
+        // console.table(membership);
+        callback(data);
     });
 };
 

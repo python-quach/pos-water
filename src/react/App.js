@@ -3,6 +3,7 @@ import LoginScreen from './Screen/LoginScreen';
 import DashBoardScreen from './Screen/DashboardScreen';
 import AddScreen from './Screen/AddScreen';
 import BuyScreen from './Screen/BuyScreen';
+import AccountScreen from './Screen/AccountScreen';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -21,6 +22,13 @@ const App = ({ api }) => (
                 path='/dashboard'
                 render={(routeProps) => (
                     <DashBoardScreen {...routeProps} api={api} />
+                )}
+            />
+            <Route
+                exact
+                path='/accounts'
+                render={(routeProps) => (
+                    <AccountScreen {...routeProps} api={api} />
                 )}
             />
             <Route

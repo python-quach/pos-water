@@ -204,54 +204,144 @@ ipcMain.on(channels.FIND, (event, { phone, account, firstName, lastName }) => {
     console.log('find', { phone, account, firstName, lastName });
     const fullname = phone || account ? '' : firstName + '%' + lastName;
 
-    const sql = `SELECT * FROM 
-                    ( SELECT 
-						ROWID,
-                        field20 record_id,
-                        field22 account,
-                        field1 firstName,
-                        field2 lastName,
-                        field4 fullname,
-                        field5 areaCode,
-                        field6 threeDigit,
-                        field7 fourDigit,
-                        field8 phone,
-                        field10 memberSince,
-                        field31 prev,
-                        field19 buy,
-                        field12 remain,
-                        field9 fee,
-                        field28 renew,
-                        field15 invoiceDate,
-                        field32 invoiceTime
-                    FROM 
-                        mckee
-                    WHERE
-    		            phone = ? 
-    		            OR account =  ? 
-    		            OR fullname like ? 
+    const sql_findOneAccount = `SELECT 	
+	field20 record_id,
+	field22 account,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field10 memberSince,
+	field28 renew,
+	field31 prev,
+	field19 buy,
+	field12 remain,
+	field9 fee,
+	field15 invoiceDate,
+	field32 invoiceTime  
+FROM 
+	mckee 
+WHERE 
+	account = ?
+ORDER BY record_id DESC LIMIT 1`;
+
+    // const sql = `SELECT * FROM
+    //                 ( SELECT
+    // 					ROWID,
+    //                     field20 record_id,
+    //                     field22 account,
+    //                     field1 firstName,
+    //                     field2 lastName,
+    //                     field4 fullname,
+    //                     field5 areaCode,
+    //                     field6 threeDigit,
+    //                     field7 fourDigit,
+    //                     field8 phone,
+    //                     field10 memberSince,
+    //                     field31 prev,
+    //                     field19 buy,
+    //                     field12 remain,
+    //                     field9 fee,
+    //                     field28 renew,
+    //                     field15 invoiceDate,
+    //                     field32 invoiceTime
+    //                 FROM
+    //                     mckee
+    //                 WHERE
+    // 		            phone = ?
+    // 		            OR account =  ?
+    // 		            OR fullname like ?
+    // 		        ORDER BY
+    // 		            fullname
+    //                 )
+    //             WHERE
+    //                 account IS NOT NULL
+    //                 AND phone IS NOT NULL
+    // 			ORDER BY
+    //                 ROWID DESC LIMIT  1`;
+
+    const sql_find = `SELECT * FROM
+            ( SELECT DISTINCT
+    		    field22 account,
+    		    field1 firstName,
+    		    field2 lastName,
+    		    field4 fullname,
+    		    field8 phone
+            FROM mckee
+                WHERE
+    		        phone = ?
+    		        OR account =  ?
+    		        OR fullname like ?
     		        ORDER BY
-    		            fullname
-                    ) 
-                WHERE 
-                    account IS NOT NULL 
-                    AND phone IS NOT NULL
-				ORDER BY
-                    ROWID DESC LIMIT  1`;
+    		    fullname
+            ) 
+        WHERE 
+            account IS NOT NULL 
+			AND phone IS NOT NULL`;
 
-    db.all(sql, [phone, account, fullname], (err, rows) => {
+    // const sql = `SELECT * FROM
+    //                 ( SELECT
+    // 					ROWID,
+    //                     field20 record_id,
+    //                     field22 account,
+    //                     field1 firstName,
+    //                     field2 lastName,
+    //                     field4 fullname,
+    //                     field5 areaCode,
+    //                     field6 threeDigit,
+    //                     field7 fourDigit,
+    //                     field8 phone,
+    //                     field10 memberSince,
+    //                     field31 prev,
+    //                     field19 buy,
+    //                     field12 remain,
+    //                     field9 fee,
+    //                     field28 renew,
+    //                     field15 invoiceDate,
+    //                     field32 invoiceTime
+    //                 FROM
+    //                     mckee
+    //                 WHERE
+    // 		            phone = ?
+    // 		            OR account =  ?
+    // 		            OR fullname like ?
+    // 		        ORDER BY
+    // 		            fullname
+    //                 )
+    //             WHERE
+    //                 account IS NOT NULL
+    //                 AND phone IS NOT NULL
+    // 			ORDER BY
+    //                 ROWID DESC LIMIT  1`;
+
+    // db.all(sql, [phone, account, fullname], (err, rows) => {
+    db.all(sql_find, [phone, account, fullname], (err, rows) => {
         if (err) return console.log(err.message);
-        console.log(rows, rows.length);
-
-        if (rows === undefined || rows.length === 0) {
-            event.sender.send(channels.FIND, {
-                membership: null,
+        console.log('number of record found:', rows.length);
+        if (rows.length === 1) {
+            db.get(sql_findOneAccount, account, (err, account) => {
+                console.log(account);
+                event.sender.send(channels.FIND, { membership: account });
             });
+        } else if (rows.length > 1) {
+            event.sender.send(channels.FIND, { memberships: rows });
         } else {
-            event.sender.send(channels.FIND, {
-                membership: rows,
-            });
+            event.sender.send(channels.FIND, { membership: null });
         }
+
+        // if (rows === undefined || rows.length === 0) {
+        //     event.sender.send(channels.FIND, {
+        //         membership: null,
+        //     });
+        // } else {
+        //     // console.log(rows);
+        //     event.sender.send(channels.FIND, {
+        //         membership: rows,
+        //     });
+        // }
     });
 });
 

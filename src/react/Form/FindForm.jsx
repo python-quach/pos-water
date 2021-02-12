@@ -11,25 +11,19 @@ const FindForm = ({ api, history }) => {
 
     const onSubmit = async ({ phone, account, firstName, lastName }) => {
         api.find({ phone, account, firstName, lastName }, (data) => {
-            // If we only find one member
-            if (data && data.length === 1) {
+            if (data.membership) {
                 api.lastRecord(({ record_id }) => {
-                    console.log({ record_id });
+                    console.log({ data, record_id });
                     history.push({
                         pathname: '/buy',
-                        state: { ...data[0], newRecordID: record_id },
+                        state: { ...data.membership, newRecordID: record_id },
                     });
                 });
-
-                // history.push({
-                //     pathname: '/buy',
-                //     state: { ...data[0] },
-                // });
-            } else if (data && data.length > 1) {
-                console.log(data.renew);
+            } else if (data.memberships) {
+                console.table(data.memberships);
                 history.push({
-                    pathname: '/account',
-                    state: { ...data },
+                    pathname: '/accounts',
+                    state: data.memberships,
                 });
             } else {
                 setErrorMessage(true);

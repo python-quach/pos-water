@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Portal from '../Portal/Portal';
 // import { Button } from 'semantic-ui-react';
 import { AddPortalConfig as config } from '../../config/portal';
-import { currentTime, currentDate } from '../../helpers/helpers';
+// import { currentTime, currentDate } from '../../helpers/helpers';
 import AddForm from '../Form/AddForm';
 
 const AddScreen = (props) => {

@@ -32,6 +32,8 @@ const options = { encoding: 'GB18030' /* default */ };
 
 let device;
 let printer;
+// device = new escpos.USB();
+// printer = new escpos.Printer(device, options);
 
 usbDetect.startMonitoring();
 usbDetect
@@ -197,51 +199,71 @@ ipcMain.on(channels.ADD, (event, arg) => {
         if (!duplicate) {
             db.run(sql_addNewAccount, data, function (err) {
                 if (err) return console.log('add', err.message);
-                // console.log('last', this.lastID);
+                // console.log('ADD:', this.lastID);
                 db.get(sql_lastRecord, this.lastID, (err, row) => {
                     if (err) return console.log('last', err.message);
                     console.log(
-                        `A row has been inserted with rowid ${this.lastID}`
+                        `A row has been inserted with rowid ${this.lastID}: record ${row.field20}`
                     );
-                    // console.log('ADD NEW MEMBERSHIP', row);
-                    const account = row.field22;
-                    const phone = row.field7;
-                    const fullname = row.field1;
-                    const prev = 'Gallons prev:' + ' ' + row.field12;
-                    const action = 'NEW MEMBERSHIP';
-                    const left = 'Gallon left:' + ' ' + row.field31;
-                    const date = row.field15 + '---' + row.field32;
-                    // const time = row.field32;
-                    const message = 'Thank You' + '     ' + account;
-                    const store = 'Mckee Pure Water';
 
-                    console.log(fullname + '--' + phone);
-                    console.log(prev);
-                    console.log(action);
-                    console.log(left);
-                    console.log(date);
-                    console.log(message);
-                    console.log(store);
+                    const data = {
+                        renewFee: `Membership Fee: $${row.field9}`,
+                        fullname: `${row.field4} -- ${row.field7}`,
+                        gallonLeft: `Gallon Total  : ${row.field31}`,
+                        blank: '',
+                        last: this.lastID,
+                        newMembership: row.field22,
+                        time: `${row.field15}  ${row.field32}`,
+                    };
 
-                    device.open(function (error) {
-                        if (error) {
-                            return console.log(error.message);
-                        }
+                    const account = `[Account#: ${row.field22}]`;
+                    const message = `Thank You                ${account}`;
 
-                        printer
-                            .font('a')
-                            .align('lt')
-                            .text(data.blank)
-                            .text(fullname + '--' + phone)
-                            .text(action)
-                            .text(left)
-                            .text(date)
-                            .text(message)
-                            .text(store)
-                            .text(data.blank)
-                            .cut()
-                            .close();
-                    });
+                    if (device) {
+                        device.open(function (error) {
+                            if (error) {
+                                return console.log(error.message);
+                            }
+
+                            printer
+                                .font('a')
+                                .align('lt')
+                                .text(data.blank)
+                                .text(data.fullname)
+                                .text(`NEW MEMBERSHIP`)
+                                .text(data.renewFee)
+                                .text(data.gallonLeft)
+                                .text(data.time)
+                                .text(data.blank)
+                                .text(message)
+                                .text('Mckee Pure Water')
+                                .text('(408) 729-1319')
+                                .text(data.blank)
+                                .cut()
+                                .close();
+                        });
+                    }
+
+                    // device.open(function (error) {
+                    //     if (error) {
+                    //         return console.log(error.message);
+                    //     }
+
+                    //     printer
+                    //         .font('a')
+                    //         .align('lt')
+                    //         .text('')
+                    //         .text(fullname + '--' + phone)
+                    //         .text(prev)
+                    //         .text(action)
+                    //         .text(left)
+                    //         .text(date)
+                    //         .text(message)
+                    //         .text(store)
+                    //         .text('')
+                    //         .cut()
+                    //         .close();
+                    // });
 
                     event.sender.send(channels.ADD, row);
                 });
@@ -444,7 +466,37 @@ ipcMain.on(channels.BUY, (event, arg) => {
         if (err) return console.log(err.message);
         db.get(sql_lastRecord, this.lastID, (err, row) => {
             if (err) return console.log(err.message);
-            console.log(`BUY: ${this.lastID}`);
+            console.log(row);
+            console.log(`BUY: ${this.lastID}: record: ${row.record_id}`);
+
+            const fullname = `${row.fullname} -- ${row.fourDigit}`;
+            const prevGallon = `Gallon Prev: ${row.prev}`;
+            const gallonBuy = `Gallon Buy : ${row.buy}`;
+            const blank = '';
+            const gallonLeft = `Gallon Left: ${row.remain}`;
+            const account = `[Account#: ${row.account}]`;
+            const message = `Thank You                ${account}`;
+
+            if (device) {
+                device.open(function (error) {
+                    if (error) return console.log(error.message);
+                    printer
+                        .font('a')
+                        .align('lt')
+                        .text(fullname.trim())
+                        .text(prevGallon)
+                        .text(gallonBuy)
+                        .text(gallonLeft)
+                        .text(row.invoiceTime + ' ' + row.invoiceTime)
+                        .text(blank)
+                        .text(message)
+                        .text('Mckee Pure Water')
+                        .text('(408) 729-1319')
+                        .text(blank)
+                        .cut()
+                        .close();
+                });
+            }
             event.sender.send(channels.BUY, { row });
         });
     });
@@ -536,7 +588,39 @@ ipcMain.on(channels.RENEW, (event, arg) => {
         if (err) return console.log(err.message);
         db.get(sql_lastRecord, this.lastID, (err, row) => {
             if (err) return console.log(err.message);
-            console.log(`RENEW: ${this.lastID}`);
+            console.log(`RENEW: ${this.lastID} record: ${row.record_id}`);
+
+            const renewGallon = `Gallon Renew: ${row.renew}`;
+            const renewFee = `Renew Fee   : $${row.fee}`;
+            const fullname = `${row.fullname} -- ${row.fourDigit}`;
+            const account = `[Account#: ${row.account}]`;
+            const totalGallon = `Gallon Left : ${row.remain}`;
+            const message = `Thank You                ${account}`;
+            const blank = '';
+
+            if (device) {
+                device.open(function (error) {
+                    if (error) return console.log(error.message);
+                    printer
+                        .font('a')
+                        .align('lt')
+                        .text(blank)
+                        .text(fullname.trim())
+                        .text(renewFee)
+                        .text(`Gallon Prev : ${row.prev}`)
+                        .text(renewGallon)
+                        .text(totalGallon)
+                        .text(row.invoiceDate + ' ' + row.invoiceTime)
+                        .text(blank)
+                        .text(message)
+                        .text('Mckee Pure Water')
+                        .text('(408) 729-1319')
+                        .text(blank)
+                        .cut()
+                        .close();
+                });
+            }
+
             event.sender.send(channels.RENEW, { row });
         });
     });

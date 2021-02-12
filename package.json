@@ -9,6 +9,8 @@
         "@testing-library/jest-dom": "^5.11.4",
         "@testing-library/react": "^11.1.0",
         "@testing-library/user-event": "^12.1.10",
+        "escpos": "^3.0.0-alpha.6",
+        "escpos-usb": "^3.0.0-alpha.4",
         "final-form": "^4.20.1",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
@@ -21,6 +23,7 @@
         "semantic-ui-css": "^2.4.1",
         "semantic-ui-react": "^2.0.3",
         "sqlite3": "^5.0.1",
+        "usb-detection": "^4.10.0",
         "web-vitals": "^0.2.4"
     },
     "scripts": {

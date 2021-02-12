@@ -9,7 +9,15 @@ const DashBoardScreen = ({ api, history }) => (
     <DashboardPortal>
         <DashBoardHeader title='Mckee Pure Water' content='Dashboard' />
         <FindForm api={api} history={history} />
-        <AddButton add={() => history.push('/add')} />
+        {/* <AddButton add={() => history.push('/add')} /> */}
+        <AddButton
+            add={() => {
+                api.lastRecord(({ record_id }) => {
+                    history.push({ pathname: '/add', state: record_id });
+                    // setLastRecord(record_id);
+                });
+            }}
+        />
         <ReportButton />
         <LogoutButton logout={() => history.push('/')} />
     </DashboardPortal>

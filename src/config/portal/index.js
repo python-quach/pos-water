@@ -1,7 +1,7 @@
 export const BuyPortalConfig = {
     animation: 'fade in',
     // animation: 'zoom',
-    duration: 200,
+    duration: 500,
     segment: {
         width: '100%',
         height: '100%',

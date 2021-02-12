@@ -1,4 +1,4 @@
-import { Table, Pagination, Button } from 'semantic-ui-react';
+import { Table, Pagination } from 'semantic-ui-react';
 
 const cellData = [
     'Record',
@@ -50,7 +50,7 @@ const Record = ({
                                 <Table.Cell
                                     content={
                                         record.renew || !record.buy
-                                            ? `$ ${record.fee}`
+                                            ? `$ ${record.fee || 0}`
                                             : `$ ${0}`
                                     }
                                 />

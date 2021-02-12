@@ -2,9 +2,8 @@ import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
 const normalizeRenewAmount = (value) => {
-    if (!value) return 0;
+    if (isNaN(parseInt(value))) return 0;
     const onlyNums = value.replace(/[^\d]/g, '');
-
     if (onlyNums.length < 7) {
         return parseInt(onlyNums);
     } else {

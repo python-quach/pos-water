@@ -32,7 +32,7 @@ const RenewReceipt = ({ receipt }) => (
                 </Table.Cell>
                 <Table.Cell>{receipt ? receipt.firstName : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.lastName : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.fee : ''}</Table.Cell>
+                <Table.Cell>{receipt ? `$${receipt.fee}` : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.prev : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.renew : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.remain : ''}</Table.Cell>

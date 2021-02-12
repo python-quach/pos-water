@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Form } from 'semantic-ui-react';
 import { Form as FinalForm, Field } from 'react-final-form';
 import { add, find, lastRecord } from '../../api/api';
+import { currentTime, currentDate } from '../../helpers/helpers';
 
-const AddForm = ({ history, initialValues }) => {
+const AddForm = ({ history, initialValues, record }) => {
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -36,13 +37,6 @@ const AddForm = ({ history, initialValues }) => {
                                 },
                             });
                         });
-
-                        // lastRecord(({ record_id }) => {
-                        //     history.push({
-                        //         pathname: '/buy',
-                        //         state: { ...data[0], newRecordID: record_id },
-                        //     });
-                        // });
                     });
                 }
             }
@@ -51,13 +45,33 @@ const AddForm = ({ history, initialValues }) => {
 
     return (
         <FinalForm
+            initialValuesEqual={() => true}
             onSubmit={onSubmit}
-            initialValues={initialValues}
+            initialValues={{
+                record_id: record,
+                areaCode: '',
+                phone: '',
+                firstName: '',
+                lastName: '',
+                memberSince: currentDate(),
+                account: '',
+                fee: 0,
+                prev: 0,
+                buy: 0,
+                renew: 0,
+                invoiceDate: currentDate(),
+                invoiceTime: currentTime(),
+            }}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
                     onSubmit={(event) => {
+                        // setOriginal(values);
+                        // updateForm(form);
                         handleSubmit(event).then(() => {
-                            console.log('form submit');
+                            console.log('form submit', error, values);
+                            // if (error) {
+                            //     form.initialize(values);
+                            // }
                         });
                     }}>
                     <Form.Group>
@@ -253,26 +267,30 @@ const AddForm = ({ history, initialValues }) => {
                                 />
                             )}
                         />
-                        <Form.Input type='hidden' width={3} />
+                        <Form.Input type='hidden' width={4} />
 
                         <Field
                             name='fee'
                             parse={(value) => {
-                                if (!value) return '0';
+                                // console.log(value);
+                                // if (!value) return 0;
+                                if (isNaN(parseInt(value))) return 0;
+                                // if (!value) return value;
                                 const onlyNums = value.replace(/[^\d]/g, '');
                                 if (onlyNums.length < 5) {
                                     return parseInt(onlyNums);
                                 } else {
-                                    return onlyNums.substring(
-                                        0,
-                                        onlyNums.length - 1
-                                    );
-                                    // return parseInt(
-                                    //     onlyNums.substring(
-                                    //         0,
-                                    //         onlyNums.length - 1
-                                    //     )
+                                    // return parseInt(onlyNum)
+                                    // return onlyNums.substring(
+                                    //     0,
+                                    //     onlyNums.length - 1
                                     // );
+                                    return parseInt(
+                                        onlyNums.substring(
+                                            0,
+                                            onlyNums.length - 1
+                                        )
+                                    );
                                 }
                             }}
                             render={({ input }) => (
@@ -289,7 +307,10 @@ const AddForm = ({ history, initialValues }) => {
                         <Field
                             name='renew'
                             parse={(value) => {
-                                if (!value) return '0';
+                                // if (!value) return '0';
+                                // if (!value) return values;
+                                if (isNaN(parseInt(value))) return 0;
+                                // if (!value) return 0;
                                 const onlyNums = value.replace(/[^\d]/g, '');
 
                                 if (onlyNums.length < 5) {

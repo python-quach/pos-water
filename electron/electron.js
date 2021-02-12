@@ -1,11 +1,13 @@
 // const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const { app, BrowserWindow, ipcMain } = require('electron');
+// const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
+const usbDetect = require('usb-detection');
 
 let mainWindow;
 let db;
@@ -22,6 +24,45 @@ const productionHTMLFile = url.format({
 });
 
 const devHTMLFile = process.env.ELECTRON_START_URL;
+
+// ESC-POS PRINTER SETUP
+let escpos = require('escpos');
+escpos.USB = require('escpos-usb');
+const options = { encoding: 'GB18030' /* default */ };
+
+let device;
+let printer;
+
+usbDetect.startMonitoring();
+usbDetect
+    .find()
+    .then(function (devices) {
+        console.log(devices);
+        devices.forEach(function (item) {
+            if (item.deviceName === 'USB Printing Support') {
+                device = new escpos.USB();
+                printer = new escpos.Printer(device, options);
+            }
+        });
+    })
+    .catch(function (err) {
+        console.log(err);
+        device = null;
+        printer = null;
+    });
+
+usbDetect.on('remove', function (device) {
+    console.log('remove', device);
+    app.quit();
+});
+
+usbDetect.on('add', function (device) {
+    console.log('add', device);
+});
+
+usbDetect.on('change:vid:pid', function (device) {
+    console.log('change', device);
+});
 
 // app.whenReady().then(() => {
 //     const startUrl = devHTMLFile || productionHTMLFile;
@@ -68,6 +109,7 @@ function createWindow() {
     // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
+        usbDetect.stopMonitoring();
         mainWindow = null;
     });
 }
@@ -87,8 +129,9 @@ app.on('activate', function () {
 
 // Listen for incoming request from ipcRenderer aka REACT FrontEND
 
+// ADD NEW MEMBERSHIP
 ipcMain.on(channels.ADD, (event, arg) => {
-    console.log('Add', { arg });
+    // console.log('Add', { arg });
     const sql_findDuplicateAccount = `SELECT * FROM mckee WHERE field22 = ?`;
     const sql_addNewAccount = `INSERT INTO mckee (
 		            field20,
@@ -154,12 +197,52 @@ ipcMain.on(channels.ADD, (event, arg) => {
         if (!duplicate) {
             db.run(sql_addNewAccount, data, function (err) {
                 if (err) return console.log('add', err.message);
-                console.log('last', this.lastID);
+                // console.log('last', this.lastID);
                 db.get(sql_lastRecord, this.lastID, (err, row) => {
                     if (err) return console.log('last', err.message);
                     console.log(
                         `A row has been inserted with rowid ${this.lastID}`
                     );
+                    // console.log('ADD NEW MEMBERSHIP', row);
+                    const account = row.field22;
+                    const phone = row.field7;
+                    const fullname = row.field1;
+                    const prev = 'Gallons prev:' + ' ' + row.field12;
+                    const action = 'NEW MEMBERSHIP';
+                    const left = 'Gallon left:' + ' ' + row.field31;
+                    const date = row.field15 + '---' + row.field32;
+                    // const time = row.field32;
+                    const message = 'Thank You' + '     ' + account;
+                    const store = 'Mckee Pure Water';
+
+                    console.log(fullname + '--' + phone);
+                    console.log(prev);
+                    console.log(action);
+                    console.log(left);
+                    console.log(date);
+                    console.log(message);
+                    console.log(store);
+
+                    device.open(function (error) {
+                        if (error) {
+                            return console.log(error.message);
+                        }
+
+                        printer
+                            .font('a')
+                            .align('lt')
+                            .text(data.blank)
+                            .text(fullname + '--' + phone)
+                            .text(action)
+                            .text(left)
+                            .text(date)
+                            .text(message)
+                            .text(store)
+                            .text(data.blank)
+                            .cut()
+                            .close();
+                    });
+
                     event.sender.send(channels.ADD, row);
                 });
             });
@@ -172,7 +255,7 @@ ipcMain.on(channels.ADD, (event, arg) => {
 });
 
 ipcMain.on(channels.APP_INFO, (event, arg) => {
-    console.log('receive app info message', { arg });
+    // console.log('receive app info message', { arg });
     db.all(`SELECT * FROM users`, (err, rows) => {
         if (err) return console.log(err.message);
         event.sender.send(channels.APP_INFO, {
@@ -189,21 +272,20 @@ ipcMain.on(channels.APP_INFO, (event, arg) => {
 
 // LOGIN USER
 ipcMain.on(channels.LOGIN, (event, { username, password }) => {
-    console.log('login', { username, password });
+    // console.log('login', { username, password });
     const sql = 'SELECT * FROM users WHERE username = ? AND password = ? ';
     db.get(sql, [username, password], (err, row) => {
         if (err) return console.log(err.message);
 
-        console.log({ row });
+        // console.log({ row });
         event.sender.send(channels.LOGIN, { login: row });
     });
 });
 
 // FIND MEMBERSHIP
 ipcMain.on(channels.FIND, (event, { phone, account, firstName, lastName }) => {
-    console.log('find', { phone, account, firstName, lastName });
+    // console.log('find', { phone, account, firstName, lastName });
     const fullname = phone || account ? '' : firstName + '%' + lastName;
-
     const sql_findOneAccount = `SELECT 	
 	field20 record_id,
 	field22 account,
@@ -228,41 +310,6 @@ WHERE
 	account = ?
 ORDER BY record_id DESC LIMIT 1`;
 
-    // const sql = `SELECT * FROM
-    //                 ( SELECT
-    // 					ROWID,
-    //                     field20 record_id,
-    //                     field22 account,
-    //                     field1 firstName,
-    //                     field2 lastName,
-    //                     field4 fullname,
-    //                     field5 areaCode,
-    //                     field6 threeDigit,
-    //                     field7 fourDigit,
-    //                     field8 phone,
-    //                     field10 memberSince,
-    //                     field31 prev,
-    //                     field19 buy,
-    //                     field12 remain,
-    //                     field9 fee,
-    //                     field28 renew,
-    //                     field15 invoiceDate,
-    //                     field32 invoiceTime
-    //                 FROM
-    //                     mckee
-    //                 WHERE
-    // 		            phone = ?
-    // 		            OR account =  ?
-    // 		            OR fullname like ?
-    // 		        ORDER BY
-    // 		            fullname
-    //                 )
-    //             WHERE
-    //                 account IS NOT NULL
-    //                 AND phone IS NOT NULL
-    // 			ORDER BY
-    //                 ROWID DESC LIMIT  1`;
-
     const sql_find = `SELECT * FROM
             ( SELECT DISTINCT
     		    field22 account,
@@ -282,48 +329,12 @@ ORDER BY record_id DESC LIMIT 1`;
             account IS NOT NULL 
 			AND phone IS NOT NULL`;
 
-    // const sql = `SELECT * FROM
-    //                 ( SELECT
-    // 					ROWID,
-    //                     field20 record_id,
-    //                     field22 account,
-    //                     field1 firstName,
-    //                     field2 lastName,
-    //                     field4 fullname,
-    //                     field5 areaCode,
-    //                     field6 threeDigit,
-    //                     field7 fourDigit,
-    //                     field8 phone,
-    //                     field10 memberSince,
-    //                     field31 prev,
-    //                     field19 buy,
-    //                     field12 remain,
-    //                     field9 fee,
-    //                     field28 renew,
-    //                     field15 invoiceDate,
-    //                     field32 invoiceTime
-    //                 FROM
-    //                     mckee
-    //                 WHERE
-    // 		            phone = ?
-    // 		            OR account =  ?
-    // 		            OR fullname like ?
-    // 		        ORDER BY
-    // 		            fullname
-    //                 )
-    //             WHERE
-    //                 account IS NOT NULL
-    //                 AND phone IS NOT NULL
-    // 			ORDER BY
-    //                 ROWID DESC LIMIT  1`;
-
-    // db.all(sql, [phone, account, fullname], (err, rows) => {
     db.all(sql_find, [phone, account, fullname], (err, rows) => {
         if (err) return console.log(err.message);
-        console.log('number of record found:', rows.length);
+        // console.log('number of record found:', rows.length);
         if (rows.length === 1) {
             db.get(sql_findOneAccount, account, (err, account) => {
-                console.log(account);
+                // console.log(account);
                 event.sender.send(channels.FIND, { membership: account });
             });
         } else if (rows.length > 1) {
@@ -347,7 +358,7 @@ ORDER BY record_id DESC LIMIT 1`;
 
 // BUY
 ipcMain.on(channels.BUY, (event, arg) => {
-    console.log('buy', arg);
+    // console.log('buy', arg);
     const {
         record_id,
         account,
@@ -440,7 +451,7 @@ ipcMain.on(channels.BUY, (event, arg) => {
 });
 // RENEW
 ipcMain.on(channels.RENEW, (event, arg) => {
-    console.log('RENEW', arg);
+    // console.log('RENEW', arg);
     const {
         record_id,
         account,
@@ -604,7 +615,7 @@ ipcMain.on(
 // HISTORY
 ipcMain.on(channels.HISTORY, (event, arg) => {
     const { account, limit, offset } = arg;
-    console.log('HISTORY:', { account, limit, offset });
+    // console.log('HISTORY:', { account, limit, offset });
     const sql = `SELECT   
                     field20 record_id,
                     field22 account,
@@ -633,7 +644,7 @@ ipcMain.on(channels.HISTORY, (event, arg) => {
 // Total Invoices
 ipcMain.on(channels.TOTAL, (event, arg) => {
     const { account } = arg;
-    console.log('TOTAL:', { account });
+    // console.log('TOTAL:', { account });
     const sql = `SELECT COUNT(*) as count FROM mckee WHERE field22 = ?`;
     db.get(sql, account, (err, count) => {
         if (err) return console.log(err.message);
@@ -643,11 +654,11 @@ ipcMain.on(channels.TOTAL, (event, arg) => {
 
 // Get last Record
 ipcMain.on(channels.LAST_RECORD, (event, arg) => {
-    console.log('LAST RECORD');
+    // console.log('LAST RECORD');
     const sql = `SELECT field20 record_id FROM mckee ORDER BY record_id DESC LIMIT 1`;
     db.get(sql, (err, row) => {
         const { record_id } = row;
-        console.log(record_id + 1);
+        // console.log(record_id + 1);
         event.sender.send(channels.LAST_RECORD, {
             record_id: record_id + 1,
         });

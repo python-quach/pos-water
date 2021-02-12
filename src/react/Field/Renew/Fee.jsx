@@ -2,10 +2,8 @@ import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
 const normalizeFee = (value) => {
-    if (!value) return 0;
-
+    if (isNaN(parseInt(value))) return 0;
     const onlyNums = value.replace(/[^\d]/g, '');
-
     if (onlyNums.length < 7) {
         return parseInt(onlyNums);
     } else {
@@ -20,7 +18,7 @@ const Fee = ({ name, setDisable, form, edit, reset, updateForm, values }) => {
         values.renew > 0
             ? form.submit().then(() => {
                   updateForm(form, values);
-                  //   document.getElementById('buy').focus();
+                  document.getElementById('buy').focus();
               })
             : null;
 

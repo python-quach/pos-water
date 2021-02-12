@@ -145,3 +145,23 @@ ORDER BY
 field20
 DESC LIMIT 5)
 ORDER BY record_id ASC
+
+     console.log('ADD NEW MEMBERSHIP', row);
+                    const account = row.field22;
+                    const phone = row.field7;
+                    const fullname = row.field1;
+                    const prev = 'Gallons prev:' + ' ' + row.field12;
+                    const action = 'NEW MEMBERSHIP';
+                    const left = 'Gallon left:' + ' ' + row.field31;
+                    const date = row.field15 + '---' + row.field32;
+                    // const time = row.field32;
+                    const message = 'Thank You' + '     ' + account;
+                    const store = 'Mckee Pure Water';
+
+                    console.log(fullname + '--' + phone);
+                    console.log(prev);
+                    console.log(action);
+                    console.log(left);
+                    console.log(date);
+                    console.log(message);
+                    console.log(store);

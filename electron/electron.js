@@ -5,7 +5,7 @@ const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
-const usbDetect = require('usb-detection');
+// const usbDetect = require('usb-detection');
 
 let mainWindow;
 let db;
@@ -30,29 +30,31 @@ const options = { encoding: 'GB18030' /* default */ };
 
 let device;
 let printer;
+device = new escpos.USB();
+printer = new escpos.Printer(device, options);
 
-usbDetect.startMonitoring();
-usbDetect
-    .find()
-    .then(function (devices) {
-        console.log(devices);
-        devices.forEach(function (item) {
-            if (item.deviceName === 'USB Printing Support') {
-                device = new escpos.USB();
-                printer = new escpos.Printer(device, options);
-            }
-        });
-    })
-    .catch(function (err) {
-        console.log(err);
-        device = null;
-        printer = null;
-    });
+// usbDetect.startMonitoring();
+// usbDetect
+//     .find()
+//     .then(function (devices) {
+//         console.log(devices);
+//         devices.forEach(function (item) {
+//             if (item.deviceName === 'USB Printing Support') {
+//                 device = new escpos.USB();
+//                 printer = new escpos.Printer(device, options);
+//             }
+//         });
+//     })
+//     .catch(function (err) {
+//         console.log(err);
+//         device = null;
+//         printer = null;
+//     });
 
-usbDetect.on('remove', function (device) {
-    console.log('remove', device);
-    app.quit();
-});
+// usbDetect.on('remove', function (device) {
+//     console.log('remove', device);
+//     app.quit();
+// });
 
 // app.whenReady().then(() => {
 //     const startUrl = devHTMLFile || productionHTMLFile;
@@ -96,10 +98,10 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
-        usbDetect.stopMonitoring();
+        // usbDetect.stopMonitoring();
         mainWindow = null;
     });
 }
@@ -259,7 +261,7 @@ ipcMain.on(channels.LOGIN, (event, { username, password }) => {
 ipcMain.on(channels.FIND, (event, { phone, account, firstName, lastName }) => {
     console.log('find', { phone, account, firstName, lastName });
 
-    const sql_selectPhone = ` SELECT DISTINCT field22 account FROM test WHERE field8 = ?`;
+    const sql_selectPhone = `SELECT DISTINCT field22 account FROM test WHERE field8 = ?`;
     const sql_getLastAccountRecord = `SELECT 
 	field20 record_id,
 	field22 account,
@@ -325,13 +327,17 @@ DESC LIMIT 1`;
     if (phone) {
         db.all(sql_selectPhone, phone, (err, rows) => {
             if (err) return console.log(err.message);
-            console.log(rows);
+            console.log('test', rows[0].account);
             if (rows.length === 1) {
-                db.get(sql_getLastAccountRecord, rows.account, (err, row) => {
-                    if (err) return console.log(err.message);
-                    console.log(row);
-                    event.sender.send(channels.FIND, { membership: row });
-                });
+                db.get(
+                    sql_getLastAccountRecord,
+                    rows[0].account,
+                    (err, row) => {
+                        if (err) return console.log(err.message);
+                        console.log(row);
+                        event.sender.send(channels.FIND, { membership: row });
+                    }
+                );
             } else {
                 db.all(sql_phone, phone, (err, rows) => {
                     console.log(rows);

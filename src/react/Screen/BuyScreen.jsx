@@ -35,15 +35,25 @@ const BuyScreen = ({ api, history }) => {
     const initialValues = {
         ...data,
         record_id: data ? data.newRecordID : '',
-        // record_id: data ? data.record_id + 1 : '',
-        // record_id: data ? data.record_id : '',
-        // record_id: record,
         prev: data ? data.remain : '',
         buy: 0,
         fee: 0,
         renew: 0,
         invoiceDate: currentDate(),
         invoiceTime: currentTime(),
+    };
+
+    const updateHistory = () => {
+        api.history(
+            {
+                account: data.account,
+                limit: 10,
+                offset: 0,
+            },
+            (response) => {
+                setRecord(response);
+            }
+        );
     };
 
     const renderReceipt = () => {
@@ -155,27 +165,6 @@ const BuyScreen = ({ api, history }) => {
         if (!history.location.state) history.push('/dashboard');
     });
 
-    const updateHistory = () => {
-        api.history(
-            {
-                account: data.account,
-                limit: 10,
-                offset: 0,
-            },
-            (response) => {
-                setRecord(response);
-            }
-        );
-    };
-
-    // useEffect(() => {
-    //     if (!record)
-    //         api.lastRecord(({ record_id }) => {
-    //             console.log({ record_id });
-    //             setLastRecord(record_id);
-    //         });
-    // }, [record, api]);
-
     useEffect(() => {
         if (!totalPages && data)
             api.totalInvoices({ account: data.account }, (response) => {
@@ -215,17 +204,6 @@ const BuyScreen = ({ api, history }) => {
                     offset: offset,
                 },
                 (response) => {
-                    // api.totalFee(data.account, (response) => {
-                    //     console.log('totalFee', response);
-                    //     api.totalRenew(data.account, (response) => {
-                    //         console.log('totalRenew', response);
-                    //         api.totalBuy(data.account, (response) => {
-                    //             console.log('totalBuy', response);
-                    //             // setRecord(response);
-                    //         });
-                    //     });
-                    // });
-
                     setRecord(response);
                 }
             );

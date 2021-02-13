@@ -125,6 +125,17 @@ export const getTotalBuyGallon = (account, callback) => {
     });
 };
 
+// GET DAILY REPORT
+export const getDailyReport = (date, time, callback) => {
+    console.log({ date });
+    ipcRenderer.send(channels.REPORT, { date, time });
+    ipcRenderer.on(channels.REPORT, (event, response) => {
+        ipcRenderer.removeAllListeners(channels.REPORT);
+        console.log({ response });
+        callback(response);
+    });
+};
+
 export const api = {
     login,
     find,
@@ -137,4 +148,5 @@ export const api = {
     totalFee: getTotalRenewalFee,
     totalRenew: getTotalRenewalGallon,
     totalBuy: getTotalBuyGallon,
+    getDailyReport,
 };

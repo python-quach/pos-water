@@ -244,29 +244,12 @@ ipcMain.on(channels.ADD, (event, arg) => {
     });
 });
 
-// ipcMain.on(channels.APP_INFO, (event, arg) => {
-//     // console.log('receive app info message', { arg });
-//     db.all(`SELECT * FROM users`, (err, rows) => {
-//         if (err) return console.log(err.message);
-//         event.sender.send(channels.APP_INFO, {
-//             appName: app.getName(),
-//             appVersion: app.getVersion(),
-//             production: productionHTMLFile,
-//             development: devHTMLFile,
-//             userData,
-//             dbFile,
-//             rows,
-//         });
-//     });
-// });
-
 // LOGIN USER
 ipcMain.on(channels.LOGIN, (event, { username, password }) => {
     // console.log('login', { username, password });
     const sql = 'SELECT * FROM users WHERE username = ? AND password = ? ';
     db.get(sql, [username, password], (err, row) => {
         if (err) return console.log(err.message);
-
         // console.log({ row });
         event.sender.send(channels.LOGIN, { login: row });
     });
@@ -319,21 +302,57 @@ DESC LIMIT 1`;
         WHERE 
             account IS NOT NULL 
 			AND phone IS NOT NULL`;
+    const sql_phone = `SELECT * FROM
+            ( SELECT DISTINCT
+    		    field22 account,
+    		    field1 firstName,
+    		    field2 lastName,
+    		    field4 fullname,
+                field5 areaCode,
+    		    field8 phone
+            FROM test 
+                WHERE
+                    phone = ?
+    		        ORDER BY
+    		    fullname
+            ) 
+        WHERE 
+            account IS NOT NULL 
+			AND phone IS NOT NULL`;
 
     const fullname = firstName + '%' + lastName;
 
     if (phone) {
-        db.get(sql_selectPhone, phone, (err, row) => {
+        db.all(sql_selectPhone, phone, (err, rows) => {
             if (err) return console.log(err.message);
-            console.log(row);
-            if (row) {
-                db.get(sql_getLastAccountRecord, row.account, (err, row) => {
+            console.log(rows);
+            if (rows.length === 1) {
+                db.get(sql_getLastAccountRecord, rows.account, (err, row) => {
                     if (err) return console.log(err.message);
                     console.log(row);
                     event.sender.send(channels.FIND, { membership: row });
                 });
             } else {
-                event.sender.send(channels.FIND, { membership: null });
+                db.all(sql_phone, phone, (err, rows) => {
+                    console.log(rows);
+                    if (rows.length === 1) {
+                        const account = rows[0].account;
+                        db.get(
+                            sql_getLastAccountRecord,
+                            account,
+                            (err, data) => {
+                                console.log(data);
+                                event.sender.send(channels.FIND, {
+                                    membership: data,
+                                });
+                            }
+                        );
+                    } else if (rows.length > 1) {
+                        event.sender.send(channels.FIND, { memberships: rows });
+                    } else {
+                        event.sender.send(channels.FIND, { membership: null });
+                    }
+                });
             }
         });
     } else if (account) {
@@ -363,97 +382,6 @@ DESC LIMIT 1`;
             }
         });
     }
-
-    // if (account) {
-    //     db.get(sql_getLastAccountRecord, account, (err, row) => {
-    //         if (err) return console.log(err.message);
-    //         console.log(row);
-    //         event.sender.send(channels.FIND, { membership: row });
-    //     });
-    // } else {
-    //     event.sender.send(channels.FIND, { membership: null });
-    // }
-
-    // if (account !== '') {
-    //     db.get(sql_getLastAccountRecord, account, (err, row) => {
-    //         if (err) return console.log(err.message);
-    //         console.log(row);
-    //         event.sender.send(channels.FIND, { membership: row });
-    //     });
-    // } else {
-    //     event.sender.send(channels.FIND, { membership: null });
-    // }
-
-    //     const sql_findOneAccount = `SELECT
-    // 	field20 record_id,
-    // 	field22 account,
-    // 	field1 firstName,
-    // 	field2 lastName,
-    // 	field4 fullname,
-    // 	field5 areaCode,
-    // 	field6 threeDigit,
-    // 	field7 fourDigit,
-    // 	field8 phone,
-    // 	field10 memberSince,
-    // 	field28 renew,
-    // 	field31 prev,
-    // 	field19 buy,
-    // 	field12 remain,
-    // 	field9 fee,
-    // 	field15 invoiceDate,
-    // 	field32 invoiceTime
-    // FROM
-    // 	mckee
-    // WHERE
-    // 	account = ?
-    // ORDER BY record_id DESC LIMIT 1`;
-
-    //     const sql_find = `SELECT * FROM
-    //             ( SELECT DISTINCT
-    //     		    field22 account,
-    //     		    field1 firstName,
-    //     		    field2 lastName,
-    //     		    field4 fullname,
-    //     		    field8 phone
-    //             FROM mckee
-    //                 WHERE
-    //     		        phone = ?
-    //     		        OR account =  ?
-    //     		        OR fullname like ?
-    //     		        ORDER BY
-    //     		    fullname
-    //             )
-    //         WHERE
-    //             account IS NOT NULL
-    // 			AND phone IS NOT NULL`;
-
-    // const sql_find_account =
-
-    // db.all(sql_find, [phone, account, fullname], (err, rows) => {
-    //     if (err) return console.log(err.message);
-    //     console.log('number of record found:', rows.length);
-    //     if (rows.length === 1) {
-    //         db.get(sql_findOneAccount, account, (err, account) => {
-    //             console.log(account);
-    //             event.sender.send(channels.FIND, { membership: account });
-    //         });
-    //     } else if (rows.length > 1) {
-    //         event.sender.send(channels.FIND, { memberships: rows });
-    //     } else {
-    //         event.sender.send(channels.FIND, { membership: null });
-    //     }
-
-    //     // if (rows === undefined || rows.length === 0) {
-    //     //     event.sender.send(channels.FIND, {
-    //     //         membership: null,
-    //     //     });
-    //     // } else {
-    //     //     // console.log(rows);
-    //     //     event.sender.send(channels.FIND, {
-    //     //         membership: rows,
-    //     //     });
-    //     // }
-    // });
 });
 
 // BUY
@@ -913,6 +841,142 @@ WHERE field22 = ?)`;
         const { totalBuyGallon } = row;
         event.sender.send(channels.TOTAL_BUY, {
             totalBuyGallon,
+        });
+    });
+});
+
+// Daily Report
+ipcMain.on(channels.REPORT, (event, request) => {
+    const { date, time } = request;
+
+    const reportRenew = `SELECT SUM(renewAmount) totalRenewAmount, SUM(fee) totalFee FROM 
+                          (SELECT ROWID record_id,
+	field20 invoice_id,
+	field22 account,
+	field15 purchaseDate,
+	field32 purchaseTime,
+	field10 memberSince,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field31 currentGallon,
+	field19 buyGallon,
+	field12 remainGallon,
+	field28 renewAmount,
+	field9 fee,
+	field30 clerk
+FROM 
+	test 
+WHERE field15 = ?) 
+WHERE buyGallon IS NULL OR buyGallon = '0'`;
+    const reportBuy = `SELECT SUM(buyGallon) totalBuy FROM 
+(SELECT 
+	ROWID record_id,
+	field20 invoice_id,
+	field22 account,
+	field15 purchaseDate,
+	field32 purchaseTime,
+	field10 memberSince,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field31 currentGallon,
+	field19 buyGallon,
+	field12 remainGallon,
+	field28 renewAmount,
+	field9 fee,
+	field30 clerk
+FROM 
+	test 
+WHERE field15 = ?) 
+WHERE buyGallon IS NOT NULL OR buyGallon = '0'`;
+
+    const reportNew = `SELECT SUM(remainGallon) totalNew FROM 
+(SELECT 
+	ROWID record_id,
+	field20 invoice_id,
+	field22 account,
+	field15 purchaseDate,
+	field32 purchaseTime,
+	field10 memberSince,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field31 currentGallon,
+	field19 buyGallon,
+	field12 remainGallon,
+	field28 renewAmount,
+	field9 fee,
+	field30 clerk
+FROM 
+	test 
+WHERE field15 = ?) 
+WHERE renewAmount IS  NULL AND buyGallon = '0'`;
+
+    console.log('daily report', { date });
+    db.get(reportRenew, date, (err, row) => {
+        if (err) return console.log(err.message);
+        const { totalFee, totalRenewAmount } = row;
+
+        db.get(reportNew, date, (err, row) => {
+            const { totalNew } = row;
+            db.get(reportBuy, date, (err, row) => {
+                if (err) return console.log(err.message);
+                const { totalBuy } = row;
+
+                const test = totalNew || 0;
+                const test2 = totalRenewAmount || 0;
+                const data = test + test2;
+
+                const totalRenewFee = `Total Fee  : $${totalFee || 0}`;
+                // const totalRenew = `Total Renew: ${totalRenewAmount || 0}`;
+                const totalRenew = `Total Renew: ${data}`;
+                const totalBuyAmount = `Total Buy  : ${totalBuy || 0}`;
+                if (device) {
+                    device.open(function (error) {
+                        if (error) return console.log(error.message);
+                        printer
+                            .font('a')
+                            .align('lt')
+                            .text('Mckee Pure Water')
+                            .text(`Daily Report`)
+                            .text(`${date} - ${time}`)
+                            .text(totalRenewFee)
+                            .text(totalRenew)
+                            .text(totalBuyAmount)
+                            .text('')
+                            .text('')
+                            .cut()
+                            .close();
+
+                        event.sender.send(channels.REPORT, {
+                            totalFee,
+                            totalRenewAmount,
+                            totalBuy,
+                            totalNew,
+                        });
+                    });
+                } else {
+                    event.sender.send(channels.REPORT, {
+                        totalFee,
+                        totalRenewAmount,
+                        totalBuy,
+                        totalNew,
+                    });
+                }
+            });
         });
     });
 });

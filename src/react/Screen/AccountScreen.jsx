@@ -9,7 +9,14 @@ const AccountScreen = (props) => {
     const [offset, setOffset] = useState(0);
     const [activePage, setActivePage] = useState(1);
 
-    const Row = ({ account, firstName, lastName, fullname, phone }) => {
+    const Row = ({
+        account,
+        firstName,
+        lastName,
+        fullname,
+        areaCode,
+        phone,
+    }) => {
         return (
             <Table.Row
                 style={{ cursor: 'pointer' }}
@@ -32,6 +39,7 @@ const AccountScreen = (props) => {
                 <Table.Cell content={firstName} />
                 <Table.Cell content={lastName} />
                 <Table.Cell content={fullname} />
+                <Table.Cell content={areaCode} />
                 <Table.Cell content={phone} />
             </Table.Row>
         );
@@ -69,6 +77,7 @@ const AccountScreen = (props) => {
                         <Table.HeaderCell content='First Name' />
                         <Table.HeaderCell content='Last Name' />
                         <Table.HeaderCell content='Full Name' />
+                        <Table.HeaderCell content='Area Code' />
                         <Table.HeaderCell content='Phone' />
                     </Table.Row>
                 </Table.Header>
@@ -84,7 +93,7 @@ const AccountScreen = (props) => {
             <Button
                 floated='right'
                 content='Back'
-                onClick={() => props.history.push('/')}
+                onClick={() => props.history.push('/dashboard')}
             />
         </AccountPortal>
     );

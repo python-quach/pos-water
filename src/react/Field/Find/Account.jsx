@@ -5,9 +5,10 @@ import { Form } from 'semantic-ui-react';
 const normalizeAccount = (value) => {
     if (!value) return value;
     const onlyNums = value.replace(/[^\d]/g, '');
-    if (onlyNums.length <= 10) return onlyNums;
+    // if (onlyNums.length <= 10) return onlyNums;
+    if (onlyNums.length <= 9) return onlyNums;
 
-    return onlyNums.slice(0, 10);
+    return onlyNums.slice(0, 9);
 };
 
 const Account = ({ form, setErrorMessage, values }) => {

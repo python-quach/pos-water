@@ -327,8 +327,8 @@ DESC LIMIT 1`;
     if (phone) {
         db.all(sql_selectPhone, phone, (err, rows) => {
             if (err) return console.log(err.message);
-            console.log('test', rows[0].account);
-            if (rows.length === 1) {
+            // console.log('test', rows[0].account);
+            if (rows && rows.length === 1) {
                 db.get(
                     sql_getLastAccountRecord,
                     rows[0].account,
@@ -341,7 +341,7 @@ DESC LIMIT 1`;
             } else {
                 db.all(sql_phone, phone, (err, rows) => {
                     console.log(rows);
-                    if (rows.length === 1) {
+                    if (rows && rows.length === 1) {
                         const account = rows[0].account;
                         db.get(
                             sql_getLastAccountRecord,
@@ -353,7 +353,7 @@ DESC LIMIT 1`;
                                 });
                             }
                         );
-                    } else if (rows.length > 1) {
+                    } else if (rows && rows.length > 1) {
                         event.sender.send(channels.FIND, { memberships: rows });
                     } else {
                         event.sender.send(channels.FIND, { membership: null });

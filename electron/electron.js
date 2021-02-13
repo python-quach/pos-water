@@ -1,13 +1,10 @@
-// const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const { app, BrowserWindow, ipcMain } = require('electron');
-// const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
-// const dbFile = path.resolve(userData, 'testdb.sqlite3');
 const usbDetect = require('usb-detection');
 
 let mainWindow;
@@ -33,8 +30,6 @@ const options = { encoding: 'GB18030' /* default */ };
 
 let device;
 let printer;
-// device = new escpos.USB();
-// printer = new escpos.Printer(device, options);
 
 usbDetect.startMonitoring();
 usbDetect
@@ -57,14 +52,6 @@ usbDetect
 usbDetect.on('remove', function (device) {
     console.log('remove', device);
     app.quit();
-});
-
-usbDetect.on('add', function (device) {
-    console.log('add', device);
-});
-
-usbDetect.on('change:vid:pid', function (device) {
-    console.log('change', device);
 });
 
 // app.whenReady().then(() => {
@@ -109,7 +96,7 @@ function createWindow() {
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         usbDetect.stopMonitoring();
@@ -135,7 +122,6 @@ app.on('activate', function () {
 // ADD NEW MEMBERSHIP
 ipcMain.on(channels.ADD, (event, arg) => {
     console.log('Add', { arg });
-
     const sql_findDuplicateAccount = `SELECT * FROM test WHERE field22 = ?`;
     const sql_addNewAccount = `INSERT INTO test (
 		            field20,
@@ -158,27 +144,6 @@ ipcMain.on(channels.ADD, (event, arg) => {
 		        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
     const sql_lastRecord = `SELECT * FROM test WHERE rowid = ?`;
 
-    // const sql_findDuplicateAccount = `SELECT * FROM mckee WHERE field22 = ?`;
-    // const sql_addNewAccount = `INSERT INTO mckee (
-    // 	            field20,
-    //                 field22,
-    //                 field1,
-    //                 field2,
-    //                 field4,
-    //                 field5,
-    //                 field6,
-    //                 field7,
-    //                 field8,
-    //                 field10,
-    //                 field31,
-    //                 field28,
-    //                 field19,
-    //                 field12,
-    //                 field9,
-    //                 field15,
-    //                 field32
-    // 	        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
-    // const sql_lastRecord = `SELECT * FROM mckee WHERE rowid = ?`;
     const {
         record_id,
         account,
@@ -268,27 +233,6 @@ ipcMain.on(channels.ADD, (event, arg) => {
                         });
                     }
 
-                    // device.open(function (error) {
-                    //     if (error) {
-                    //         return console.log(error.message);
-                    //     }
-
-                    //     printer
-                    //         .font('a')
-                    //         .align('lt')
-                    //         .text('')
-                    //         .text(fullname + '--' + phone)
-                    //         .text(prev)
-                    //         .text(action)
-                    //         .text(left)
-                    //         .text(date)
-                    //         .text(message)
-                    //         .text(store)
-                    //         .text('')
-                    //         .cut()
-                    //         .close();
-                    // });
-
                     event.sender.send(channels.ADD, row);
                 });
             });
@@ -300,21 +244,21 @@ ipcMain.on(channels.ADD, (event, arg) => {
     });
 });
 
-ipcMain.on(channels.APP_INFO, (event, arg) => {
-    // console.log('receive app info message', { arg });
-    db.all(`SELECT * FROM users`, (err, rows) => {
-        if (err) return console.log(err.message);
-        event.sender.send(channels.APP_INFO, {
-            appName: app.getName(),
-            appVersion: app.getVersion(),
-            production: productionHTMLFile,
-            development: devHTMLFile,
-            userData,
-            dbFile,
-            rows,
-        });
-    });
-});
+// ipcMain.on(channels.APP_INFO, (event, arg) => {
+//     // console.log('receive app info message', { arg });
+//     db.all(`SELECT * FROM users`, (err, rows) => {
+//         if (err) return console.log(err.message);
+//         event.sender.send(channels.APP_INFO, {
+//             appName: app.getName(),
+//             appVersion: app.getVersion(),
+//             production: productionHTMLFile,
+//             development: devHTMLFile,
+//             userData,
+//             dbFile,
+//             rows,
+//         });
+//     });
+// });
 
 // LOGIN USER
 ipcMain.on(channels.LOGIN, (event, { username, password }) => {
@@ -555,47 +499,6 @@ ipcMain.on(channels.BUY, (event, arg) => {
         invoiceTime,
     ];
 
-    // const sql = `INSERT INTO mckee (
-    // field20,
-    // field22,
-    // field1,
-    // field2,
-    // field4,
-    // field5,
-    // field6,
-    // field7,
-    // field8,
-    // field10,
-    // field31,
-    // field19,
-    // field12,
-    // field9,
-    // field28,
-    // field15,
-    // field32
-
-    //     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    // const sql_lastRecord = `SELECT
-    // rowid,
-    // field20 record_id,
-    // field22 account,
-    // field1 firstName,
-    // field2 lastName,
-    // field4 fullname,
-    // field5 areaCode,
-    // field6 threeDigit,
-    // field7 fourDigit,
-    // field8 phone,
-    // field10 memberSince,
-    // field31 prev,
-    // field19 buy,
-    // field12 remain,
-    // field9 fee,
-    // field28 renew,
-    // field15 invoiceDate,
-    // field32 invoiceTime FROM mckee WHERE rowid = ? `;
-
     const sql = `INSERT INTO test(
   	field20,
 	field22,
@@ -719,46 +622,6 @@ ipcMain.on(channels.RENEW, (event, arg) => {
         invoiceTime,
     ];
 
-    // const sql = `INSERT INTO mckee (
-    // field20,
-    // field22,
-    // field1,
-    // field2,
-    // field4,
-    // field5,
-    // field6,
-    // field7,
-    // field8,
-    // field10,
-    // field31,
-    // field19,
-    // field12,
-    // field9,
-    // field28,
-    // field15,
-    // field32
-    //     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    // const sql_lastRecord = `SELECT
-    // rowid,
-    // field20 record_id,
-    // field22 account,
-    // field1 firstName,
-    // field2 lastName,
-    // field4 fullname,
-    // field5 areaCode,
-    // field6 threeDigit,
-    // field7 fourDigit,
-    // field8 phone,
-    // field10 memberSince,
-    // field31 prev,
-    // field19 buy,
-    // field12 remain,
-    // field9 fee,
-    // field28 renew,
-    // field15 invoiceDate,
-    // field32 invoiceTime FROM mckee WHERE rowid = ? `;
-
     const sql = `INSERT INTO test(
   	field20,
 	field22,
@@ -849,18 +712,6 @@ ipcMain.on(
         const threeDigit = newPhone.slice(0, 3);
         const fourDigit = newPhone.slice(3, 7);
 
-        // const sql = `UPDATE
-        //             mckee
-        //         SET
-        //             field5 = ?,
-        //             field8 = ?,
-        //             field1 = ?,
-        //             field2 = ?,
-        //             field4 = ?,
-        //             field6 = ?,
-        //             field7 = ?
-        //         WHERE field22 = ?`;
-
         const sql = `UPDATE
                    test 
                 SET
@@ -883,29 +734,6 @@ ipcMain.on(
             fourDigit,
             account,
         ];
-
-        //     const sql_getLastAccountRecord = `SELECT
-        //     field20 record_id,
-        //     field22 account,
-        //     field1 firstName,
-        //     field2 lastName,
-        //     field4 fullname,
-        //     field5 areaCode,
-        //     field6 threeDigit,
-        //     field7 fourDigit,
-        //     field8 phone,
-        //     field10 memberSince,
-        //     field31 prev,
-        //     field19 buy,
-        //     field12 remain,
-        //     field9 fee,
-        //     field28 renew,
-        //     field15 invoiceDate,
-        //     field32 invoiceTime
-        // FROM
-        //     mckee
-        // WHERE
-        //     account = ? ORDER BY record_id DESC LIMIT 1 `;
 
         const sql_getLastAccountRecord = `SELECT   
         field20 record_id,
@@ -971,25 +799,6 @@ ipcMain.on(channels.HISTORY, (event, arg) => {
                     field32 invoiceTime  
                 FROM test WHERE field22 = ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
 
-    // const sql = `SELECT
-    //                 field20 record_id,
-    //                 field22 account,
-    //                 field1 firstName,
-    //                 field2 lastName,
-    //                 field4 fullname,
-    //                 field5 areaCode,
-    //                 field6 threeDigit,
-    //                 field7 fourDigit,
-    //                 field8 phone,
-    //                 field10 memberSince,
-    //                 field31 prev,
-    //                 field19 buy,
-    //                 field12 remain,
-    //                 field9 fee,
-    //                 field28 renew,
-    //                 field15 invoiceDate,
-    //                 field32 invoiceTime
-    //             FROM mckee WHERE field22 = ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
     db.all(sql, [account, limit, offset], (err, rows) => {
         if (err) return console.log(err.message);
         event.sender.send(channels.HISTORY, rows);
@@ -1000,7 +809,6 @@ ipcMain.on(channels.HISTORY, (event, arg) => {
 ipcMain.on(channels.TOTAL, (event, arg) => {
     const { account } = arg;
     // console.log('TOTAL:', { account });
-    // const sql = `SELECT COUNT(*) as count FROM mckee WHERE field22 = ?`;
     const sql = `SELECT COUNT(*) as count FROM test WHERE field22 = ?`;
     db.get(sql, account, (err, count) => {
         if (err) return console.log(err.message);
@@ -1011,7 +819,6 @@ ipcMain.on(channels.TOTAL, (event, arg) => {
 // Get last Record
 ipcMain.on(channels.LAST_RECORD, (event, arg) => {
     // console.log('LAST RECORD');
-    // const sql = `SELECT field20 record_id FROM mckee ORDER BY record_id DESC LIMIT 1`;
     const sql = `SELECT field20 record_id FROM test ORDER BY record_id DESC LIMIT 1`;
     db.get(sql, (err, row) => {
         const { record_id } = row;
@@ -1025,16 +832,6 @@ ipcMain.on(channels.LAST_RECORD, (event, arg) => {
 // GET TOTAL RENEW FEE
 ipcMain.on(channels.TOTAL_FEE, (event, request) => {
     const { account } = request;
-    //     const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
-    // (SELECT
-    // 	field19 buyGallon,
-    // 	field28 renewAmount,
-    // 	field31 currentGallon,
-    // 	field9 fees
-    // FROM
-    // 	mckee
-    // WHERE field22 = ?)
-    // WHERE buyGallon = 0 OR buyGallon IS NULL`;
 
     const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
 (SELECT 
@@ -1061,16 +858,6 @@ WHERE buyGallon = 0 OR buyGallon IS NULL`;
 // GET TOTAL RENEW GALLON
 ipcMain.on(channels.TOTAL_RENEW, (event, request) => {
     const { account } = request;
-    //     const totalRenew = `SELECT * FROM
-    // (SELECT
-    // 	field19 ,
-    // 	field28 ,
-    // 	field31,
-    // 	field9
-    // FROM
-    // 	mckee
-    // WHERE field22 = ?)
-    // WHERE field19 = 0 OR field19 IS NULL`;
 
     const totalRenew = `SELECT * FROM
 (SELECT 
@@ -1108,16 +895,6 @@ WHERE field19 = 0 OR field19 IS NULL`;
 // GET TOTAL BUY GALLON
 ipcMain.on(channels.TOTAL_BUY, (event, request) => {
     const { account } = request;
-    //     const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
-    // (SELECT
-    // 	field19 ,
-    // 	field28 ,
-    // 	field31,
-    // 	field9
-    // FROM
-    // 	mckee
-    // WHERE field22 = ?)`;
-
     const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
 (SELECT 
 	field19 ,

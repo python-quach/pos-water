@@ -165,3 +165,31 @@ ORDER BY record_id ASC
                     console.log(date);
                     console.log(message);
                     console.log(store);
+
+-- SEARCH BY PHONE, then we need search phone first, then use account to get last record
+-- SELECT DISTINCT field22 account FROM test WHERE field8 = '712-3459'
+
+SELECT \* FROM
+(SELECT
+field20 record_id,
+field22 account,
+field1 firstName,
+field2 lastName,
+field4 fullname,
+field5 areaCode,
+field6 threeDigit,
+field7 fourDigit,
+field8 phone,
+field10 memberSince,
+field28 renew,
+field31 prev,
+field19 buy,
+field12 remain,
+field9 fee,
+field15 invoiceDate,
+field32 invoiceTime  
+ FROM
+test
+ORDER BY record_id DESC LIMIT 50
+)
+ORDER BY record_id ASC

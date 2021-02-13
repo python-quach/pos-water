@@ -79,8 +79,8 @@ const BuyScreen = ({ api, history }) => {
         const { buy, renew, prev } = data;
 
         if (buy) {
-            api.buy({ ...data, renew: null }, ({ row }) => {
-                setReceipt(row);
+            api.buy({ ...data, renew: null }, (data) => {
+                setReceipt(data);
                 api.history(
                     { account: data.account, limit: 10, offset: 0 },
                     (response) => {
@@ -105,32 +105,29 @@ const BuyScreen = ({ api, history }) => {
         }
 
         if (renew) {
-            api.renew(
-                { ...data, buy: null, remain: prev + renew },
-                ({ row }) => {
-                    setReceipt(row);
-                    api.history(
-                        { account: data.account, limit: 10, offset: 0 },
-                        (response) => {
-                            setRecord(response);
-                            setActivePage(1);
-                            api.totalFee(data.account, (response) => {
-                                console.log('totalFee', response);
-                                setTotalFee(response);
-                                api.totalRenew(data.account, (response) => {
-                                    console.log('totalRenew', response);
-                                    setTotalRenew(response);
-                                    api.totalBuy(data.account, (response) => {
-                                        console.log('totalBuy', response);
-                                        setTotalBuy(response);
-                                        // setRecord(response);
-                                    });
+            api.renew({ ...data, buy: null, remain: prev + renew }, (data) => {
+                setReceipt(data);
+                api.history(
+                    { account: data.account, limit: 10, offset: 0 },
+                    (response) => {
+                        setRecord(response);
+                        setActivePage(1);
+                        api.totalFee(data.account, (response) => {
+                            console.log('totalFee', response);
+                            setTotalFee(response);
+                            api.totalRenew(data.account, (response) => {
+                                console.log('totalRenew', response);
+                                setTotalRenew(response);
+                                api.totalBuy(data.account, (response) => {
+                                    console.log('totalBuy', response);
+                                    setTotalBuy(response);
+                                    // setRecord(response);
                                 });
                             });
-                        }
-                    );
-                }
-            );
+                        });
+                    }
+                );
+            });
         }
     };
 

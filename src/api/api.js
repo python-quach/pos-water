@@ -49,7 +49,6 @@ export const edit = (data, callback) => {
     ipcRenderer.send(channels.EDIT, data);
     ipcRenderer.on(channels.EDIT, (_, response) => {
         ipcRenderer.removeAllListeners(channels.EDIT);
-        // console.log(response);
         callback(response);
     });
 };
@@ -59,7 +58,6 @@ export const renew = (data, callback) => {
     ipcRenderer.send(channels.RENEW, data);
     ipcRenderer.on(channels.RENEW, (_, response) => {
         ipcRenderer.removeAllListeners(channels.RENEW);
-        // console.log(response);
         callback(response);
     });
 };

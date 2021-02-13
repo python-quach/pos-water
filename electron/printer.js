@@ -26,4 +26,64 @@ module.exports = {
                 .close();
         });
     },
+    printBuyReceipt: function (device, printer, data) {
+        const fullname = `${data.fullname} -- ${data.fourDigit}`;
+        const prevGallon = `Gallon Prev: ${data.prev}`;
+        const gallonBuy = `Gallon Buy : ${data.buy}`;
+        const blank = '';
+        const gallonLeft = `Gallon Left: ${data.remain}`;
+        const message = `Thank You                [Account#: ${data.account}]`;
+
+        if (device) {
+            device.open(function (error) {
+                if (error) return console.log(error.message);
+                printer
+                    .font('a')
+                    .align('lt')
+                    .text(fullname.trim())
+                    .text(prevGallon)
+                    .text(gallonBuy)
+                    .text(gallonLeft)
+                    .text(data.invoiceTime + ' ' + data.invoiceTime)
+                    .text(blank)
+                    .text(message)
+                    .text('Mckee Pure Water')
+                    .text('(408) 729-1319')
+                    .text(blank)
+                    .cut()
+                    .close();
+            });
+        }
+    },
+    printRenewReceipt: function (device, printer, data) {
+        const renewGallon = `Gallon Renew: ${data.renew}`;
+        const renewFee = `Renew Fee   : $${data.fee}`;
+        const fullname = `${data.fullname} -- ${data.fourDigit}`;
+        const totalGallon = `Gallon Left : ${data.remain}`;
+        const message = `Thank You                [Account#: ${data.account}]`;
+        const blank = '';
+
+        if (device) {
+            device.open(function (error) {
+                if (error) return console.log(error.message);
+                printer
+                    .font('a')
+                    .align('lt')
+                    .text(blank)
+                    .text(fullname.trim())
+                    .text(renewFee)
+                    .text(`Gallon Prev : ${data.prev}`)
+                    .text(renewGallon)
+                    .text(totalGallon)
+                    .text(data.invoiceDate + ' ' + data.invoiceTime)
+                    .text(blank)
+                    .text(message)
+                    .text('Mckee Pure Water')
+                    .text('(408) 729-1319')
+                    .text(blank)
+                    .cut()
+                    .close();
+            });
+        }
+    },
 };

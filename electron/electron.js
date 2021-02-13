@@ -6,6 +6,9 @@ const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
 // const usbDetect = require('usb-detection');
+const { sql, addData } = require('./query');
+const { printAddReceipt } = require('./printer');
+const { addMemberShip } = require('./db');
 
 let mainWindow;
 let db;
@@ -33,75 +36,20 @@ let printer;
 device = new escpos.USB();
 printer = new escpos.Printer(device, options);
 
-// usbDetect.startMonitoring();
-// usbDetect
-//     .find()
-//     .then(function (devices) {
-//         console.log(devices);
-//         devices.forEach(function (item) {
-//             if (item.deviceName === 'USB Printing Support') {
-//                 device = new escpos.USB();
-//                 printer = new escpos.Printer(device, options);
-//             }
-//         });
-//     })
-//     .catch(function (err) {
-//         console.log(err);
-//         device = null;
-//         printer = null;
-//     });
-
-// usbDetect.on('remove', function (device) {
-//     console.log('remove', device);
-//     app.quit();
-// });
-
-// app.whenReady().then(() => {
-//     const startUrl = devHTMLFile || productionHTMLFile;
-//     const displays = screen.getAllDisplays();
-//     const externalDisplay = displays.find((display) => {
-//         return display.bounds.x !== 0 || display.bounds.y !== 0;
-//     });
-
-//     if (externalDisplay) {
-//         mainWindow = new BrowserWindow({
-//             frame: false,
-//             x:
-//                 externalDisplay.bounds.x +
-//                 (externalDisplay.bounds.width - 800) / 2,
-//             y:
-//                 externalDisplay.bounds.y +
-//                 (externalDisplay.bounds.height - 600) / 2,
-//             webPreferences: {
-//                 preload: path.join(__dirname, 'preload.js'),
-//             },
-//         });
-//         mainWindow.loadURL(startUrl);
-//     } else {
-//         createWindow();
-//     }
-
-//     mainWindow.on('closed', function () {
-//         mainWindow = null;
-//     });
-// });
-
 function createWindow() {
     const startUrl = devHTMLFile || productionHTMLFile;
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         center: true,
-        // frame: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
-        // usbDetect.stopMonitoring();
         mainWindow = null;
     });
 }
@@ -119,136 +67,23 @@ app.on('activate', function () {
     }
 });
 
-// Listen for incoming request from ipcRenderer aka REACT FrontEND
-
 // ADD NEW MEMBERSHIP
 ipcMain.on(channels.ADD, (event, arg) => {
-    console.log('Add', { arg });
-    const sql_findDuplicateAccount = `SELECT * FROM test WHERE field22 = ?`;
-    const sql_addNewAccount = `INSERT INTO test (
-		            field20,
-                    field22,
-                    field1,
-                    field2,
-                    field4,
-                    field5,
-                    field6,
-                    field7,
-                    field8,
-                    field10,
-                    field31,
-                    field28,
-                    field19,
-                    field12,
-                    field9,
-                    field15,
-                    field32 
-		        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
-    const sql_lastRecord = `SELECT * FROM test WHERE rowid = ?`;
-
-    const {
-        record_id,
-        account,
-        firstName,
-        lastName,
-        fullname,
-        areaCode,
-        threeDigit,
-        fourDigit,
-        phone,
-        memberSince,
-        prev,
-        renew,
-        buy,
-        remain,
-        fee,
-        invoiceDate,
-        invoiceTime,
-    } = arg;
-
-    const data = [
-        record_id,
-        account,
-        firstName,
-        lastName,
-        fullname,
-        areaCode,
-        threeDigit,
-        fourDigit,
-        phone,
-        memberSince,
-        prev,
-        renew,
-        buy,
-        remain,
-        fee,
-        invoiceDate,
-        invoiceTime,
-    ];
-
-    db.get(sql_findDuplicateAccount, account, (err, duplicate) => {
-        if (!duplicate) {
-            db.run(sql_addNewAccount, data, function (err) {
-                if (err) return console.log('add', err.message);
-                // console.log('ADD:', this.lastID);
-                db.get(sql_lastRecord, this.lastID, (err, row) => {
-                    if (err) return console.log('last', err.message);
-                    console.log(
-                        `A row has been inserted with rowid ${this.lastID}: record ${row.field20}`
-                    );
-
-                    const data = {
-                        renewFee: `Membership Fee: $${row.field9}`,
-                        fullname: `${row.field4} -- ${row.field7}`,
-                        gallonLeft: `Gallon Total  : ${row.field31}`,
-                        blank: '',
-                        last: this.lastID,
-                        newMembership: row.field22,
-                        time: `${row.field15}  ${row.field32}`,
-                    };
-
-                    const account = `[Account#: ${row.field22}]`;
-                    const message = `Thank You                ${account}`;
-
-                    if (device) {
-                        device.open(function (error) {
-                            if (error) {
-                                return console.log(error.message);
-                            }
-
-                            printer
-                                .font('a')
-                                .align('lt')
-                                .text(data.blank)
-                                .text(data.fullname)
-                                .text(`NEW MEMBERSHIP`)
-                                .text(data.renewFee)
-                                .text(data.gallonLeft)
-                                .text(data.time)
-                                .text(data.blank)
-                                .text(message)
-                                .text('Mckee Pure Water')
-                                .text('(408) 729-1319')
-                                .text(data.blank)
-                                .cut()
-                                .close();
-                        });
-                    }
-
-                    event.sender.send(channels.ADD, row);
-                });
-            });
+    addMemberShip(db, arg, (duplicateAccount, data) => {
+        if (duplicateAccount) {
+            console.log(duplicateAccount);
+            event.sender.send(channels.ADD, duplicateAccount);
         } else {
-            event.sender.send(channels.ADD, {
-                error: `${account} already existed, Please use another account`,
-            });
+            console.log('ADD NEW ACCOUNT', data);
+            if (device) printAddReceipt(device, printer, data);
+            event.sender.send(channels.ADD, data);
         }
     });
 });
 
 // LOGIN USER
 ipcMain.on(channels.LOGIN, (event, { username, password }) => {
-    // console.log('login', { username, password });
+    console.log('LOGIN USER:', { username, password });
     const sql = 'SELECT * FROM users WHERE username = ? AND password = ? ';
     db.get(sql, [username, password], (err, row) => {
         if (err) return console.log(err.message);

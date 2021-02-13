@@ -15,15 +15,7 @@ const cellData = [
     'Time',
 ];
 
-const Record = ({
-    records,
-    totalPages,
-    onChange,
-    activePage,
-    totalFee,
-    totalRenew,
-    totalBuy,
-}) => {
+const Record = ({ records, totalPages, onChange, activePage }) => {
     return records ? (
         <>
             <Table celled striped selectable color='teal'>
@@ -36,6 +28,7 @@ const Record = ({
                 </Table.Header>
                 <Table.Body>
                     {records.map((record, index) => {
+                        console.table([{ ...record }]);
                         return (
                             <Table.Row key={index}>
                                 <Table.Cell content={record.record_id} />
@@ -49,7 +42,8 @@ const Record = ({
                                 <Table.Cell content={record.lastName} />
                                 <Table.Cell
                                     content={
-                                        record.renew || !record.buy
+                                        record.buy === '0' ||
+                                        record.buy === null
                                             ? `$ ${record.fee || 0}`
                                             : `$ ${0}`
                                     }
@@ -58,8 +52,6 @@ const Record = ({
                                     positive={record.renew ? true : false}
                                     content={record.renew || 0}
                                 />
-                                {/* <Table.Cell content={record.prev} /> */}
-                                {/* <Table.Cell content={record.prev} /> */}
                                 <Table.Cell
                                     content={
                                         record.renew
@@ -69,9 +61,13 @@ const Record = ({
                                 />
 
                                 <Table.Cell
-                                    positive={!record.buy ? true : false}
+                                    positive={
+                                        record.buy === '0' || !record.buy
+                                            ? true
+                                            : false
+                                    }
                                     content={
-                                        !record.buy && !record.renew
+                                        record.buy === '0' && !record.renew
                                             ? 'NEW'
                                             : !record.buy
                                             ? 'RENEW'

@@ -10,6 +10,7 @@ const AddForm = ({ history, initialValues, record }) => {
 
     const onSubmit = async (data) => {
         const { phone, firstName, lastName, renew } = data;
+        console.log(phone);
         add(
             {
                 ...data,

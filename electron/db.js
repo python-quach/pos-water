@@ -169,4 +169,37 @@ module.exports = {
             callback(totalRenewalFee);
         });
     },
+    totalRenew: function (db, args, callback) {
+        const { account } = args;
+        db.all(sql.totalRenew, account, (err, row) => {
+            if (err) {
+                return console.log(err.message);
+            }
+            let sum = 0;
+            row.forEach((data) => {
+                if (parseInt(data.field19) === 0 && data.field28 === null) {
+                    sum = sum + parseInt(data.field31);
+                } else {
+                    if (data.field28 !== null) {
+                        sum = sum + parseInt(data.field28);
+                    }
+                }
+            });
+
+            console.log('TOTAL RENEW:', sum);
+
+            callback({
+                totalRenewalGallon: sum,
+            });
+        });
+    },
+    totalBuy: function (db, args, callback) {
+        const { account } = args;
+        db.get(sql.totalBuy, account, (err, row) => {
+            if (err) return console.log(err.message);
+            const { totalBuyGallon } = row;
+            console.log('TOTAL BUY:', totalBuyGallon);
+            callback({ totalBuyGallon });
+        });
+    },
 };

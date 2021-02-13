@@ -241,6 +241,30 @@ test
 WHERE field22 = ?)
 WHERE buyGallon = 0 OR buyGallon IS NULL`;
 
+// TOTAL RENEW GALLON
+const totalRenew = `SELECT * FROM
+(SELECT 
+	field19 ,
+	field28 ,
+	field31,
+	field9 
+FROM 
+test
+WHERE field22 = ?)
+WHERE field19 = 0 OR field19 IS NULL`;
+
+const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
+(SELECT 
+	field19 ,
+	field28 ,
+	field31,
+	field9 
+FROM 
+test
+WHERE field22 = ?)`;
+
+// TOTAL BUY GALLON
+
 module.exports = {
     sql: {
         duplicate,
@@ -261,6 +285,8 @@ module.exports = {
         total_account_invoices,
         last_row_record,
         totalFee,
+        totalRenew,
+        totalBuy,
     },
     renewData: function ({
         record_id,

@@ -21,6 +21,8 @@ const {
     total_account_invoices,
     last_record,
     totalFee,
+    totalRenew,
+    totalBuy,
 } = require('./db');
 
 let mainWindow;
@@ -157,64 +159,16 @@ ipcMain.on(channels.TOTAL_FEE, (event, arg) => {
 });
 
 // GET TOTAL RENEW GALLON
-ipcMain.on(channels.TOTAL_RENEW, (event, request) => {
-    const { account } = request;
-
-    const totalRenew = `SELECT * FROM
-(SELECT 
-	field19 ,
-	field28 ,
-	field31,
-	field9 
-FROM 
-test
-WHERE field22 = ?)
-WHERE field19 = 0 OR field19 IS NULL`;
-
-    db.all(totalRenew, account, (err, row) => {
-        if (err) {
-            ipcMain.removeAllListeners(channels.TOTAL_RENEW);
-            return console.log(err.message);
-        }
-        let sum = 0;
-        row.forEach((data) => {
-            if (parseInt(data.field19) === 0 && data.field28 === null) {
-                sum = sum + parseInt(data.field31);
-            } else {
-                if (data.field28 !== null) {
-                    sum = sum + parseInt(data.field28);
-                }
-            }
-        });
-
-        event.sender.send(channels.TOTAL_RENEW, {
-            totalRenewalGallon: sum,
-        });
+ipcMain.on(channels.TOTAL_RENEW, (event, arg) => {
+    totalRenew(db, arg, (totalRenew) => {
+        event.sender.send(channels.TOTAL_RENEW, totalRenew);
     });
 });
 
 // GET TOTAL BUY GALLON
-ipcMain.on(channels.TOTAL_BUY, (event, request) => {
-    const { account } = request;
-    const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
-(SELECT 
-	field19 ,
-	field28 ,
-	field31,
-	field9 
-FROM 
-test
-WHERE field22 = ?)`;
-
-    db.get(totalBuy, account, (err, row) => {
-        if (err) {
-            ipcMain.removeAllListeners(channels.TOTAL_BUY);
-            return console.log(err.message);
-        }
-        const { totalBuyGallon } = row;
-        event.sender.send(channels.TOTAL_BUY, {
-            totalBuyGallon,
-        });
+ipcMain.on(channels.TOTAL_BUY, (event, arg) => {
+    totalBuy(db, arg, (totalBuy) => {
+        event.sender.send(channels.TOTAL_BUY, totalBuy);
     });
 });
 

@@ -1,10 +1,13 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
+// const usbDetect = require('usb-detection');
+
 const {
     printAddReceipt,
     printBuyReceipt,
@@ -45,6 +48,7 @@ const productionHTMLFile = url.format({
 
 const devHTMLFile = process.env.ELECTRON_START_URL;
 
+// ELECTRON SETUP
 function createWindow() {
     const startUrl = devHTMLFile || productionHTMLFile;
     mainWindow = new BrowserWindow({
@@ -53,6 +57,8 @@ function createWindow() {
         center: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true,
         },
     });
 
@@ -68,6 +74,11 @@ function createWindow() {
 
     device = new escpos.USB();
     printer = new escpos.Printer(device, options);
+
+    // MIght remove this
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
 }
 
 app.on('ready', createWindow);
@@ -183,4 +194,58 @@ ipcMain.on(channels.REPORT, (event, arg) => {
             event.sender.send(channels.REPORT, data);
         }
     });
+});
+
+// Close Application
+ipcMain.on(channels.CLOSE_APP, (event, _) => {
+    ipcMain.removeAllListeners(channels.CLOSE_APP);
+    console.log('Closing App');
+    app.quit();
+});
+
+// BACK UP DATABASE
+ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
+    console.log('open dialog box');
+    const currentdate = new Date();
+    const datetime =
+        currentdate.getMonth() +
+        1 +
+        '-' +
+        currentdate.getDate() +
+        '-' +
+        currentdate.getFullYear();
+    console.log(datetime);
+
+    dialog
+        .showSaveDialog({
+            properties: ['openFile', 'multiSelections'],
+            defaultPath: `backup-${datetime}.sqlite3`,
+            filters: [{ name: 'Sqlite3', extensions: ['sqlite3'] }],
+        })
+        .then((result) => {
+            console.log(result);
+
+            fs.copyFile(dbFile, result.filePath, function (err) {
+                if (err) {
+                    event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                        open: false,
+                    });
+                    throw err;
+                } else {
+                    console.log(
+                        'Successfully copied and moved the file!',
+                        result.filePath
+                    );
+                    event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                        open: `backup-${datetime}.sqlite3`,
+                    });
+                }
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                open: false,
+            });
+        });
 });

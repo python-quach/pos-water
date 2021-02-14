@@ -24,14 +24,9 @@ export const add = (data, callback) => {
 export const find = ({ phone, account, firstName, lastName }, callback) => {
     console.log('Find', phone, account, firstName, lastName);
     ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
-    // ipcRenderer.on(channels.FIND, (_, { membership }) => {
     ipcRenderer.on(channels.FIND, (_, data) => {
         ipcRenderer.removeAllListeners(channels.FIND);
-        // console.log(membership);
         console.log(data);
-        // console.table(membership);
-        // We need to check of there are many accounts with the search
-        // console.table(membership);
         callback(data);
     });
 };
@@ -67,7 +62,6 @@ export const history = ({ account, limit, offset }, callback) => {
     ipcRenderer.send(channels.HISTORY, { account, limit, offset });
     ipcRenderer.on(channels.HISTORY, (_, response) => {
         ipcRenderer.removeAllListeners(channels.HISTORY);
-        // console.table(response);
         callback(response);
     });
 };
@@ -77,7 +71,6 @@ export const totalInvoices = ({ account }, callback) => {
     ipcRenderer.send(channels.TOTAL, { account });
     ipcRenderer.on(channels.TOTAL, (_, response) => {
         ipcRenderer.removeAllListeners(channels.TOTAL);
-        // console.log({ response });
         callback(response);
     });
 };
@@ -125,11 +118,23 @@ export const getTotalBuyGallon = (account, callback) => {
 
 // GET DAILY REPORT
 export const getDailyReport = (date, time, callback) => {
-    console.log({ date });
     ipcRenderer.send(channels.REPORT, { date, time });
     ipcRenderer.on(channels.REPORT, (event, response) => {
         ipcRenderer.removeAllListeners(channels.REPORT);
-        console.log({ response });
+        callback(response);
+    });
+};
+
+// CLOSE ELECTRON APP
+export const closeApp = () => {
+    ipcRenderer.send(channels.CLOSE_APP);
+};
+
+// BACKUP UP SQLITE FILE
+export const backup = (callback) => {
+    ipcRenderer.send(channels.SHOW_BACKUP_DIALOG);
+    ipcRenderer.on(channels.SHOW_BACKUP_DIALOG, (event, response) => {
+        ipcRenderer.removeAllListeners(channels.SHOW_BACKUP_DIALOG);
         callback(response);
     });
 };
@@ -147,4 +152,6 @@ export const api = {
     totalRenew: getTotalRenewalGallon,
     totalBuy: getTotalBuyGallon,
     getDailyReport,
+    closeApp,
+    backup,
 };

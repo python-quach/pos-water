@@ -15,5 +15,8 @@ module.exports = {
         TOTAL_BUY: 'TOTAL_BUY',
         TOTAL_RENEW: 'TOTAL_RENEW',
         REPORT: 'REPORT',
+        CLOSE_APP: 'CLOSE_APP',
+        BACKUP: 'BACKUP',
+        SHOW_BACKUP_DIALOG: 'SHOW_BACKUP_DIALOG',
     },
 };

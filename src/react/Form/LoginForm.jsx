@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Divider } from 'semantic-ui-react';
+import { Form, Divider, Button } from 'semantic-ui-react';
 import { Form as FinalForm } from 'react-final-form';
 import Username from '../Field/Login/Username';
 import Password from '../Field/Login/Password';
@@ -9,6 +9,7 @@ import LoginButton from '../Button/LoginButton';
 const LoginForm = ({ api, history }) => {
     const [errorMessage, setErrorMessage] = useState(false);
     const [iconColor, setIconColor] = useState('blueIcon');
+    const [save, setSave] = useState(false);
 
     const handleLogin = async ({ username, password }) => {
         api.login({ username, password }, (auth) => {
@@ -49,6 +50,40 @@ const LoginForm = ({ api, history }) => {
                         form={form}
                         clear={setErrorMessage}
                     />
+                    <Form.Group>
+                        <Button
+                            className='LoginButton'
+                            circular
+                            fluid={true}
+                            size='huge'
+                            color='black'
+                            icon='close'
+                            labelPosition='right'
+                            content='Close'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                api.closeApp();
+                            }}
+                        />
+                        <Button
+                            className='LoginButton'
+                            circular
+                            fluid={true}
+                            size='huge'
+                            color='pink'
+                            icon='save'
+                            labelPosition='right'
+                            content='Backup'
+                            loading={save}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setSave(true);
+                                api.backup((response) => {
+                                    setSave(false);
+                                });
+                            }}
+                        />
+                    </Form.Group>
                 </Form>
             )}
         />

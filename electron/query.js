@@ -253,6 +253,7 @@ test
 WHERE field22 = ?)
 WHERE field19 = 0 OR field19 IS NULL`;
 
+// TOTAL BUY GALLON
 const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
 (SELECT 
 	field19 ,
@@ -263,7 +264,82 @@ FROM
 test
 WHERE field22 = ?)`;
 
-// TOTAL BUY GALLON
+// DAILY REPORT
+const reportRenew = `SELECT SUM(renewAmount) totalRenewAmount, SUM(fee) totalFee FROM 
+                          (SELECT ROWID record_id,
+	field20 invoice_id,
+	field22 account,
+	field15 purchaseDate,
+	field32 purchaseTime,
+	field10 memberSince,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field31 currentGallon,
+	field19 buyGallon,
+	field12 remainGallon,
+	field28 renewAmount,
+	field9 fee,
+	field30 clerk
+FROM 
+	test 
+WHERE field15 = ?) 
+WHERE buyGallon IS NULL OR buyGallon = '0'`;
+const reportBuy = `SELECT SUM(buyGallon) totalBuy FROM 
+(SELECT 
+	ROWID record_id,
+	field20 invoice_id,
+	field22 account,
+	field15 purchaseDate,
+	field32 purchaseTime,
+	field10 memberSince,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field31 currentGallon,
+	field19 buyGallon,
+	field12 remainGallon,
+	field28 renewAmount,
+	field9 fee,
+	field30 clerk
+FROM 
+	test 
+WHERE field15 = ?) 
+WHERE buyGallon IS NOT NULL OR buyGallon = '0'`;
+
+const reportNew = `SELECT SUM(remainGallon) totalNew FROM 
+(SELECT 
+	ROWID record_id,
+	field20 invoice_id,
+	field22 account,
+	field15 purchaseDate,
+	field32 purchaseTime,
+	field10 memberSince,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field31 currentGallon,
+	field19 buyGallon,
+	field12 remainGallon,
+	field28 renewAmount,
+	field9 fee,
+	field30 clerk
+FROM 
+	test 
+WHERE field15 = ?) 
+WHERE renewAmount IS  NULL AND buyGallon = '0'`;
 
 module.exports = {
     sql: {
@@ -287,6 +363,9 @@ module.exports = {
         totalFee,
         totalRenew,
         totalBuy,
+        reportRenew,
+        reportBuy,
+        reportNew,
     },
     renewData: function ({
         record_id,

@@ -9,6 +9,7 @@ const {
     printAddReceipt,
     printBuyReceipt,
     printRenewReceipt,
+    printDailyReport,
 } = require('./printer');
 const {
     addMemberShip,
@@ -23,6 +24,7 @@ const {
     totalFee,
     totalRenew,
     totalBuy,
+    dailyReport,
 } = require('./db');
 
 let mainWindow;
@@ -173,137 +175,12 @@ ipcMain.on(channels.TOTAL_BUY, (event, arg) => {
 });
 
 // Daily Report
-ipcMain.on(channels.REPORT, (event, request) => {
-    const { date, time } = request;
-
-    const reportRenew = `SELECT SUM(renewAmount) totalRenewAmount, SUM(fee) totalFee FROM 
-                          (SELECT ROWID record_id,
-	field20 invoice_id,
-	field22 account,
-	field15 purchaseDate,
-	field32 purchaseTime,
-	field10 memberSince,
-	field1 firstName,
-	field2 lastName,
-	field4 fullname,
-	field5 areaCode,
-	field6 threeDigit,
-	field7 fourDigit,
-	field8 phone,
-	field31 currentGallon,
-	field19 buyGallon,
-	field12 remainGallon,
-	field28 renewAmount,
-	field9 fee,
-	field30 clerk
-FROM 
-	test 
-WHERE field15 = ?) 
-WHERE buyGallon IS NULL OR buyGallon = '0'`;
-    const reportBuy = `SELECT SUM(buyGallon) totalBuy FROM 
-(SELECT 
-	ROWID record_id,
-	field20 invoice_id,
-	field22 account,
-	field15 purchaseDate,
-	field32 purchaseTime,
-	field10 memberSince,
-	field1 firstName,
-	field2 lastName,
-	field4 fullname,
-	field5 areaCode,
-	field6 threeDigit,
-	field7 fourDigit,
-	field8 phone,
-	field31 currentGallon,
-	field19 buyGallon,
-	field12 remainGallon,
-	field28 renewAmount,
-	field9 fee,
-	field30 clerk
-FROM 
-	test 
-WHERE field15 = ?) 
-WHERE buyGallon IS NOT NULL OR buyGallon = '0'`;
-
-    const reportNew = `SELECT SUM(remainGallon) totalNew FROM 
-(SELECT 
-	ROWID record_id,
-	field20 invoice_id,
-	field22 account,
-	field15 purchaseDate,
-	field32 purchaseTime,
-	field10 memberSince,
-	field1 firstName,
-	field2 lastName,
-	field4 fullname,
-	field5 areaCode,
-	field6 threeDigit,
-	field7 fourDigit,
-	field8 phone,
-	field31 currentGallon,
-	field19 buyGallon,
-	field12 remainGallon,
-	field28 renewAmount,
-	field9 fee,
-	field30 clerk
-FROM 
-	test 
-WHERE field15 = ?) 
-WHERE renewAmount IS  NULL AND buyGallon = '0'`;
-
-    console.log('daily report', { date });
-    db.get(reportRenew, date, (err, row) => {
-        if (err) return console.log(err.message);
-        const { totalFee, totalRenewAmount } = row;
-
-        db.get(reportNew, date, (err, row) => {
-            const { totalNew } = row;
-            db.get(reportBuy, date, (err, row) => {
-                if (err) return console.log(err.message);
-                const { totalBuy } = row;
-
-                const test = totalNew || 0;
-                const test2 = totalRenewAmount || 0;
-                const data = test + test2;
-
-                const totalRenewFee = `Total Fee  : $${totalFee || 0}`;
-                // const totalRenew = `Total Renew: ${totalRenewAmount || 0}`;
-                const totalRenew = `Total Renew: ${data}`;
-                const totalBuyAmount = `Total Buy  : ${totalBuy || 0}`;
-                if (device) {
-                    device.open(function (error) {
-                        if (error) return console.log(error.message);
-                        printer
-                            .font('a')
-                            .align('lt')
-                            .text('Mckee Pure Water')
-                            .text(`Daily Report`)
-                            .text(`${date} - ${time}`)
-                            .text(totalRenewFee)
-                            .text(totalRenew)
-                            .text(totalBuyAmount)
-                            .text('')
-                            .text('')
-                            .cut()
-                            .close();
-
-                        event.sender.send(channels.REPORT, {
-                            totalFee,
-                            totalRenewAmount,
-                            totalBuy,
-                            totalNew,
-                        });
-                    });
-                } else {
-                    event.sender.send(channels.REPORT, {
-                        totalFee,
-                        totalRenewAmount,
-                        totalBuy,
-                        totalNew,
-                    });
-                }
-            });
-        });
+ipcMain.on(channels.REPORT, (event, arg) => {
+    dailyReport(db, arg, (data) => {
+        if (device) {
+            printDailyReport(device, printer, data);
+        } else {
+            event.sender.send(channels.REPORT, data);
+        }
     });
 });

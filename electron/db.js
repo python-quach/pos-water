@@ -202,4 +202,35 @@ module.exports = {
             callback({ totalBuyGallon });
         });
     },
+    dailyReport: function (db, args, callback) {
+        const { date, time } = args;
+
+        db.get(sql.reportRenew, date, (err, row) => {
+            if (err) return console.log(err.message);
+            const { totalFee, totalRenewAmount } = row;
+            db.get(sql.reportNew, date, (err, row) => {
+                const { totalNew } = row;
+                db.get(sql.reportBuy, date, (err, row) => {
+                    if (err) return console.log(err.message);
+                    const { totalBuy } = row;
+
+                    const data = {
+                        totalFee: totalFee || 0,
+                        totalNew: totalNew || 0,
+                        totalRenew: totalRenewAmount || 0,
+                        totalBuy: totalBuy || 0,
+                        date,
+                        time,
+                    };
+
+                    console.log('DAILY REPORT:', {
+                        ...data,
+                        date,
+                        time,
+                    });
+                    callback(data);
+                });
+            });
+        });
+    },
 };

@@ -55,6 +55,32 @@ module.exports = {
             });
         }
     },
+    printDailyReport: function (device, printer, data) {
+        const totalRenewFee = `Total Fee  : $${data.totalFee}`;
+        const totalNew = `Total New  : ${data.totalNew}`;
+        const totalRenew = `Total Renew: ${data.totalRenew}`;
+        const totalBuyAmount = `Total Buy  : ${data.totalBuy}`;
+
+        if (device) {
+            device.open(function (error) {
+                if (error) return console.log(error.message);
+                printer
+                    .font('a')
+                    .align('lt')
+                    .text('Mckee Pure Water')
+                    .text(`Daily Report`)
+                    .text(`${data.date} - ${data.time}`)
+                    .text(totalRenewFee)
+                    .text(totalNew)
+                    .text(totalRenew)
+                    .text(totalBuyAmount)
+                    .text('')
+                    .text('')
+                    .cut()
+                    .close();
+            });
+        }
+    },
     printRenewReceipt: function (device, printer, data) {
         const renewGallon = `Gallon Renew: ${data.renew}`;
         const renewFee = `Renew Fee   : $${data.fee}`;

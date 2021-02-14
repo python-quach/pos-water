@@ -216,15 +216,15 @@ module.exports = {
 
                     const data = {
                         totalFee: totalFee || 0,
-                        totalNew: totalNew || 0,
                         totalRenew: totalRenewAmount || 0,
                         totalBuy: totalBuy || 0,
+                        totalNew: totalNew || 0,
                         date,
                         time,
                     };
 
                     console.log('DAILY REPORT:', {
-                        ...data,
+                        data,
                         date,
                         time,
                     });

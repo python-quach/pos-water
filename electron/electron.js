@@ -6,8 +6,7 @@ const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
-// const usbDetect = require('usb-detection');
-
+const usbDetect = require('usb-detection');
 const {
     printAddReceipt,
     printBuyReceipt,
@@ -30,27 +29,57 @@ const {
     dailyReport,
 } = require('./db');
 
+// NOTE NEED TO CHANGE AREA CODE INTO STRING
+
+// ELECTRON MAIN WINDOW
 let mainWindow;
+
+// SQLITE DATABASE
 let db;
+
+// POS PRINTER SETUP
+const options = { encoding: 'GB18030' /* default */ };
+let escpos;
 let device;
 let printer;
 
-db = new sqlite3.Database(dbFile, (err) => {
-    if (err) console.error('Database opening error', err);
-    console.log(`sqlite debug:`, { err, dbFile, userData });
-});
-
+// PRODUCTION AND DEVELOPMENT index.html location
 const productionHTMLFile = url.format({
     pathname: path.join(__dirname, '../index.html'),
     protocol: 'file:',
     slashes: true,
 });
-
 const devHTMLFile = process.env.ELECTRON_START_URL;
+const startUrl = devHTMLFile || productionHTMLFile;
+
+// Setup Database and USB POS PRINTING
+db = new sqlite3.Database(dbFile, (err) => {
+    if (err) console.error('Database opening error', err);
+    console.log(`sqlite debug:`, { err, dbFile, userData });
+    usbDetect.startMonitoring();
+    usbDetect
+        .find()
+        .then(function (devices) {
+            devices.forEach(function (item) {
+                if (item.deviceName === 'USB Printing Support') {
+                    console.log('Found USB: ', { ...item });
+                    escpos = require('escpos');
+                    escpos.USB = require('escpos-usb');
+                    device = new escpos.USB();
+                    printer = new escpos.Printer(device, options);
+                }
+            });
+        })
+        .catch(function (err) {
+            console.log('71', err);
+            escpos = null;
+            device = null;
+            printer = null;
+        });
+});
 
 // ELECTRON SETUP
 function createWindow() {
-    const startUrl = devHTMLFile || productionHTMLFile;
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -67,24 +96,51 @@ function createWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
-
-    let escpos = require('escpos');
-    escpos.USB = require('escpos-usb');
-    const options = { encoding: 'GB18030' /* default */ };
-
-    device = new escpos.USB();
-    printer = new escpos.Printer(device, options);
-
-    // MIght remove this
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
     });
 }
 
-app.on('ready', createWindow);
+// Detect USB add/insert
+usbDetect.on('add', function (usbDevice) {
+    console.log('add', usbDevice);
+    usbDetect
+        .find()
+        .then(function (devices) {
+            devices.forEach(function (item) {
+                // Search for USB PRINTING and add driver
+                if (item.deviceName === 'USB Printing Support') {
+                    console.log('Found USB: ', { ...item });
+                    escpos = require('escpos');
+                    escpos.USB = require('escpos-usb');
 
+                    setTimeout(function () {
+                        device = new escpos.USB();
+                        printer = new escpos.Printer(device, options);
+                    }, 1000);
+                }
+            });
+        })
+        .catch(function (err) {
+            // console.log('119', err);
+            escpos = null;
+            device = null;
+            printer = null;
+        });
+});
+
+usbDetect.on('remove', function (usbDevice) {
+    console.log('remove', usbDevice);
+    escpos = null;
+    device = null;
+    printer = null;
+});
+
+// ELECTRON APP
+app.on('ready', createWindow);
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
+        usbDetect.stopMonitoring();
         app.quit();
     }
 });
@@ -224,26 +280,32 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
         })
         .then((result) => {
             console.log(result);
-
-            fs.copyFile(dbFile, result.filePath, function (err) {
-                if (err) {
-                    event.sender.send(channels.SHOW_BACKUP_DIALOG, {
-                        open: false,
-                    });
-                    throw err;
-                } else {
-                    console.log(
-                        'Successfully copied and moved the file!',
-                        result.filePath
-                    );
-                    event.sender.send(channels.SHOW_BACKUP_DIALOG, {
-                        open: `backup-${datetime}.sqlite3`,
-                    });
-                }
-            });
+            if (result.filePath) {
+                fs.copyFile(dbFile, result.filePath, function (err) {
+                    if (err) {
+                        event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                            open: false,
+                        });
+                        throw err;
+                    } else {
+                        console.log(
+                            'Successfully copied and moved the file!',
+                            result.filePath
+                        );
+                        event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                            open: `backup-${datetime}.sqlite3`,
+                        });
+                    }
+                });
+            } else {
+                // TODO: might remove this line
+                event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                    open: false,
+                });
+            }
         })
         .catch((err) => {
-            console.log(err);
+            console.log('catch', err);
             event.sender.send(channels.SHOW_BACKUP_DIALOG, {
                 open: false,
             });

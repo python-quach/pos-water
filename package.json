@@ -33,6 +33,7 @@
         "start-electron-mac": "export ELECTRON_START_URL=http://localhost:3000 && electron .",
         "start-electron-win": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
         "rebuild-sqlite3": "electron-rebuild -f -w sqlite3",
+        "rebuild-usb": "electron-rebuild -f -w usb-detection",
         "postinstall": "electron-builder install-app-deps",
         "clean": "rm -rf build dist",
         "clean-win": "rmdir build /S /Q & rmdir dist/S /Q",

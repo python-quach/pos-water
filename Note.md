@@ -193,3 +193,5 @@ test
 ORDER BY record_id DESC LIMIT 50
 )
 ORDER BY record_id ASC
+
+./node_modules/.bin/electron-rebuild

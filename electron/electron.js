@@ -52,10 +52,8 @@ const productionHTMLFile = url.format({
 const devHTMLFile = process.env.ELECTRON_START_URL;
 const startUrl = devHTMLFile || productionHTMLFile;
 
-db = new sqlite3.Database(dbFile, (err) => {
-    if (err) console.error('Database opening error', err);
-    console.log(`sqlite debug:`, { err, dbFile, userData });
-});
+db = new sqlite3.Database(dbFile);
+
 usbDetect.startMonitoring();
 usbDetect
     .find()
@@ -86,7 +84,6 @@ usbDetect.on('add', function (usbDevice) {
                     console.log('Found USB: ', { ...item });
                     escpos = require('escpos');
                     escpos.USB = require('escpos-usb');
-
                     setTimeout(function () {
                         device = new escpos.USB();
                         printer = new escpos.Printer(device, options);
@@ -94,14 +91,14 @@ usbDetect.on('add', function (usbDevice) {
                 }
             });
         })
-        .catch(function (err) {
+        .catch(function () {
             escpos = null;
             device = null;
             printer = null;
         });
 });
 
-usbDetect.on('remove', function (usbDevice) {
+usbDetect.on('remove', function () {
     escpos = null;
     device = null;
     printer = null;
@@ -113,6 +110,7 @@ function createWindow() {
         width: 800,
         height: 600,
         center: true,
+        backgroundColor: '#0a2e4c',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
@@ -133,8 +131,6 @@ app.whenReady().then(() => {
     createWindow();
 
     app.on('activate', function () {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 });

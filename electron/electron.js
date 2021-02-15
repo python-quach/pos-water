@@ -52,59 +52,32 @@ const productionHTMLFile = url.format({
 const devHTMLFile = process.env.ELECTRON_START_URL;
 const startUrl = devHTMLFile || productionHTMLFile;
 
-// Setup Database and USB POS PRINTING
-// db = new sqlite3.Database(dbFile, (err) => {
-//     if (err) console.error('Database opening error', err);
-//     console.log(`sqlite debug:`, { err, dbFile, userData });
-// usbDetect.startMonitoring();
-// usbDetect
-//     .find()
-//     .then(function (devices) {
-//         devices.forEach(function (item) {
-//             if (item.deviceName === 'USB Printing Support') {
-//                 console.log('Found USB: ', { ...item });
-//                 escpos = require('escpos');
-//                 escpos.USB = require('escpos-usb');
-//                 device = new escpos.USB();
-//                 printer = new escpos.Printer(device, options);
-//             }
-//         });
-//     })
-//     .catch(function (err) {
-//         console.log('71', err);
-//         escpos = null;
-//         device = null;
-//         printer = null;
-//     });
-// });
-
-// ELECTRON SETUP
-function createWindow() {
-    db = new sqlite3.Database(dbFile, (err) => {
-        if (err) console.error('Database opening error', err);
-        console.log(`sqlite debug:`, { err, dbFile, userData });
-        // usbDetect.startMonitoring();
-        // usbDetect
-        //     .find()
-        //     .then(function (devices) {
-        //         devices.forEach(function (item) {
-        //             if (item.deviceName === 'USB Printing Support') {
-        //                 console.log('Found USB: ', { ...item });
-        //                 escpos = require('escpos');
-        //                 escpos.USB = require('escpos-usb');
-        //                 device = new escpos.USB();
-        //                 printer = new escpos.Printer(device, options);
-        //             }
-        //         });
-        //     })
-        //     .catch(function (err) {
-        //         console.log('71', err);
-        //         escpos = null;
-        //         device = null;
-        //         printer = null;
-        //     });
+db = new sqlite3.Database(dbFile, (err) => {
+    if (err) console.error('Database opening error', err);
+    console.log(`sqlite debug:`, { err, dbFile, userData });
+});
+usbDetect.startMonitoring();
+usbDetect
+    .find()
+    .then(function (devices) {
+        devices.forEach(function (item) {
+            if (item.deviceName === 'USB Printing Support') {
+                console.log('Found USB: ', { ...item });
+                escpos = require('escpos');
+                escpos.USB = require('escpos-usb');
+                device = new escpos.USB();
+                printer = new escpos.Printer(device, options);
+            }
+        });
+    })
+    .catch(function (err) {
+        console.log('71', err);
+        escpos = null;
+        device = null;
+        printer = null;
     });
-    usbDetect.startMonitoring();
+
+usbDetect.on('add', function (usbDevice) {
     usbDetect
         .find()
         .then(function (devices) {
@@ -113,52 +86,29 @@ function createWindow() {
                     console.log('Found USB: ', { ...item });
                     escpos = require('escpos');
                     escpos.USB = require('escpos-usb');
-                    device = new escpos.USB();
-                    printer = new escpos.Printer(device, options);
+
+                    setTimeout(function () {
+                        device = new escpos.USB();
+                        printer = new escpos.Printer(device, options);
+                    }, 1000);
                 }
             });
         })
         .catch(function (err) {
-            console.log('71', err);
             escpos = null;
             device = null;
             printer = null;
         });
+});
 
-    usbDetect.on('add', function (usbDevice) {
-        console.log('add', usbDevice);
-        usbDetect
-            .find()
-            .then(function (devices) {
-                devices.forEach(function (item) {
-                    // Search for USB PRINTING and add driver
-                    if (item.deviceName === 'USB Printing Support') {
-                        console.log('Found USB: ', { ...item });
-                        escpos = require('escpos');
-                        escpos.USB = require('escpos-usb');
+usbDetect.on('remove', function (usbDevice) {
+    escpos = null;
+    device = null;
+    printer = null;
+});
 
-                        setTimeout(function () {
-                            device = new escpos.USB();
-                            printer = new escpos.Printer(device, options);
-                        }, 1000);
-                    }
-                });
-            })
-            .catch(function (err) {
-                // console.log('119', err);
-                escpos = null;
-                device = null;
-                printer = null;
-            });
-    });
-
-    usbDetect.on('remove', function (usbDevice) {
-        console.log('remove', usbDevice);
-        escpos = null;
-        device = null;
-        printer = null;
-    });
-
+// ELECTRON SETUP
+function createWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -166,7 +116,6 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
-            // nodeIntegrationInWorker: true,
         },
     });
 
@@ -179,44 +128,6 @@ function createWindow() {
         mainWindow.show();
     });
 }
-
-// Detect USB add/insert
-// usbDetect.on('add', function (usbDevice) {
-//     console.log('add', usbDevice);
-//     usbDetect
-//         .find()
-//         .then(function (devices) {
-//             devices.forEach(function (item) {
-//                 // Search for USB PRINTING and add driver
-//                 if (item.deviceName === 'USB Printing Support') {
-//                     console.log('Found USB: ', { ...item });
-//                     escpos = require('escpos');
-//                     escpos.USB = require('escpos-usb');
-
-//                     setTimeout(function () {
-//                         device = new escpos.USB();
-//                         printer = new escpos.Printer(device, options);
-//                     }, 1000);
-//                 }
-//             });
-//         })
-//         .catch(function (err) {
-//             // console.log('119', err);
-//             escpos = null;
-//             device = null;
-//             printer = null;
-//         });
-// });
-
-// usbDetect.on('remove', function (usbDevice) {
-//     console.log('remove', usbDevice);
-//     escpos = null;
-//     device = null;
-//     printer = null;
-// });
-
-// ELECTRON APP
-// app.on('ready', createWindow);
 
 app.whenReady().then(() => {
     createWindow();
@@ -232,18 +143,6 @@ app.on('window-all-closed', function () {
     usbDetect.stopMonitoring();
     if (process.platform !== 'darwin') app.quit();
 });
-
-// app.on('window-all-closed', function () {
-//     if (process.platform !== 'darwin') {
-//         usbDetect.stopMonitoring();
-//         app.quit();
-//     }
-// });
-// app.on('activate', function () {
-//     if (mainWindow === null) {
-//         createWindow();
-//     }
-// });
 
 // ADD NEW MEMBERSHIP
 ipcMain.on(channels.ADD, (event, arg) => {

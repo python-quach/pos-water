@@ -10,6 +10,7 @@ import BuyReceipt from '../Receipt/BuyReceipt';
 import RenewReceipt from '../Receipt/RenewReceipt';
 import Receipt from '../Receipt/Receipt';
 import Record from '../Record/Record';
+// import Keyboard from 'react-simple-keyboard';
 
 const BuyScreen = ({ api, history }) => {
     const [receipt, setReceipt] = useState(history.location.state || {});
@@ -20,6 +21,9 @@ const BuyScreen = ({ api, history }) => {
     const [totalFee, setTotalFee] = useState(0);
     const [totalRenew, setTotalRenew] = useState(0);
     const [totalBuy, setTotalBuy] = useState(0);
+
+    // PRINT PORTAL
+    const [openPrintOption, setPrintOption] = useState(false);
 
     // Pagination;
     const [totalPages, setTotalPages] = useState(0);
@@ -258,10 +262,12 @@ const BuyScreen = ({ api, history }) => {
                 disabled={edit}
                 floated='right'
                 type='button'
-                style={{
-                    // marginTop: '10px',
-                    width: '100px',
-                }}
+                style={
+                    {
+                        // marginTop: '10px',
+                        // width: '100px',
+                    }
+                }
                 onClick={() => {
                     setOpenPortal((prev) => !prev);
                     api.history(

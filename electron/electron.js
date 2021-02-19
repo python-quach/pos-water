@@ -117,7 +117,7 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -300,4 +300,35 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
                 open: false,
             });
         });
+});
+
+ipcMain.on(channels.PRINT_RECEIPT, (event, arg) => {
+    const renewFee = `Membership Fee: $${arg.field9}`;
+    const fullname = `${arg.field4} -- ${arg.field7}`;
+    const gallonLeft = `Gallon Total  : ${arg.field31}`;
+    const blank = '';
+    const time = `${arg.field15}  ${arg.field32}`;
+    const message = `Thank You                [Account#: ${arg.field22}]`;
+
+    const receipt = () => {
+        console.log(renewFee);
+        console.log(fullname);
+        console.log(gallonLeft);
+        console.log(time);
+        console.log(blank);
+        console.log(message);
+        console.log('Mckee Pure Water');
+        console.log('(408) 729-1319');
+    };
+
+    console.log('PRINT: ', arg);
+    receipt();
+    if (device) {
+        printAddReceipt(device, printer, arg, (done) => {
+            console.log({ done });
+            event.sender.send(channels.PRINT_RECEIPT, done);
+        });
+    } else {
+        event.sender.send(channels.PRINT_RECEIPT, { done: false });
+    }
 });

@@ -40,6 +40,7 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
             initialValues={initialValues}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
+                    size='massive'
                     onSubmit={(event) => {
                         handleSubmit(event).then(() => {
                             handle.updateForm(form, values);
@@ -128,10 +129,10 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             remain={values.remain}
                         />
                         <Form.Button
+                            size='massive'
                             content='Buy'
                             style={{
                                 marginTop: '30px',
-                                width: '100px',
                             }}
                             color='green'
                             disabled={values.buy <= 0 || disable}
@@ -170,7 +171,8 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             type='submit'
                             content='Renew'
                             color='facebook'
-                            style={{ marginTop: '30px', width: '100px' }}
+                            size='massive'
+                            style={{ marginTop: '30px' }}
                             disabled={!values.fee || !values.renew}
                         />
                     </Form.Group>

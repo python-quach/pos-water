@@ -16,7 +16,8 @@ LogoutButton.defaultProps = {
     logoutButton: {
         id: 'LogoutButton',
         content: 'Logout',
-        size: 'huge',
+        // size: 'huge',
+        size: 'massive',
         color: 'black',
         icon: 'sign-out',
         labelPosition: 'right',

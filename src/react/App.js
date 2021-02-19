@@ -6,6 +6,7 @@ import BuyScreen from './Screen/BuyScreen';
 import AccountScreen from './Screen/AccountScreen';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
+// import 'simple-keyboard/build/css/index.css';
 
 const App = ({ api }) => (
     <Router>

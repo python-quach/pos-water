@@ -37,6 +37,7 @@ Portal.defaultProps = {
         height: '100%',
         overflow: 'hidden',
         zIndex: 1000,
+        // zIndex: 1,
         backgroundColor: '#002b487d',
     },
     grid: {
@@ -46,6 +47,7 @@ Portal.defaultProps = {
     },
     gridColumn: {
         style: { maxWidth: 450 },
+        // style: { maxWidth: 800 },
     },
 };
 

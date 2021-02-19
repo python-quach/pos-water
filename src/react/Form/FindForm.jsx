@@ -44,6 +44,8 @@ const FindForm = ({ api, history }) => {
                 }}
                 render={({ handleSubmit, form, values, initialValues }) => (
                     <Form
+                        // size='massive'
+                        size='large'
                         onSubmit={(event) => {
                             handleSubmit(event).then(() =>
                                 setTimeout(form.reset)

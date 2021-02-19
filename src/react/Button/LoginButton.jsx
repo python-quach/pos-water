@@ -21,6 +21,7 @@ const LoginButton = ({ errorMessage, username, password, clear }) => {
             circular
             fluid
             size='huge'
+            // size='massive'
             id='LoginButton'
             color='blue'
             icon='sign in'
@@ -43,6 +44,7 @@ const LoginButton = ({ errorMessage, username, password, clear }) => {
                 circular
                 fluid
                 size='huge'
+                // size='massive'
                 id='LoginButton'
                 color='red'
                 icon='warning sign'

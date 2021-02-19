@@ -23,6 +23,7 @@ const FindButton = ({
             <Divider hidden />
             {!errorMessage ? (
                 <Form.Button
+                    size='massive'
                     {...findButton}
                     disabled={
                         !phone && !account && !firstName && !lastName
@@ -33,6 +34,7 @@ const FindButton = ({
             ) : (
                 <Transition {...transitionProps} visible={visible}>
                     <Form.Button
+                        size='massive'
                         {...errorButton}
                         onClick={(event) => event.preventDefault()}
                     />

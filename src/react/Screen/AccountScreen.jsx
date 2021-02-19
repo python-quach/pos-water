@@ -70,7 +70,7 @@ const AccountScreen = (props) => {
 
     return (
         <AccountPortal {...config}>
-            <Table celled selectable color='blue'>
+            <Table celled selectable color='blue' size='large'>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell content='Account' />
@@ -84,6 +84,7 @@ const AccountScreen = (props) => {
                 <Table.Body>{renderRows()}</Table.Body>
             </Table>
             <Pagination
+                size='massive'
                 activePage={activePage}
                 onPageChange={onChange}
                 totalPages={
@@ -91,6 +92,7 @@ const AccountScreen = (props) => {
                 }
             />
             <Button
+                size='massive'
                 floated='right'
                 content='Back'
                 onClick={() => props.history.push('/dashboard')}

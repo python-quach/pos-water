@@ -18,5 +18,6 @@ module.exports = {
         CLOSE_APP: 'CLOSE_APP',
         BACKUP: 'BACKUP',
         SHOW_BACKUP_DIALOG: 'SHOW_BACKUP_DIALOG',
+        PRINT_RECEIPT: 'PRINT_RECEIPT',
     },
 };

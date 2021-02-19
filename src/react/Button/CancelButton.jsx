@@ -3,6 +3,7 @@ import { Form } from 'semantic-ui-react';
 const CancelButton = ({ setEdit, form, initialValues, values }) => {
     return (
         <Form.Button
+            size='massive'
             type='button'
             content='Cancel'
             style={{

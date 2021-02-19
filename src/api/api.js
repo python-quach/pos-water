@@ -139,6 +139,15 @@ export const backup = (callback) => {
     });
 };
 
+// PRINT RECEIPT
+export const print = (data, callback) => {
+    ipcRenderer.send(channels.PRINT_RECEIPT, data);
+    ipcRenderer.on(channels.PRINT_RECEIPT, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.PRINT_RECEIPT);
+        callback(response);
+    });
+};
+
 export const api = {
     login,
     find,

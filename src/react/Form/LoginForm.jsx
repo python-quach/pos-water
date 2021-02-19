@@ -37,6 +37,7 @@ const LoginForm = ({ api, history }) => {
                 values: { username, password },
             }) => (
                 <Form
+                    size='large'
                     onSubmit={(event) => {
                         handleSubmit(event).then(form.reset);
                     }}>
@@ -56,6 +57,7 @@ const LoginForm = ({ api, history }) => {
                             circular
                             fluid={true}
                             size='huge'
+                            // size='massive'
                             color='black'
                             icon='close'
                             labelPosition='right'
@@ -70,6 +72,7 @@ const LoginForm = ({ api, history }) => {
                             circular
                             fluid={true}
                             size='huge'
+                            // size='massive'
                             color='pink'
                             icon='save'
                             labelPosition='right'

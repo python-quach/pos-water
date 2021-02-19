@@ -16,7 +16,7 @@ const cellData = [
 ];
 
 const NewReceipt = ({ receipt }) => (
-    <Table celled striped selectable color='green'>
+    <Table celled striped selectable color='green' size='large'>
         <Table.Header>
             <Table.Row>
                 {cellData.map((item, index) => (

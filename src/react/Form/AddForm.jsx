@@ -65,6 +65,7 @@ const AddForm = ({ history, initialValues, record }) => {
             }}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
+                    size='massive'
                     onSubmit={(event) => {
                         // setOriginal(values);
                         // updateForm(form);
@@ -346,10 +347,12 @@ const AddForm = ({ history, initialValues, record }) => {
                             )}
                         />
                         <Form.Button
+                            size='massive'
                             type='submit'
-                            content='Add'
+                            content='Done'
                             color='facebook'
-                            style={{ marginTop: '30px', width: '80px' }}
+                            style={{ marginTop: '30px' }}
+                            // style={{ marginTop: '30px', width: '80px' }}
                             disabled={
                                 !values.fee ||
                                 !values.renew ||
@@ -361,9 +364,12 @@ const AddForm = ({ history, initialValues, record }) => {
                             }
                         />
                         <Form.Button
+                            size='massive'
                             type='submit'
-                            content='Done'
-                            style={{ marginTop: '30px', width: '80px' }}
+                            color='google plus'
+                            content='Cancel'
+                            style={{ marginTop: '30px' }}
+                            // style={{ marginTop: '30px', width: '80px' }}
                             onClick={(e) => {
                                 e.preventDefault();
                                 history.push('/dashboard');

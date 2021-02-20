@@ -88,8 +88,9 @@ const BuyScreen = ({ api, history }) => {
 
         if (buy) {
             api.buy({ ...data, renew: null }, (data) => {
-                setReceipt(data);
                 setOpenReceipt(true);
+                setReceipt(data);
+                // setOpenReceipt(true);
                 api.history(
                     { account: data.account, limit: 10, offset: 0 },
                     (response) => {
@@ -234,20 +235,25 @@ const BuyScreen = ({ api, history }) => {
                 open={openReceipt}>
                 <Segment
                     style={{
-                        left: '15%',
+                        left: '2%',
                         position: 'fixed',
-                        top: '30%',
+                        top: '33%',
                         zIndex: 1000,
                     }}>
                     <Header>Receipt</Header>
                     <Receipt
                         receipt={receipt}
+                        openReceipt={openReceipt}
                         setOpenReceipt={setOpenReceipt}
                     />
                 </Segment>
             </TransitionablePortal>
             {!openReceipt ? (
-                <Receipt receipt={receipt} setOpenReceipt={setOpenReceipt} />
+                <Receipt
+                    receipt={receipt}
+                    setOpenReceipt={setOpenReceipt}
+                    openReceipt={openReceipt}
+                />
             ) : null}
             <Divider hidden />
             <Divider />

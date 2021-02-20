@@ -65,20 +65,20 @@ const AddForm = ({ history, initialValues, record }) => {
                             console.log({ data, record_id });
 
                             // Open Print option and disable Done
-                            setPrintReceipt({
-                                ...data,
-                                newRecordID: record_id,
-                            });
-
-                            setOpen(true);
-
-                            // history.push({
-                            //     pathname: '/buy',
-                            //     state: {
-                            //         ...data.membership,
-                            //         newRecordID: record_id,
-                            //     },
+                            // setPrintReceipt({
+                            //     ...data,
+                            //     newRecordID: record_id,
                             // });
+
+                            // setOpen(true);
+
+                            history.push({
+                                pathname: '/buy',
+                                state: {
+                                    ...data.membership,
+                                    newRecordID: record_id,
+                                },
+                            });
                         });
                     });
                 }

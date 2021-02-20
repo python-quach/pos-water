@@ -18,7 +18,7 @@ const cellData = [
     'Action',
 ];
 
-const NewReceipt = ({ receipt, setOpenReceipt }) => (
+const NewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
     <Table celled striped selectable color='yellow' size='large' compact>
         <Table.Header>
             <Table.Row>
@@ -37,7 +37,7 @@ const NewReceipt = ({ receipt, setOpenReceipt }) => (
                 <Table.Cell>{receipt ? receipt.memberSince : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.firstName : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.lastName : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.fee : ''}</Table.Cell>
+                <Table.Cell>{receipt ? `$${receipt.fee}` : '$0'}</Table.Cell>
                 {/* <Table.Cell>{receipt.renew ? receipt.renew : 'NEW'}</Table.Cell> */}
                 {/* <Table.Cell>{receipt ? receipt.prev : ''}</Table.Cell> */}
                 {/* <Table.Cell>{receipt.buy ? receipt.buy : 'NEW'}</Table.Cell> */}
@@ -78,6 +78,17 @@ const NewReceipt = ({ receipt, setOpenReceipt }) => (
                             });
                         }}
                     />
+                    {openReceipt ? (
+                        <Button
+                            size='massive'
+                            color='black'
+                            // icon='remove'
+                            content='Close'
+                            onClick={() => {
+                                setOpenReceipt(false);
+                            }}
+                        />
+                    ) : null}
                 </Table.Cell>
             </Table.Row>
         </Table.Body>

@@ -16,7 +16,7 @@ const cellData = [
     'Action',
 ];
 
-const BuyReceipt = ({ receipt, setOpenReceipt }) => (
+const BuyReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
     <Table celled striped selectable color='green' size='large' compact>
         <Table.Header>
             <Table.Row>
@@ -52,6 +52,17 @@ const BuyReceipt = ({ receipt, setOpenReceipt }) => (
                             });
                         }}
                     />
+                    {openReceipt ? (
+                        <Button
+                            size='massive'
+                            color='black'
+                            // icon='remove'
+                            content='Close'
+                            onClick={() => {
+                                setOpenReceipt(false);
+                            }}
+                        />
+                    ) : null}
                 </Table.Cell>
             </Table.Row>
         </Table.Body>

@@ -5,6 +5,7 @@ const cellData = [
     'Renew Receipt',
     'Account',
     'Phone',
+    'MemberSince',
     'First Name',
     'Last Name',
     'Fee',
@@ -32,6 +33,7 @@ const RenewReceipt = ({ receipt, setOpenReceipt }) => (
                 <Table.Cell>
                     {receipt ? receipt.areaCode + '-' + receipt.phone : ''}
                 </Table.Cell>
+                <Table.Cell>{receipt ? receipt.memberSince : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.firstName : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.lastName : ''}</Table.Cell>
                 <Table.Cell>{receipt ? `$${receipt.fee}` : ''}</Table.Cell>

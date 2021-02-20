@@ -5,6 +5,7 @@ const cellData = [
     'Buy Receipt',
     'Account',
     'Phone',
+    'MemberSince',
     'First Name',
     'Last Name',
     'Prev',
@@ -29,6 +30,7 @@ const BuyReceipt = ({ receipt, setOpenReceipt }) => (
                 <Table.Cell content={receipt.record_id} />
                 <Table.Cell content={receipt.account} />
                 <Table.Cell content={receipt.areaCode + '-' + receipt.phone} />
+                <Table.Cell content={receipt.memberSince} />
                 <Table.Cell content={receipt.firstName} />
                 <Table.Cell content={receipt.lastName} />
                 <Table.Cell content={receipt.prev} />

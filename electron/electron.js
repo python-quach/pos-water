@@ -146,7 +146,7 @@ ipcMain.on(channels.ADD, (event, arg) => {
         if (duplicateAccount) {
             event.sender.send(channels.ADD, duplicateAccount);
         } else {
-            if (device) printAddReceipt(device, printer, data);
+            // if (device) printAddReceipt(device, printer, data);
             event.sender.send(channels.ADD, data);
         }
     });
@@ -178,7 +178,7 @@ ipcMain.on(channels.BUY, (event, arg) => {
 // RENEW
 ipcMain.on(channels.RENEW, (event, arg) => {
     renew(db, arg, (data) => {
-        if (device) printRenewReceipt(device, printer, data);
+        // if (device) printRenewReceipt(device, printer, data);
         event.sender.send(channels.RENEW, data);
     });
 });
@@ -345,35 +345,26 @@ ipcMain.on(channels.PRINT_BUY_RECEIPT, (event, arg) => {
     const gallonLeft = `Gallon Left: ${arg.remain}`;
     const message = `Thank You                [Account#: ${arg.account}]`;
 
-    // console.log(fullname);
-    // console.log(prevGallon);
-    // console.log(gallonBuy);
-    // console.log(blank);
-    // console.log(gallonLeft);
-    // console.log(message);
-
     if (device) {
         printBuyReceipt(device, printer, arg);
         event.sender.send(channels.PRINT_RECEIPT, { done: true });
     } else {
+        console.log(blank);
         console.log(fullname);
         console.log(prevGallon);
         console.log(gallonBuy);
-        console.log(blank);
         console.log(gallonLeft);
+        console.log(arg.invoiceDate + ' ' + arg.invoiceTime);
+        console.log(blank);
         console.log(message);
+        console.log('Mckee Pure Water');
+        console.log('(408) 729-1319');
+        console.log(blank);
         event.sender.send(channels.PRINT_BUY_RECEIPT, { done: false });
     }
 });
 
 ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
-    // const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
-    // const prevGallon = `Gallon Prev: ${arg.prev}`;
-    // const gallonBuy = `Gallon Buy : ${arg.buy}`;
-    // const blank = '';
-    // const gallonLeft = `Gallon Left: ${arg.remain}`;
-    // const message = `Thank You                [Account#: ${arg.account}]`;
-
     const renewGallon = `Gallon Renew: ${arg.renew}`;
     const renewFee = `Renew Fee   : $${arg.fee}`;
     const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
@@ -382,13 +373,13 @@ ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
     const blank = '';
 
     if (device) {
-        printBuyReceipt(device, printer, arg);
+        printRenewReceipt(device, printer, arg);
         event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: true });
     } else {
         console.log(blank);
         console.log(fullname.trim());
         console.log(renewFee);
-        console.log(`Gallon Prev: ${arg.prev}`);
+        console.log(`Gallon Prev : ${arg.prev}`);
         console.log(renewGallon);
         console.log(totalGallon);
         console.log(arg.invoiceDate + ' ' + arg.invoiceTime);

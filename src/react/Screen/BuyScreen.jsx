@@ -16,7 +16,6 @@ import BuyReceipt from '../Receipt/BuyReceipt';
 import RenewReceipt from '../Receipt/RenewReceipt';
 import Receipt from '../Receipt/Receipt';
 import Record from '../Record/Record';
-// import Keyboard from 'react-simple-keyboard';
 
 const BuyScreen = ({ api, history }) => {
     const [openReceipt, setOpenReceipt] = useState(false);
@@ -132,7 +131,6 @@ const BuyScreen = ({ api, history }) => {
                                 api.totalBuy(data.account, (response) => {
                                     console.log('totalBuy', response);
                                     setTotalBuy(response);
-                                    // setRecord(response);
                                 });
                             });
                         });
@@ -186,7 +184,6 @@ const BuyScreen = ({ api, history }) => {
                         api.totalBuy(data.account, (response) => {
                             console.log('totalBuy', response);
                             setTotalBuy(response);
-                            // setRecord(response);
                         });
                     });
                 });
@@ -249,8 +246,12 @@ const BuyScreen = ({ api, history }) => {
                     />
                 </Segment>
             </TransitionablePortal>
-            {/* <Receipt receipt={receipt} /> */}
-            {/* <Divider /> */}
+            {!openReceipt ? (
+                <Receipt receipt={receipt} setOpenReceipt={setOpenReceipt} />
+            ) : null}
+            <Divider hidden />
+            <Divider />
+            <Divider hidden />
             <Form.Buy
                 history={history}
                 api={api}
@@ -281,7 +282,7 @@ const BuyScreen = ({ api, history }) => {
                 }}
             />
             <Divider />
-
+            <Divider hidden />
             <Button.Done edit={edit} handleDone={handleDone} />
             <Button.History
                 content={open ? 'Close' : 'History'}
@@ -289,12 +290,6 @@ const BuyScreen = ({ api, history }) => {
                 disabled={edit}
                 floated='right'
                 type='button'
-                style={
-                    {
-                        // marginTop: '10px',
-                        // width: '100px',
-                    }
-                }
                 onClick={() => {
                     setOpenPortal((prev) => !prev);
                     api.history(
@@ -312,8 +307,6 @@ const BuyScreen = ({ api, history }) => {
             <RecordPortal open={open}>
                 <Header>{data.fullname} Record History</Header>
                 <SButton
-                    // floated='right'
-                    // floated='left'
                     color='red'
                     content='Total Fee'
                     icon='dollar'
@@ -325,9 +318,6 @@ const BuyScreen = ({ api, history }) => {
                     }}
                 />
                 <SButton
-                    // floated='left'
-                    // basic
-                    // floated='right'
                     color='blue'
                     content='Total Renew'
                     icon='tint'
@@ -340,9 +330,6 @@ const BuyScreen = ({ api, history }) => {
                     }}
                 />
                 <SButton
-                    // floated='left'
-                    // floated='right'
-                    // basic
                     color='green'
                     content='Total Buy'
                     icon='cart'
@@ -364,9 +351,6 @@ const BuyScreen = ({ api, history }) => {
                     totalBuy={totalBuy}
                 />
             </RecordPortal>
-            {/* <pre style={{ color: 'white' }}>
-                {JSON.stringify({ totalFee, totalRenew, totalBuy }, null, 2)}
-            </pre> */}
         </Portal>
     );
 };

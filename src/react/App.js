@@ -1,6 +1,6 @@
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import LoginScreen from './Login/Screen/LoginScreen';
-import DashBoardScreen from './Screen/DashboardScreen';
+import DashBoardScreen from './Dashboard/Screen/DashboardScreen';
 import AddScreen from './Screen/AddScreen';
 import BuyScreen from './Screen/BuyScreen';
 import AccountScreen from './Screen/AccountScreen';
@@ -11,13 +11,7 @@ const App = ({ api }) => (
     <Router>
         <Switch>
             <Route exact path='/' component={LoginScreen} />
-            <Route
-                exact
-                path='/dashboard'
-                render={(routeProps) => (
-                    <DashBoardScreen {...routeProps} api={api} />
-                )}
-            />
+            <Route exact path='/dashboard' component={DashBoardScreen} />
             <Route
                 exact
                 path='/accounts'

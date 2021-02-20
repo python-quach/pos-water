@@ -9,6 +9,8 @@ const AccountScreen = (props) => {
     const [offset, setOffset] = useState(0);
     const [activePage, setActivePage] = useState(1);
 
+    console.log(memberships);
+
     const Row = ({
         account,
         firstName,

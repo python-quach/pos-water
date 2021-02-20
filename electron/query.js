@@ -55,6 +55,7 @@ const find_name = `SELECT * FROM
     		    field1 firstName,
     		    field2 lastName,
     		    field4 fullname,
+                field5 areaCode,
     		    field8 phone
             FROM test 
                 WHERE

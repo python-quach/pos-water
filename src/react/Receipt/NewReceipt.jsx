@@ -1,4 +1,5 @@
-import { Table } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
+import { print } from '../../api/api';
 
 const cellData = [
     'New Membership',
@@ -13,10 +14,11 @@ const cellData = [
     'Gallon',
     'Date',
     'Time',
+    'Action',
 ];
 
 const NewReceipt = ({ receipt }) => (
-    <Table celled striped selectable color='green' size='large'>
+    <Table celled striped selectable color='yellow' size='large' compact>
         <Table.Header>
             <Table.Row>
                 {cellData.map((item, index) => (
@@ -40,6 +42,40 @@ const NewReceipt = ({ receipt }) => (
                 <Table.Cell>{receipt ? receipt.remain : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.invoiceDate : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.invoiceTime : ''}</Table.Cell>
+                <Table.Cell textAlign='left'>
+                    <Button
+                        size='massive'
+                        color='red'
+                        content='Print Receipt'
+                        onClick={() => {
+                            console.log('Print New Receipt', receipt);
+
+                            const {
+                                fee,
+                                remain,
+                                fourDigit,
+                                fullname,
+                                invoiceDate,
+                                invoiceTime,
+                                account,
+                            } = receipt;
+
+                            const printData = {
+                                field9: fee,
+                                field4: fullname,
+                                field7: fourDigit,
+                                field31: remain,
+                                field15: invoiceDate,
+                                field32: invoiceTime,
+                                field22: account,
+                            };
+
+                            print(printData, (done) => {
+                                console.log({ done });
+                            });
+                        }}
+                    />
+                </Table.Cell>
             </Table.Row>
         </Table.Body>
     </Table>

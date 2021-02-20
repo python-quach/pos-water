@@ -28,7 +28,6 @@ const Record = ({ records, totalPages, onChange, activePage }) => {
                 </Table.Header>
                 <Table.Body>
                     {records.map((record, index) => {
-                        console.table([{ ...record }]);
                         return (
                             <Table.Row key={index}>
                                 <Table.Cell content={record.record_id} />

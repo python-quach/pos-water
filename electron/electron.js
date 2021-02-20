@@ -169,7 +169,8 @@ ipcMain.on(channels.FIND, (event, arg) => {
 // BUY
 ipcMain.on(channels.BUY, (event, arg) => {
     buy(db, arg, (data) => {
-        if (device) printBuyReceipt(device, printer, data);
+        // Remove to prevent automatic printing
+        // if (device) printBuyReceipt(device, printer, data);
         event.sender.send(channels.BUY, data);
     });
 });
@@ -302,6 +303,7 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
         });
 });
 
+// PRINT NEW MEMBERSHIP
 ipcMain.on(channels.PRINT_RECEIPT, (event, arg) => {
     const renewFee = `Membership Fee: $${arg.field9}`;
     const fullname = `${arg.field4} -- ${arg.field7}`;
@@ -311,8 +313,8 @@ ipcMain.on(channels.PRINT_RECEIPT, (event, arg) => {
     const message = `Thank You                [Account#: ${arg.field22}]`;
 
     const receipt = () => {
-        console.log(renewFee);
         console.log(fullname);
+        console.log(renewFee);
         console.log(gallonLeft);
         console.log(time);
         console.log(blank);
@@ -323,12 +325,79 @@ ipcMain.on(channels.PRINT_RECEIPT, (event, arg) => {
 
     console.log('PRINT: ', arg);
     receipt();
+
     if (device) {
         printAddReceipt(device, printer, arg, (done) => {
             console.log({ done });
-            event.sender.send(channels.PRINT_RECEIPT, done);
+            event.sender.send(channels.PRINT_RECEIPT, { done: true });
         });
     } else {
         event.sender.send(channels.PRINT_RECEIPT, { done: false });
+    }
+});
+
+// PRINT BUY RECEIPT
+ipcMain.on(channels.PRINT_BUY_RECEIPT, (event, arg) => {
+    const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
+    const prevGallon = `Gallon Prev: ${arg.prev}`;
+    const gallonBuy = `Gallon Buy : ${arg.buy}`;
+    const blank = '';
+    const gallonLeft = `Gallon Left: ${arg.remain}`;
+    const message = `Thank You                [Account#: ${arg.account}]`;
+
+    // console.log(fullname);
+    // console.log(prevGallon);
+    // console.log(gallonBuy);
+    // console.log(blank);
+    // console.log(gallonLeft);
+    // console.log(message);
+
+    if (device) {
+        printBuyReceipt(device, printer, arg);
+        event.sender.send(channels.PRINT_RECEIPT, { done: true });
+    } else {
+        console.log(fullname);
+        console.log(prevGallon);
+        console.log(gallonBuy);
+        console.log(blank);
+        console.log(gallonLeft);
+        console.log(message);
+        event.sender.send(channels.PRINT_BUY_RECEIPT, { done: false });
+    }
+});
+
+ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
+    // const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
+    // const prevGallon = `Gallon Prev: ${arg.prev}`;
+    // const gallonBuy = `Gallon Buy : ${arg.buy}`;
+    // const blank = '';
+    // const gallonLeft = `Gallon Left: ${arg.remain}`;
+    // const message = `Thank You                [Account#: ${arg.account}]`;
+
+    const renewGallon = `Gallon Renew: ${arg.renew}`;
+    const renewFee = `Renew Fee   : $${arg.fee}`;
+    const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
+    const totalGallon = `Gallon Left : ${arg.remain}`;
+    const message = `Thank You                [Account#: ${arg.account}]`;
+    const blank = '';
+
+    if (device) {
+        printBuyReceipt(device, printer, arg);
+        event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: true });
+    } else {
+        console.log(blank);
+        console.log(fullname.trim());
+        console.log(renewFee);
+        console.log(`Gallon Prev: ${arg.prev}`);
+        console.log(renewGallon);
+        console.log(totalGallon);
+        console.log(arg.invoiceDate + ' ' + arg.invoiceTime);
+        console.log(blank);
+        console.log(message);
+        console.log('Mckee Pure Water');
+        console.log('(408) 729-1319');
+        console.log(blank);
+
+        event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: false });
     }
 });

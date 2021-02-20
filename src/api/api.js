@@ -148,6 +148,24 @@ export const print = (data, callback) => {
     });
 };
 
+// PRINT BUY RECEIPT
+export const printBuyReceipt = (data, callback) => {
+    console.log('API BUY PRINT:', data);
+    ipcRenderer.send(channels.PRINT_BUY_RECEIPT, data);
+    ipcRenderer.on(channels.PRINT_BUY_RECEIPT, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.PRINT_BUY_RECEIPT);
+        callback(response);
+    });
+};
+
+export const printRenewReceipt = (data, callback) => {
+    console.log('API RENEW PRINT:', data);
+    ipcRenderer.send(channels.PRINT_RENEW_RECEIPT, data);
+    ipcRenderer.on(channels.PRINT_RENEW_RECEIPT, (_, response) => {
+        ipcRenderer.removeAllListeners(channels.PRINT_RENEW_RECEIPT);
+        callback(response);
+    });
+};
 export const api = {
     login,
     find,
@@ -163,4 +181,5 @@ export const api = {
     getDailyReport,
     closeApp,
     backup,
+    printBuyReceipt,
 };

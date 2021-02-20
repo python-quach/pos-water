@@ -139,3 +139,21 @@
     color: white;
     background-color: #d5c1c124;
 }
+
+/* NEW RECEIPT */
+.ui.yellow.large.celled.selectable.striped.compact.table {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* BUY RECEIPT TABLE  */
+.ui.green.large.celled.selectable.striped.compact.table {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* RENEW RECEIPT */
+.ui.blue.large.celled.selectable.striped.compact.table {
+    font-size: 24px;
+    font-weight: bold;
+}

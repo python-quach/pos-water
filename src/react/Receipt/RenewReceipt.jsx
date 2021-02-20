@@ -1,4 +1,5 @@
-import { Table } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
+import { printRenewReceipt } from '../../api/api';
 
 const cellData = [
     'Renew Receipt',
@@ -12,10 +13,11 @@ const cellData = [
     'Remain',
     'Date',
     'Time',
+    'Action',
 ];
 
 const RenewReceipt = ({ receipt }) => (
-    <Table celled striped selectable color='blue' size='large'>
+    <Table celled striped selectable color='blue' size='large' compact>
         <Table.Header>
             <Table.Row>
                 {cellData.map((cell, index) => (
@@ -38,6 +40,20 @@ const RenewReceipt = ({ receipt }) => (
                 <Table.Cell>{receipt ? receipt.remain : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.invoiceDate : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.invoiceTime : ''}</Table.Cell>
+                <Table.Cell textAlign='left'>
+                    <Button
+                        size='massive'
+                        color='red'
+                        content='Print Receipt'
+                        onClick={() => {
+                            console.log('Print Renew Receipt', receipt);
+                            // const { membership } = receipt;
+                            printRenewReceipt(receipt, (done) => {
+                                console.log('Print Renew', done);
+                            });
+                        }}
+                    />
+                </Table.Cell>
             </Table.Row>
         </Table.Body>
     </Table>

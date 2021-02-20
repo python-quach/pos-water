@@ -15,7 +15,7 @@ const cellData = [
     'Action',
 ];
 
-const BuyReceipt = ({ receipt }) => (
+const BuyReceipt = ({ receipt, setOpenReceipt }) => (
     <Table celled striped selectable color='green' size='large' compact>
         <Table.Header>
             <Table.Row>
@@ -46,6 +46,7 @@ const BuyReceipt = ({ receipt }) => (
                             // const { membership } = receipt;
                             printBuyReceipt(receipt, (done) => {
                                 console.log('Print Buy', done);
+                                setOpenReceipt(false);
                             });
                         }}
                     />

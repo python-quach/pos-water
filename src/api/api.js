@@ -182,4 +182,6 @@ export const api = {
     closeApp,
     backup,
     printBuyReceipt,
+    printRenewReceipt,
+    print,
 };

@@ -1,9 +1,10 @@
 import { useState, useEffect, createContext } from 'react';
-import LoginPortal from '../Portal/Portal';
-import LoginHeader from '../Header/StoreHeader';
-import LoginForm from '../Form/LoginForm';
-import { api } from '../../api/api';
+import Portal from '../../Portal/Portal';
+import { api } from '../../../api/api';
 import { withRouter } from 'react-router';
+import Header from '../Header/LoginHeader';
+import Form from '../Form/LoginForm';
+// import { Login } from '../index';
 
 export const LoginContext = createContext();
 
@@ -26,6 +27,7 @@ const LoginScreen = ({ history }) => {
     };
 
     const store = {
+        api,
         state: {
             errorMessage,
             iconColor,
@@ -37,6 +39,7 @@ const LoginScreen = ({ history }) => {
             save: setSave,
             login: handleLogin,
         },
+        initialValues: { username: '', password: '' },
     };
 
     useEffect(() => {
@@ -44,24 +47,13 @@ const LoginScreen = ({ history }) => {
     }, [errorMessage]);
 
     return (
-        <LoginPortal>
-            <LoginHeader title='Mckee Pure Water' content='User Login' />
-            <LoginContext.Provider value={store}>
-                <LoginForm
-                // state={{
-                //     errorMessage,
-                //     iconColor,
-                //     save,
-                // }}
-                // handle={{
-                //     errorMessage: setErrorMessage,
-                //     iconColor: setIconColor,
-                //     save: setSave,
-                //     login: handleLogin,
-                // }}
-                />
-            </LoginContext.Provider>
-        </LoginPortal>
+        <LoginContext.Provider value={store}>
+            <Portal>
+                <Header title='Mckee Pure Water' content='User Login' />
+                {/* <Login.Header title='Mckee Pure Water' content='User Login' /> */}
+                <Form size='large' />
+            </Portal>
+        </LoginContext.Provider>
     );
 };
 

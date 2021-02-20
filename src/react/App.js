@@ -1,23 +1,16 @@
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import LoginScreen from './Screen/LoginScreen';
+import LoginScreen from './Login/Screen/LoginScreen';
 import DashBoardScreen from './Screen/DashboardScreen';
 import AddScreen from './Screen/AddScreen';
 import BuyScreen from './Screen/BuyScreen';
 import AccountScreen from './Screen/AccountScreen';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
-// import 'simple-keyboard/build/css/index.css';
 
 const App = ({ api }) => (
     <Router>
         <Switch>
-            <Route
-                exact
-                path='/'
-                render={(routeProps) => (
-                    <LoginScreen {...routeProps} api={api} />
-                )}
-            />
+            <Route exact path='/' component={LoginScreen} />
             <Route
                 exact
                 path='/dashboard'

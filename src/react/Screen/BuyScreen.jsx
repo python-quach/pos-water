@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Divider, Header, Button as SButton } from 'semantic-ui-react';
+import {
+    Segment,
+    TransitionablePortal,
+    Divider,
+    Header,
+    Button as SButton,
+} from 'semantic-ui-react';
 import { currentTime, currentDate } from '../../helpers/helpers';
 import { BuyPortalConfig as config } from '../../config/portal';
 import { Form } from '../Form/Form';
@@ -13,6 +19,8 @@ import Record from '../Record/Record';
 // import Keyboard from 'react-simple-keyboard';
 
 const BuyScreen = ({ api, history }) => {
+    const [openReceipt, setOpenReceipt] = useState(false);
+
     const [receipt, setReceipt] = useState(history.location.state || {});
     const [records, setRecord] = useState(0);
     const [disable, setDisable] = useState(false);
@@ -21,9 +29,6 @@ const BuyScreen = ({ api, history }) => {
     const [totalFee, setTotalFee] = useState(0);
     const [totalRenew, setTotalRenew] = useState(0);
     const [totalBuy, setTotalBuy] = useState(0);
-
-    // PRINT PORTAL
-    const [openPrintOption, setPrintOption] = useState(false);
 
     // Pagination;
     const [totalPages, setTotalPages] = useState(0);
@@ -85,6 +90,7 @@ const BuyScreen = ({ api, history }) => {
         if (buy) {
             api.buy({ ...data, renew: null }, (data) => {
                 setReceipt(data);
+                setOpenReceipt(true);
                 api.history(
                     { account: data.account, limit: 10, offset: 0 },
                     (response) => {
@@ -111,6 +117,7 @@ const BuyScreen = ({ api, history }) => {
         if (renew) {
             api.renew({ ...data, buy: null, remain: prev + renew }, (data) => {
                 setReceipt(data);
+                setOpenReceipt(true);
                 api.history(
                     { account: data.account, limit: 10, offset: 0 },
                     (response) => {
@@ -222,8 +229,28 @@ const BuyScreen = ({ api, history }) => {
 
     return (
         <Portal {...config}>
-            <Receipt receipt={receipt} />
-            <Divider />
+            <TransitionablePortal
+                closeOnDocumentClick={false}
+                closeOnEscape={false}
+                closeOnDimmerClick={false}
+                closeOnPortalMouseLeave={false}
+                open={openReceipt}>
+                <Segment
+                    style={{
+                        left: '15%',
+                        position: 'fixed',
+                        top: '30%',
+                        zIndex: 1000,
+                    }}>
+                    <Header>Receipt</Header>
+                    <Receipt
+                        receipt={receipt}
+                        setOpenReceipt={setOpenReceipt}
+                    />
+                </Segment>
+            </TransitionablePortal>
+            {/* <Receipt receipt={receipt} /> */}
+            {/* <Divider /> */}
             <Form.Buy
                 history={history}
                 api={api}

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { LoginContext } from '../../Screen/LoginScreen';
+import { LoginContext } from '../Screen/LoginScreen';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 

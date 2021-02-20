@@ -17,7 +17,7 @@ const cellData = [
     'Action',
 ];
 
-const NewReceipt = ({ receipt }) => (
+const NewReceipt = ({ receipt, setOpenReceipt }) => (
     <Table celled striped selectable color='yellow' size='large' compact>
         <Table.Header>
             <Table.Row>
@@ -72,6 +72,7 @@ const NewReceipt = ({ receipt }) => (
 
                             print(printData, (done) => {
                                 console.log({ done });
+                                // setOpenReceipt(false);
                             });
                         }}
                     />

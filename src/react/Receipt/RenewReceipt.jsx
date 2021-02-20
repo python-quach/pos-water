@@ -16,7 +16,7 @@ const cellData = [
     'Action',
 ];
 
-const RenewReceipt = ({ receipt }) => (
+const RenewReceipt = ({ receipt, setOpenReceipt }) => (
     <Table celled striped selectable color='blue' size='large' compact>
         <Table.Header>
             <Table.Row>
@@ -50,6 +50,7 @@ const RenewReceipt = ({ receipt }) => (
                             // const { membership } = receipt;
                             printRenewReceipt(receipt, (done) => {
                                 console.log('Print Renew', done);
+                                setOpenReceipt(false);
                             });
                         }}
                     />

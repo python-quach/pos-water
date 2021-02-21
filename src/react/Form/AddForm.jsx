@@ -357,7 +357,7 @@ const AddForm = ({ history, initialValues, record }) => {
                                     size='massive'
                                     type='submit'
                                     content='Done'
-                                    color='yellow'
+                                    color='facebook'
                                     style={{ marginTop: '30px' }}
                                     disabled={
                                         !values.fee ||

@@ -18,7 +18,6 @@ export const BuyPortalConfig = {
 
 export const AccountPortalConfig = {
     animation: 'fade in',
-    // animation: 'zoom',
     duration: 300,
     segment: {
         width: '100%',
@@ -29,7 +28,6 @@ export const AccountPortalConfig = {
     },
     grid: {
         style: { height: '100vh' },
-        // verticalAlign: 'middle',
     },
     gridColumn: {},
 };

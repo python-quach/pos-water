@@ -69,10 +69,10 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                     <Form.Group>
                         <Field.BuyDate name='invoiceDate' edit={edit} />
                         <Field.BuyTime name='invoiceTime' edit={edit} />
-                        <Form.Input type='hidden' width={6} />
+                        <Form.Input type='hidden' width={8} />
                         <Field.BuyMemberSince name='memberSince' edit={edit} />
                         <Field.BuyAccount name='account' edit={edit} />
-                        <Field.BuyRecord name='record_id' edit={edit} />
+                        {/* <Field.BuyRecord name='record_id' edit={edit} /> */}
                     </Form.Group>
                     <Form.Group>
                         <Field.BuyAreaCode edit={edit} name='areaCode' />
@@ -133,6 +133,7 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             content='Buy'
                             style={{
                                 marginTop: '30px',
+                                width: '160px',
                             }}
                             color='green'
                             disabled={values.buy <= 0 || disable}
@@ -172,7 +173,7 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             content='Renew'
                             color='facebook'
                             size='massive'
-                            style={{ marginTop: '30px' }}
+                            style={{ marginTop: '30px', width: '160px' }}
                             disabled={!values.fee || !values.renew}
                         />
                     </Form.Group>

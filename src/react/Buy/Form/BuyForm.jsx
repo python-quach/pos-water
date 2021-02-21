@@ -22,9 +22,92 @@ import PreviousGallon from '../Field/PreviousGallon';
 import Time from '../Field/Time';
 import RenewAmount from '../Field/RenewAmount';
 import Fee from '../Field/Fee';
+import { api } from '../../../api/api';
+import { currentTime, currentDate } from '../../../helpers/helpers';
 
-const BuyForm = ({ api, state, initialValues, handle }) => {
-    const { edit, disable, data } = state;
+const BuyForm = ({
+    receipt,
+    disable,
+    edit,
+    setEdit,
+    resetBuyForm,
+    setDisable,
+    updateHistory,
+    updateForm,
+    setOpenReceipt,
+    setReceipt,
+    setRecord,
+    setActivePage,
+    setTotalFee,
+    resetRenewForm,
+    setTotalRenew,
+    setTotalBuy,
+}) => {
+    const initialValues = {
+        ...receipt,
+        record_id: receipt ? receipt.newRecordID : '',
+        prev: receipt ? receipt.remain : '',
+        buy: 0,
+        fee: 0,
+        renew: 0,
+        invoiceDate: currentDate(),
+        invoiceTime: currentTime(),
+    };
+    const onSubmit = async (data) => {
+        const { buy, renew, prev } = data;
+
+        if (buy) {
+            api.buy({ ...data, renew: null }, (data) => {
+                setOpenReceipt(true);
+                setReceipt(data);
+                api.history(
+                    { account: data.account, limit: 10, offset: 0 },
+                    (response) => {
+                        setRecord(response);
+                        setActivePage(1);
+                        api.totalFee(data.account, (response) => {
+                            console.log('totalFee', response);
+                            setTotalFee(response);
+                            api.totalRenew(data.account, (response) => {
+                                console.log('totalRenew', response);
+                                setTotalRenew(response);
+                                api.totalBuy(data.account, (response) => {
+                                    console.log('totalBuy', response);
+                                    setTotalBuy(response);
+                                });
+                            });
+                        });
+                    }
+                );
+            });
+        }
+
+        if (renew) {
+            api.renew({ ...data, buy: null, remain: prev + renew }, (data) => {
+                setReceipt(data);
+                setOpenReceipt(true);
+                api.history(
+                    { account: data.account, limit: 10, offset: 0 },
+                    (response) => {
+                        setRecord(response);
+                        setActivePage(1);
+                        api.totalFee(data.account, (response) => {
+                            console.log('totalFee', response);
+                            setTotalFee(response);
+                            api.totalRenew(data.account, (response) => {
+                                console.log('totalRenew', response);
+                                setTotalRenew(response);
+                                api.totalBuy(data.account, (response) => {
+                                    console.log('totalBuy', response);
+                                    setTotalBuy(response);
+                                });
+                            });
+                        });
+                    }
+                );
+            });
+        }
+    };
 
     const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
         <FinalField name={set} subscription={{}}>
@@ -49,14 +132,15 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
     return (
         <FinalForm
             initialValuesEqual={() => true}
-            onSubmit={handle.onSubmit}
+            // onSubmit={handle.onSubmit}
+            onSubmit={onSubmit}
             initialValues={initialValues}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
                     size='massive'
                     onSubmit={(event) => {
                         handleSubmit(event).then(() => {
-                            handle.updateForm(form, values);
+                            updateForm(form, values);
                             document.getElementById('buy').focus();
                         });
                     }}>
@@ -94,7 +178,7 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             <EditButton
                                 edit={edit}
                                 form={form}
-                                setEdit={handle.setEdit}
+                                setEdit={setEdit}
                                 handleEdit={api.edit}
                                 values={values}
                                 initialValues={initialValues}
@@ -104,7 +188,7 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                                 <CancelButton
                                     edit={edit}
                                     form={form}
-                                    setEdit={handle.setEdit}
+                                    setEdit={setEdit}
                                     handleEdit={api.edit}
                                     values={values}
                                     initialValues={initialValues}
@@ -112,12 +196,12 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                                 <SaveButton
                                     edit={edit}
                                     form={form}
-                                    setEdit={handle.setEdit}
+                                    setEdit={setEdit}
                                     handleEdit={api.edit}
                                     values={values}
                                     initialValues={initialValues}
-                                    updateReceipt={handle.setReceipt}
-                                    updateHistory={handle.updateHistory}
+                                    updateReceipt={setReceipt}
+                                    updateHistory={updateHistory}
                                 />
                             </>
                         )}
@@ -127,13 +211,13 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             name='buy'
                             edit={edit}
                             disable={disable}
-                            setDisable={handle.setDisable}
+                            setDisable={setDisable}
                             previous={values.previousGallon}
                             form={form}
                             gallonBuy={values.gallonBuy}
                             renewAmount={values.renewalAmount}
-                            remain={data ? data.remain : ''}
-                            reset={handle.resetRenewForm}
+                            remain={receipt ? receipt.remain : ''}
+                            reset={resetRenewForm}
                         />
                         <GallonRemain
                             edited={edit}
@@ -153,9 +237,9 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             previous={values.prev}
                             renew={values.renew}
                             values={values}
-                            reset={handle.resetBuyForm}
-                            setDisable={handle.setDisable}
-                            updateForm={handle.updateForm}
+                            reset={resetBuyForm}
+                            setDisable={setDisable}
+                            updateForm={updateForm}
                         />
                         <RenewAmount
                             name='renew'
@@ -166,9 +250,9 @@ const BuyForm = ({ api, state, initialValues, handle }) => {
                             renew={values.renew}
                             previous={values.prev}
                             values={values}
-                            reset={handle.resetBuyForm}
-                            setDisable={handle.setDisable}
-                            updateForm={handle.updateForm}
+                            reset={resetBuyForm}
+                            setDisable={setDisable}
+                            updateForm={updateForm}
                         />
                         <RenewButton values={values} />
                     </Form.Group>

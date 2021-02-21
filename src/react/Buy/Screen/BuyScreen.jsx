@@ -1,18 +1,11 @@
 import { useState, useEffect } from 'react';
-import {
-    Segment,
-    TransitionablePortal,
-    Divider,
-    Header,
-    Button,
-} from 'semantic-ui-react';
+import { Divider } from 'semantic-ui-react';
 import { currentTime, currentDate } from '../../../helpers/helpers';
 import { BuyPortalConfig as config } from '../../../config/portal';
 import BuyForm from '../Form/BuyForm';
 import Portal from '../../Portal/Portal';
-import RecordPortal from '../../Portal/RecordPortal';
-import BuyReceipt from '../../Receipt/BuyReceipt';
-import RenewReceipt from '../../Receipt/RenewReceipt';
+import RecordPortal from '../Portal/RecordPortal';
+
 import Receipt from '../../Receipt/Receipt';
 import Record from '../../Record/Record';
 import DoneButton from '../Button/DoneButton';
@@ -42,17 +35,6 @@ const BuyScreen = ({ history }) => {
     };
 
     const data = history.location.state;
-    const initialValues = {
-        ...data,
-        record_id: data ? data.newRecordID : '',
-        prev: data ? data.remain : '',
-        buy: 0,
-        fee: 0,
-        renew: 0,
-        invoiceDate: currentDate(),
-        invoiceTime: currentTime(),
-    };
-
     const updateHistory = () => {
         api.history(
             {
@@ -64,11 +46,6 @@ const BuyScreen = ({ history }) => {
                 setRecord(response);
             }
         );
-    };
-
-    const renderReceipt = () => {
-        if (receipt.renew) return <RenewReceipt receipt={receipt} />;
-        if (receipt.buy) return <BuyReceipt receipt={receipt} />;
     };
 
     const handleDone = () => {
@@ -83,62 +60,6 @@ const BuyScreen = ({ history }) => {
     const resetBuyForm = (form, previous) => {
         form.change('buy', 0);
         form.change('remain', previous);
-    };
-
-    const onSubmit = async (data) => {
-        const { buy, renew, prev } = data;
-
-        if (buy) {
-            api.buy({ ...data, renew: null }, (data) => {
-                setOpenReceipt(true);
-                setReceipt(data);
-                api.history(
-                    { account: data.account, limit: 10, offset: 0 },
-                    (response) => {
-                        setRecord(response);
-                        setActivePage(1);
-                        api.totalFee(data.account, (response) => {
-                            console.log('totalFee', response);
-                            setTotalFee(response);
-                            api.totalRenew(data.account, (response) => {
-                                console.log('totalRenew', response);
-                                setTotalRenew(response);
-                                api.totalBuy(data.account, (response) => {
-                                    console.log('totalBuy', response);
-                                    setTotalBuy(response);
-                                });
-                            });
-                        });
-                    }
-                );
-            });
-        }
-
-        if (renew) {
-            api.renew({ ...data, buy: null, remain: prev + renew }, (data) => {
-                setReceipt(data);
-                setOpenReceipt(true);
-                api.history(
-                    { account: data.account, limit: 10, offset: 0 },
-                    (response) => {
-                        setRecord(response);
-                        setActivePage(1);
-                        api.totalFee(data.account, (response) => {
-                            console.log('totalFee', response);
-                            setTotalFee(response);
-                            api.totalRenew(data.account, (response) => {
-                                console.log('totalRenew', response);
-                                setTotalRenew(response);
-                                api.totalBuy(data.account, (response) => {
-                                    console.log('totalBuy', response);
-                                    setTotalBuy(response);
-                                });
-                            });
-                        });
-                    }
-                );
-            });
-        }
     };
 
     const updateForm = (form, values) => {
@@ -246,38 +167,26 @@ const BuyScreen = ({ history }) => {
             <Divider />
             <Divider hidden />
             <BuyForm
-                history={history}
-                api={api}
-                state={{
-                    initialValues,
-                    disable,
-                    edit,
-                    data,
-                    receipt,
-                }}
-                totalFee={totalFee}
-                totalRenew={totalRenew}
-                totalBuy={totalBuy}
-                initialValues={initialValues}
+                receipt={receipt}
+                setOpenReceipt={setOpenReceipt}
+                setReceipt={setReceipt}
+                setRecord={setRecord}
+                setActivePage={setActivePage}
+                setTotalFee={setTotalFee}
+                setTotalRenew={setTotalRenew}
+                setTotalBuy={setTotalBuy}
+                setDisable={setDisable}
+                setEdit={setEdit}
+                updateHistory={updateHistory}
                 disable={disable}
+                resetBuyForm={resetBuyForm}
+                updateForm={updateForm}
+                resetRenewForm={resetRenewForm}
                 edit={edit}
-                handle={{
-                    onSubmit,
-                    renderReceipt,
-                    handleDone,
-                    resetBuyForm,
-                    resetRenewForm,
-                    setEdit,
-                    setDisable,
-                    updateForm,
-                    setReceipt,
-                    updateHistory,
-                }}
             />
             <Divider />
             <Divider hidden />
             <DoneButton edit={edit} handleDone={handleDone} />
-
             <HistoryButton
                 open={open}
                 setOpenPortal={setOpenPortal}
@@ -288,44 +197,12 @@ const BuyScreen = ({ history }) => {
                 edit={edit}
                 size='massive'
             />
-
-            <RecordPortal open={open}>
-                <Header>{data.fullname} Record History</Header>
-                <Button
-                    color='red'
-                    content='Total Fee'
-                    icon='dollar'
-                    label={{
-                        basic: true,
-                        color: 'red',
-                        pointing: 'left',
-                        content: totalFee,
-                    }}
-                />
-                <Button
-                    color='blue'
-                    content='Total Renew'
-                    icon='tint'
-                    label={{
-                        as: 'a',
-                        basic: true,
-                        color: 'blue',
-                        pointing: 'left',
-                        content: totalRenew,
-                    }}
-                />
-                <Button
-                    color='green'
-                    content='Total Buy'
-                    icon='cart'
-                    label={{
-                        as: 'a',
-                        basic: true,
-                        color: 'green',
-                        pointing: 'left',
-                        content: totalBuy,
-                    }}
-                />
+            <RecordPortal
+                data={data}
+                open={open}
+                totalBuy={totalBuy}
+                totalFee={totalFee}
+                totalRenew={totalRenew}>
                 <Record
                     records={records}
                     totalPages={totalPages}

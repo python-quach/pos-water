@@ -1,10 +1,9 @@
-// import { Field } from 'efinal-form';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const InvoiceTime = ({ width }) => (
+const Date = ({ name, edit }) => (
     <Field
-        name='invoiceDate'
+        name={name}
         render={({ input }) => (
             <Form.Input
                 {...input}
@@ -14,12 +13,13 @@ const InvoiceTime = ({ width }) => (
                 placeholder='mm/dd/yyyy'
                 icon='calendar'
                 iconPosition='left'
+                disabled={edit}
+                width={2}
                 inverted
                 readOnly
-                width={width}
             />
         )}
     />
 );
 
-export default InvoiceTime;
+export default Date;

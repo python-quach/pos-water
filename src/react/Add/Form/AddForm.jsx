@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Form } from 'semantic-ui-react';
-import { Form as FinalForm, Field } from 'react-final-form';
-import { add, find, lastRecord } from '../../api/api';
-import { currentTime, currentDate } from '../../helpers/helpers';
-import InvoiceDate from '../Field/InvoiceData';
+import { Form as FinalForm } from 'react-final-form';
+import { add, find, lastRecord } from '../../../api/api';
+import { currentTime, currentDate } from '../../../helpers/helpers';
+import InvoiceDate from '../Field/InvoiceDate';
 import InvoiceTime from '../Field/InvoiceTime';
 import Account from '../Field/Account';
 import AreaCode from '../Field/AreaCode';
@@ -12,6 +12,8 @@ import FirstName from '../Field/FirstName';
 import LastName from '../Field/LastName';
 import Fee from '../Field/Fee';
 import Renew from '../Field/Renew';
+import DoneButton from '../Button/DoneButton';
+import CancelButton from '../Button/CancelButton';
 
 const AddForm = ({ history, record }) => {
     const [error, setError] = useState(false);
@@ -92,64 +94,15 @@ const AddForm = ({ history, record }) => {
                             errorMessage={errorMessage}
                             width={2}
                         />
-                        <AreaCode width={2} />
+                        <AreaCode width={1} />
                         <Phone width={2} />
                         <FirstName width={2} />
                         <LastName width={2} />
                         <Form.Input type='hidden' width={4} />
                         <Fee width={1} />
                         <Renew width={1} />
-                        <Field
-                            name='renew'
-                            parse={(value) => {
-                                if (isNaN(parseInt(value))) return 0;
-                                const onlyNums = value.replace(/[^\d]/g, '');
-                                if (onlyNums.length < 5) {
-                                    return parseInt(onlyNums);
-                                } else {
-                                    return onlyNums.substring(
-                                        0,
-                                        onlyNums.length - 1
-                                    );
-                                }
-                            }}
-                            render={({ input }) => (
-                                <Form.Input
-                                    {...input}
-                                    label='Gallon'
-                                    className='AreaCode'
-                                    inverted={true}
-                                    width={1}
-                                />
-                            )}
-                        />
-                        <Form.Button
-                            size='massive'
-                            type='submit'
-                            content='Done'
-                            color='facebook'
-                            style={{ marginTop: '30px' }}
-                            disabled={
-                                !values.fee ||
-                                !values.renew ||
-                                !values.firstName ||
-                                !values.lastName ||
-                                !values.phone ||
-                                !values.areaCode ||
-                                !values.account
-                            }
-                        />
-                        <Form.Button
-                            size='massive'
-                            type='submit'
-                            color='google plus'
-                            content='Cancel'
-                            style={{ marginTop: '30px' }}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                history.push('/dashboard');
-                            }}
-                        />
+                        <DoneButton values={values} />
+                        <CancelButton history={history} />
                     </Form.Group>
                 </Form>
             )}

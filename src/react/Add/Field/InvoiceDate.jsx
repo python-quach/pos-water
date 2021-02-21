@@ -1,4 +1,5 @@
-import { Field } from 'final-form';
+// import { Field } from 'final-form';
+import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
 const InvoiceDate = ({ width }) => {

@@ -59,6 +59,7 @@ usbDetect.startMonitoring();
 usbDetect
     .find()
     .then(function (devices) {
+        console.log(devices);
         devices.forEach(function (item) {
             if (item.deviceName === 'USB Printing Support') {
                 console.log('Found USB: ', { ...item });
@@ -77,6 +78,7 @@ usbDetect
     });
 
 usbDetect.on('add', function (usbDevice) {
+    console.log(usbDevice);
     usbDetect
         .find()
         .then(function (devices) {

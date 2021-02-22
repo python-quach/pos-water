@@ -28,7 +28,7 @@ const RecordPortal = ({
             closeOnPortalMouseLeave={false}>
             <div id='invoices'>
                 <Segment>
-                    <Header>{data.fullname} Record History</Header>
+                    <Header>{data ? data.fullname : ''} Record History</Header>
                     <Button
                         color='red'
                         content='Total Fee'

@@ -7,7 +7,7 @@ import Portal from '../../Portal/Portal';
 import RecordPortal from '../Portal/RecordPortal';
 
 import Receipt from '../../Receipt/Receipt';
-import Record from '../../Record/Record';
+import Record from '../Record/Record';
 import DoneButton from '../Button/DoneButton';
 import HistoryButton from '../Button/HistoryButton';
 import ReceiptPortal from '../Portal/ReceiptPortal';

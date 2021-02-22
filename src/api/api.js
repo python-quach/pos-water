@@ -166,6 +166,7 @@ export const printRenewReceipt = (data, callback) => {
         callback(response);
     });
 };
+
 export const api = {
     login,
     find,

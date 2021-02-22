@@ -9,9 +9,6 @@ const cellData = [
     'First Name',
     'Last Name',
     'Fee',
-    // 'Renew',
-    // 'Prev',
-    // 'Buy',
     'Gallon',
     'Date',
     'Time',
@@ -38,9 +35,6 @@ const NewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
                 <Table.Cell>{receipt ? receipt.firstName : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.lastName : ''}</Table.Cell>
                 <Table.Cell>{receipt ? `$${receipt.fee}` : '$0'}</Table.Cell>
-                {/* <Table.Cell>{receipt.renew ? receipt.renew : 'NEW'}</Table.Cell> */}
-                {/* <Table.Cell>{receipt ? receipt.prev : ''}</Table.Cell> */}
-                {/* <Table.Cell>{receipt.buy ? receipt.buy : 'NEW'}</Table.Cell> */}
                 <Table.Cell>{receipt ? receipt.remain : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.invoiceDate : ''}</Table.Cell>
                 <Table.Cell>{receipt ? receipt.invoiceTime : ''}</Table.Cell>
@@ -74,7 +68,6 @@ const NewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
 
                             print(printData, (done) => {
                                 console.log({ done });
-                                // setOpenReceipt(false);
                             });
                         }}
                     />
@@ -82,7 +75,6 @@ const NewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
                         <Button
                             size='massive'
                             color='black'
-                            // icon='remove'
                             content='Close'
                             onClick={() => {
                                 setOpenReceipt(false);

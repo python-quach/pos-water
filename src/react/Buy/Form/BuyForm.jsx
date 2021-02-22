@@ -25,21 +25,55 @@ import Fee from '../Field/Fee';
 import { api } from '../../../api/api';
 import { currentTime, currentDate } from '../../../helpers/helpers';
 
+const updateForm = (form, values) => {
+    const { buy, renew, remain, record_id } = values;
+    if (buy) {
+        form.initialize({
+            ...values,
+            record_id: record_id + 1,
+            prev: remain,
+            buy: 0,
+            invoiceDate: currentDate(),
+            invoiceTime: currentTime(),
+        });
+    }
+
+    if (renew) {
+        form.initialize({
+            ...values,
+            record_id: values.record_id + 1 || '',
+            prev: remain + renew,
+            remain: remain + renew,
+            fee: 0,
+            renew: 0,
+            invoiceDate: currentDate(),
+            invoiceTime: currentTime(),
+        });
+    }
+};
+
+const resetRenewForm = (form) => {
+    form.change('fee', 0);
+    form.change('renew', 0);
+};
+
+const resetBuyForm = (form, previous) => {
+    form.change('buy', 0);
+    form.change('remain', previous);
+};
+
 const BuyForm = ({
     receipt,
     disable,
     edit,
     setEdit,
-    resetBuyForm,
     setDisable,
     updateHistory,
-    updateForm,
     setOpenReceipt,
     setReceipt,
     setRecord,
     setActivePage,
     setTotalFee,
-    resetRenewForm,
     setTotalRenew,
     setTotalBuy,
 }) => {
@@ -132,7 +166,6 @@ const BuyForm = ({
     return (
         <FinalForm
             initialValuesEqual={() => true}
-            // onSubmit={handle.onSubmit}
             onSubmit={onSubmit}
             initialValues={initialValues}
             render={({ handleSubmit, form, values, initialValues }) => (

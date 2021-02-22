@@ -27,6 +27,7 @@ const {
     totalRenew,
     totalBuy,
     dailyReport,
+    totalInvoices,
 } = require('./db');
 
 // NOTE NEED TO CHANGE AREA CODE INTO STRING
@@ -364,6 +365,7 @@ ipcMain.on(channels.PRINT_BUY_RECEIPT, (event, arg) => {
     }
 });
 
+// PRINT RENEW RECEIPT
 ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
     const renewGallon = `Gallon Renew: ${arg.renew}`;
     const renewFee = `Renew Fee   : $${arg.fee}`;

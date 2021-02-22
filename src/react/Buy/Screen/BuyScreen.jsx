@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Divider } from 'semantic-ui-react';
-import { currentTime, currentDate } from '../../../helpers/helpers';
 import { BuyPortalConfig as config } from '../../../config/portal';
+
 import BuyForm from '../Form/BuyForm';
 import Portal from '../../Portal/Portal';
 import RecordPortal from '../Portal/RecordPortal';
-
 import Receipt from '../../Receipt/Receipt';
 import Record from '../Record/Record';
 import DoneButton from '../Button/DoneButton';
@@ -14,17 +13,21 @@ import ReceiptPortal from '../Portal/ReceiptPortal';
 import { api } from '../../../api/api';
 
 const BuyScreen = ({ history }) => {
+    const { account } = history.location.state;
+
     const [openReceipt, setOpenReceipt] = useState(false);
     const [receipt, setReceipt] = useState(history.location.state || {});
-    const [records, setRecord] = useState(0);
+    const [records, setRecords] = useState(0);
+
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
     const [open, setOpenPortal] = useState(false);
+
     const [totalFee, setTotalFee] = useState(0);
     const [totalRenew, setTotalRenew] = useState(0);
     const [totalBuy, setTotalBuy] = useState(0);
 
-    // Pagination;
+    // Pagination
     const [totalPages, setTotalPages] = useState(0);
     const [offset, setOffset] = useState(0);
     const [activePage, setActivePage] = useState(1);
@@ -35,58 +38,18 @@ const BuyScreen = ({ history }) => {
     };
 
     const data = history.location.state;
+
     const updateHistory = () => {
         api.history(
             {
-                account: data.account,
+                account,
                 limit: 10,
                 offset: 0,
             },
             (response) => {
-                setRecord(response);
+                setRecords(response);
             }
         );
-    };
-
-    const handleDone = () => {
-        history.push('/dashboard');
-    };
-
-    const resetRenewForm = (form) => {
-        form.change('fee', 0);
-        form.change('renew', 0);
-    };
-
-    const resetBuyForm = (form, previous) => {
-        form.change('buy', 0);
-        form.change('remain', previous);
-    };
-
-    const updateForm = (form, values) => {
-        const { buy, renew, remain, record_id } = values;
-        if (buy) {
-            form.initialize({
-                ...values,
-                record_id: record_id + 1,
-                prev: remain,
-                buy: 0,
-                invoiceDate: currentDate(),
-                invoiceTime: currentTime(),
-            });
-        }
-
-        if (renew) {
-            form.initialize({
-                ...values,
-                record_id: values.record_id + 1 || '',
-                prev: remain + renew,
-                remain: remain + renew,
-                fee: 0,
-                renew: 0,
-                invoiceDate: currentDate(),
-                invoiceTime: currentTime(),
-            });
-        }
     };
 
     useEffect(() => {
@@ -116,7 +79,7 @@ const BuyScreen = ({ history }) => {
                         offset: offset,
                     },
                     (response) => {
-                        setRecord(response);
+                        setRecords(response);
                     }
                 );
             });
@@ -131,7 +94,7 @@ const BuyScreen = ({ history }) => {
                     offset: offset,
                 },
                 (response) => {
-                    setRecord(response);
+                    setRecords(response);
                 }
             );
 
@@ -170,7 +133,7 @@ const BuyScreen = ({ history }) => {
                 receipt={receipt}
                 setOpenReceipt={setOpenReceipt}
                 setReceipt={setReceipt}
-                setRecord={setRecord}
+                setRecord={setRecords}
                 setActivePage={setActivePage}
                 setTotalFee={setTotalFee}
                 setTotalRenew={setTotalRenew}
@@ -179,19 +142,19 @@ const BuyScreen = ({ history }) => {
                 setEdit={setEdit}
                 updateHistory={updateHistory}
                 disable={disable}
-                resetBuyForm={resetBuyForm}
-                updateForm={updateForm}
-                resetRenewForm={resetRenewForm}
                 edit={edit}
             />
             <Divider />
             <Divider hidden />
-            <DoneButton edit={edit} handleDone={handleDone} />
+            <DoneButton
+                edit={edit}
+                handleDone={() => history.push('/dashboard')}
+            />
             <HistoryButton
                 open={open}
                 setOpenPortal={setOpenPortal}
                 api={api}
-                setRecord={setRecord}
+                setRecord={setRecords}
                 data={data}
                 offset={offset}
                 edit={edit}

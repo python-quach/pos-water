@@ -1,5 +1,5 @@
 {
-    "productName": "MckeePureWaterPOS",
+    "productName": "MPW-POS",
     "main": "electron/electron.js",
     "name": "electron-react-sqlite",
     "version": "0.1.0",

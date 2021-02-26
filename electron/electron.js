@@ -27,7 +27,7 @@ const {
     totalRenew,
     totalBuy,
     dailyReport,
-    totalInvoices,
+    // totalInvoices,
 } = require('./db');
 
 // NOTE NEED TO CHANGE AREA CODE INTO STRING

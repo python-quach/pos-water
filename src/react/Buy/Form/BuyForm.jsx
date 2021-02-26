@@ -170,7 +170,7 @@ const BuyForm = ({
             initialValues={initialValues}
             render={({ handleSubmit, form, values, initialValues }) => (
                 <Form
-                    size='massive'
+                    size='huge'
                     onSubmit={(event) => {
                         handleSubmit(event).then(() => {
                             updateForm(form, values);
@@ -238,7 +238,7 @@ const BuyForm = ({
                                 />
                             </>
                         )}
-                        <Form.Input type='hidden' width={!edit ? 5 : 2} />
+                        <Form.Input type='hidden' width={!edit ? 5 : 1} />
                         <PreviousGallon edited={edit} name='prev' />
                         <BuyGallon
                             name='buy'

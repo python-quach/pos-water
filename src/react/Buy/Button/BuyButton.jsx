@@ -3,7 +3,7 @@ import { Form } from 'semantic-ui-react';
 const BuyButton = ({ values, disable }) => {
     return (
         <Form.Button
-            size='massive'
+            size='huge'
             content='Buy'
             style={{
                 marginTop: '30px',

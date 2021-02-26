@@ -158,7 +158,7 @@ const BuyScreen = ({ history }) => {
                 data={data}
                 offset={offset}
                 edit={edit}
-                size='massive'
+                size='huge'
             />
             <RecordPortal
                 data={data}

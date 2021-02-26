@@ -9,7 +9,7 @@ const SaveButton = ({
     updateHistory,
 }) => (
     <Form.Button
-        size='massive'
+        size='huge'
         type='button'
         color='google plus'
         style={{

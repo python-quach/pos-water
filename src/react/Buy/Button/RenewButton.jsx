@@ -5,7 +5,7 @@ const RenewButton = ({ values }) => (
         type='submit'
         content='Renew'
         color='facebook'
-        size='massive'
+        size='huge'
         style={{ marginTop: '30px', width: '160px' }}
         disabled={!values.fee || !values.renew}
     />

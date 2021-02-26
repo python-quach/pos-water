@@ -3,7 +3,7 @@ import { Form } from 'semantic-ui-react';
 const DoneButton = ({ handleDone, edit }) => {
     return (
         <Form.Button
-            size='massive'
+            size='huge'
             disabled={edit}
             floated='right'
             type='button'

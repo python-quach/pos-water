@@ -238,7 +238,7 @@ const BuyForm = ({
                                 />
                             </>
                         )}
-                        <Form.Input type='hidden' width={!edit ? 5 : 1} />
+                        <Form.Input type='hidden' width={!edit ? 4 : 1} />
                         <PreviousGallon edited={edit} name='prev' />
                         <BuyGallon
                             name='buy'

@@ -75,7 +75,7 @@ const AddForm = ({ history, record }) => {
             }}
             render={({ handleSubmit, values }) => (
                 <Form
-                    size='massive'
+                    size='huge'
                     onSubmit={(event) => {
                         handleSubmit(event).then(() => {
                             console.log('form submit', error, values);

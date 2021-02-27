@@ -3,7 +3,7 @@ import { Form } from 'semantic-ui-react';
 const CancelButton = ({ history }) => {
     return (
         <Form.Button
-            size='massive'
+            size='huge'
             color='google plus'
             content='Cancel'
             style={{ marginTop: '30px' }}

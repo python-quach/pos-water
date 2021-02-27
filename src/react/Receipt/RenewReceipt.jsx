@@ -1,4 +1,4 @@
-import { Table, Button } from 'semantic-ui-react';
+import { Table, Button, Header } from 'semantic-ui-react';
 import { printRenewReceipt } from '../../api/api';
 
 const cellData = [
@@ -18,7 +18,7 @@ const cellData = [
 ];
 
 const RenewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
-    <Table celled striped selectable color='blue' size='large' compact>
+    <Table celled striped selectable color='blue' compact>
         <Table.Header>
             <Table.Row>
                 {cellData.map((cell, index) => (
@@ -28,28 +28,51 @@ const RenewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
         </Table.Header>
         <Table.Body>
             <Table.Row>
-                <Table.Cell>{receipt ? receipt.record_id : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.account : ''}</Table.Cell>
                 <Table.Cell>
-                    {receipt ? receipt.areaCode + '-' + receipt.phone : ''}
+                    <Header>{receipt ? receipt.record_id : ''}</Header>
                 </Table.Cell>
-                <Table.Cell>{receipt ? receipt.memberSince : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.firstName : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.lastName : ''}</Table.Cell>
-                <Table.Cell>{receipt ? `$${receipt.fee}` : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.prev : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.renew : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.remain : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.invoiceDate : ''}</Table.Cell>
-                <Table.Cell>{receipt ? receipt.invoiceTime : ''}</Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.account : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>
+                        {receipt ? receipt.areaCode + '-' + receipt.phone : ''}
+                    </Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.memberSince : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.firstName : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.lastName : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? `$${receipt.fee}` : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.prev : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.renew : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.remain : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.invoiceDate : ''}</Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>{receipt ? receipt.invoiceTime : ''}</Header>
+                </Table.Cell>
                 <Table.Cell textAlign='left'>
                     <Button
-                        size='massive'
+                        size='large'
                         color='red'
                         content='Print Receipt'
                         onClick={() => {
                             console.log('Print Renew Receipt', receipt);
-                            // const { membership } = receipt;
                             printRenewReceipt(receipt, (done) => {
                                 console.log('Print Renew', done);
                                 setOpenReceipt(false);
@@ -58,9 +81,8 @@ const RenewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
                     />
                     {openReceipt ? (
                         <Button
-                            size='massive'
+                            size='large'
                             color='black'
-                            // icon='remove'
                             content='Close'
                             onClick={() => {
                                 setOpenReceipt(false);

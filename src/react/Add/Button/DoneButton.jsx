@@ -3,7 +3,7 @@ import { Form } from 'semantic-ui-react';
 const DoneButton = ({ values }) => {
     return (
         <Form.Button
-            size='massive'
+            size='huge'
             type='submit'
             content='Done'
             color='facebook'

@@ -78,6 +78,18 @@
     color: #00bcd4;
 }
 
+.three.wide.field.TodayDate label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.three.wide.field.TodayDate div.ui.inverted.left.icon.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+.three.wide.field.three.wide.field.TodayDate div.ui.inverted.left.icon.input i {
+    color: #00bcd4;
+}
+
 /* BuyAccount */
 .two.wide.field.BuyAccount label {
     color: #fff;

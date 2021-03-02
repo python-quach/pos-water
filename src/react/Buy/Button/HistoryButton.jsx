@@ -10,6 +10,7 @@ const HistoryButton = ({
     edit,
     size,
 }) => {
+    console.log('LOOK HERE:', { data });
     return (
         <Form.Button
             size={size}
@@ -25,6 +26,10 @@ const HistoryButton = ({
                         account: data.account,
                         limit: 10,
                         offset: offset,
+                        phone: data.account,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        memberSince: data.memberSince,
                     },
                     (response) => {
                         setRecord(response);

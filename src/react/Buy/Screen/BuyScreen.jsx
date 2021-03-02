@@ -13,7 +13,14 @@ import ReceiptPortal from '../Portal/ReceiptPortal';
 import { api } from '../../../api/api';
 
 const BuyScreen = ({ history }) => {
-    const { account } = history.location.state;
+    console.log(history.location.state);
+    const {
+        account,
+        phone,
+        firstName,
+        lastName,
+        memberSince,
+    } = history.location.state;
 
     const [openReceipt, setOpenReceipt] = useState(false);
     const [receipt, setReceipt] = useState(history.location.state || {});
@@ -45,6 +52,10 @@ const BuyScreen = ({ history }) => {
                 account,
                 limit: 10,
                 offset: 0,
+                phone,
+                firstName,
+                lastName,
+                memberSince,
             },
             (response) => {
                 setRecords(response);
@@ -58,32 +69,73 @@ const BuyScreen = ({ history }) => {
 
     useEffect(() => {
         if (!totalPages && data)
-            api.totalInvoices({ account: data.account }, (response) => {
-                setTotalPages(response);
-                api.totalFee(data.account, (response) => {
-                    console.log('totalFee', response);
-                    setTotalFee(response);
-                    api.totalRenew(data.account, (response) => {
-                        console.log('totalRenew', response);
-                        setTotalRenew(response);
-                        api.totalBuy(data.account, (response) => {
-                            console.log('totalBuy', response);
-                            setTotalBuy(response);
-                        });
-                    });
-                });
-                api.history(
-                    {
-                        account: data.account,
-                        limit: 10,
-                        offset: offset,
-                    },
-                    (response) => {
-                        setRecords(response);
-                    }
-                );
-            });
-    }, [totalPages, setTotalPages, data, offset]);
+            api.totalInvoices(
+                { account: data.account, firstName, lastName, memberSince },
+                (response) => {
+                    setTotalPages(response);
+                    // api.totalFee(data.account, (response) => {
+                    api.totalFee(
+                        {
+                            account: data.account,
+                            firstName,
+                            lastName,
+                            memberSince,
+                        },
+                        (response) => {
+                            console.log('totalFee', response);
+                            setTotalFee(response);
+                            api.totalRenew(
+                                {
+                                    account: data.account,
+                                    firstName,
+                                    lastName,
+                                    memberSince,
+                                },
+                                (response) => {
+                                    console.log('totalRenew', response);
+                                    setTotalRenew(response);
+                                    api.totalBuy(
+                                        {
+                                            account: data.account,
+                                            firstName,
+                                            lastName,
+                                            memberSince,
+                                        },
+                                        (response) => {
+                                            console.log('totalBuy', response);
+                                            setTotalBuy(response);
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    );
+                    api.history(
+                        {
+                            account: data.account,
+                            limit: 10,
+                            offset: offset,
+                            phone,
+                            firstName,
+                            lastName,
+                            memberSince,
+                        },
+                        (response) => {
+                            setRecords(response);
+                        }
+                    );
+                }
+            );
+    }, [
+        totalPages,
+        setTotalPages,
+        data,
+        offset,
+        phone,
+        firstName,
+        lastName,
+        memberSince,
+    ]);
 
     useEffect(() => {
         if (open)
@@ -92,6 +144,10 @@ const BuyScreen = ({ history }) => {
                     account: data.account,
                     limit: 10,
                     offset: offset,
+                    phone,
+                    firstName,
+                    lastName,
+                    memberSince,
                 },
                 (response) => {
                     setRecords(response);
@@ -103,7 +159,7 @@ const BuyScreen = ({ history }) => {
             setActivePage(1);
             setTotalPages(0);
         }
-    }, [offset, data, open]);
+    }, [offset, data, open, phone, firstName, lastName, memberSince]);
 
     useEffect(() => {
         document.getElementById('buy').focus();

@@ -9,10 +9,11 @@ const PreviousGallon = ({ edited, name }) => {
             name={name}
             render={({ input }) => (
                 <Form.Input
+                    type='hidden'
                     {...input}
                     floated='right'
                     // label='Current'
-                    label='Previous'
+                    // label='Previous'
                     className='AreaCode'
                     readOnly
                     inverted

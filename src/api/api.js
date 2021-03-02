@@ -58,8 +58,20 @@ export const renew = (data, callback) => {
 };
 
 // History
-export const history = ({ account, limit, offset }, callback) => {
-    ipcRenderer.send(channels.HISTORY, { account, limit, offset });
+export const history = (
+    { account, limit, offset, phone, firstName, lastName, memberSince },
+    callback
+) => {
+    console.log(firstName, lastName);
+    ipcRenderer.send(channels.HISTORY, {
+        account,
+        limit,
+        offset,
+        phone,
+        firstName,
+        lastName,
+        memberSince,
+    });
     ipcRenderer.on(channels.HISTORY, (_, response) => {
         ipcRenderer.removeAllListeners(channels.HISTORY);
         callback(response);
@@ -67,8 +79,16 @@ export const history = ({ account, limit, offset }, callback) => {
 };
 
 // Total Invoices
-export const totalInvoices = ({ account }, callback) => {
-    ipcRenderer.send(channels.TOTAL, { account });
+export const totalInvoices = (
+    { account, firstName, lastName, memberSince },
+    callback
+) => {
+    ipcRenderer.send(channels.TOTAL, {
+        account,
+        firstName,
+        lastName,
+        memberSince,
+    });
     ipcRenderer.on(channels.TOTAL, (_, response) => {
         ipcRenderer.removeAllListeners(channels.TOTAL);
         callback(response);
@@ -86,9 +106,19 @@ export const lastRecord = (callback) => {
 };
 
 // GET TOTAL RENEWAL FEE
-export const getTotalRenewalFee = (account, callback) => {
+// export const getTotalRenewalFee = (account, callback) => {
+export const getTotalRenewalFee = (
+    { account, firstName, lastName, memberSince },
+    callback
+) => {
     console.log('total fee', account);
-    ipcRenderer.send(channels.TOTAL_FEE, { account });
+    // ipcRenderer.send(channels.TOTAL_FEE, { account });
+    ipcRenderer.send(channels.TOTAL_FEE, {
+        account,
+        firstName,
+        lastName,
+        memberSince,
+    });
     ipcRenderer.on(channels.TOTAL_FEE, (_, response) => {
         ipcRenderer.removeAllListeners(channels.TOTAL_FEE);
         const { totalRenewalFee } = response;
@@ -97,8 +127,17 @@ export const getTotalRenewalFee = (account, callback) => {
 };
 
 // GET TOTAL RENEWAL GALLON
-export const getTotalRenewalGallon = (account, callback) => {
-    ipcRenderer.send(channels.TOTAL_RENEW, { account });
+// export const getTotalRenewalGallon = (account, callback) => {
+export const getTotalRenewalGallon = (
+    { account, firstName, lastName, memberSince },
+    callback
+) => {
+    ipcRenderer.send(channels.TOTAL_RENEW, {
+        account,
+        firstName,
+        lastName,
+        memberSince,
+    });
     ipcRenderer.on(channels.TOTAL_RENEW, (_, response) => {
         ipcRenderer.removeAllListeners(channels.TOTAL_RENEW);
         const { totalRenewalGallon } = response;
@@ -107,8 +146,16 @@ export const getTotalRenewalGallon = (account, callback) => {
 };
 
 // GET TOTAL BUY GALLON
-export const getTotalBuyGallon = (account, callback) => {
-    ipcRenderer.send(channels.TOTAL_BUY, { account });
+export const getTotalBuyGallon = (
+    { account, firstName, lastName, memberSince },
+    callback
+) => {
+    ipcRenderer.send(channels.TOTAL_BUY, {
+        account,
+        firstName,
+        lastName,
+        memberSince,
+    });
     ipcRenderer.on(channels.TOTAL_BUY, (_, response) => {
         ipcRenderer.removeAllListeners(channels.TOTAL_BUY);
         const { totalBuyGallon } = response;

@@ -95,22 +95,64 @@ const BuyForm = ({
                 setOpenReceipt(true);
                 setReceipt(data);
                 api.history(
-                    { account: data.account, limit: 10, offset: 0 },
+                    {
+                        account: data.account,
+                        limit: 10,
+                        offset: 0,
+                        phone: data.phone,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        memberSince: data.memberSince,
+                    },
+
                     (response) => {
                         setRecord(response);
                         setActivePage(1);
-                        api.totalFee(data.account, (response) => {
-                            console.log('totalFee', response);
-                            setTotalFee(response);
-                            api.totalRenew(data.account, (response) => {
-                                console.log('totalRenew', response);
-                                setTotalRenew(response);
-                                api.totalBuy(data.account, (response) => {
-                                    console.log('totalBuy', response);
-                                    setTotalBuy(response);
-                                });
-                            });
-                        });
+                        // api.totalFee(data.account, (response) => {
+                        api.totalFee(
+                            {
+                                account: data.account,
+                                phone: data.phone,
+                                firstName: data.firstName,
+                                lastName: data.lastName,
+                                memberSince: data.memberSince,
+                            },
+                            (response) => {
+                                console.log('totalFee', response);
+                                setTotalFee(response);
+                                // api.totalRenew(data.account, (response) => {
+                                api.totalRenew(
+                                    {
+                                        account: data.account,
+                                        phone: data.phone,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        memberSince: data.memberSince,
+                                    },
+                                    (response) => {
+                                        console.log('totalRenew', response);
+                                        setTotalRenew(response);
+                                        api.totalBuy(
+                                            // data.account,
+                                            {
+                                                account: data.account,
+                                                phone: data.phone,
+                                                firstName: data.firstName,
+                                                lastName: data.lastName,
+                                                memberSince: data.memberSince,
+                                            },
+                                            (response) => {
+                                                console.log(
+                                                    'totalBuy',
+                                                    response
+                                                );
+                                                setTotalBuy(response);
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
                     }
                 );
             });
@@ -121,7 +163,16 @@ const BuyForm = ({
                 setReceipt(data);
                 setOpenReceipt(true);
                 api.history(
-                    { account: data.account, limit: 10, offset: 0 },
+                    // { account: data.account, limit: 10, offset: 0 },
+                    {
+                        account: data.account,
+                        limit: 10,
+                        offset: 0,
+                        phone: data.phone,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        memberSince: data.memberSince,
+                    },
                     (response) => {
                         setRecord(response);
                         setActivePage(1);

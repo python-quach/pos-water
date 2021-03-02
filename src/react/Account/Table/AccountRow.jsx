@@ -10,12 +10,14 @@ const AccountRow = ({
     areaCode,
     phone,
 }) => {
+    console.log({ account, phone });
     return (
         <Table.Row
             style={{ cursor: 'pointer' }}
             onClick={() => {
                 console.log('account', account);
-                api.find({ account }, (data) => {
+                // api.find({ account }, (data) => {
+                api.find({ account, phone, firstName, lastName }, (data) => {
                     api.lastRecord(({ record_id }) => {
                         console.log({ data, record_id });
                         history.push({

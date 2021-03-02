@@ -36,63 +36,150 @@ module.exports = {
     find: function (db, args, callback) {
         console.log('FIND:', { args });
         const { phone, account, firstName, lastName } = args;
+
         const fullname = firstName + '%' + lastName;
 
-        if (phone) {
-            db.all(sql.find_phone, phone, (err, rows) => {
-                if (err) return console.log(err.message);
-                if (rows && rows.length === 1) {
-                    const user_account = rows[0].account;
-                    db.get(
-                        sql.last_account_record,
-                        user_account,
-                        (err, row) => {
-                            if (err) return console.log(err.message);
-                            callback({ membership: row });
-                        }
-                    );
-                } else {
-                    db.all(sql.find_accounts_by_phone, phone, (err, rows) => {
-                        if (rows && rows.length === 1) {
-                            const account = rows[0].account;
-                            db.get(
-                                sql.last_account_record,
-                                account,
-                                (err, data) => {
-                                    callback({ membership: data });
-                                }
-                            );
-                        } else if (rows && rows.length > 1) {
-                            callback({ memberships: rows });
-                        } else {
-                            callback({ membership: null });
-                        }
-                    });
+        if (phone && account) {
+            console.log({ phone, account });
+            db.all(
+                sql.last_both_phone_account,
+                [account, phone],
+                (err, data) => {
+                    console.log(data);
+                    callback({ membership: data[0] });
                 }
-            });
-        } else if (account) {
-            db.get(sql.last_account_record, account, (err, row) => {
-                if (err) return console.log(err.message);
-                if (row) {
-                    callback({ membership: row });
-                } else {
-                    callback({ membership: null });
-                }
-            });
+            );
         } else {
-            db.all(sql.find_name, fullname, (err, rows) => {
-                if (rows.length === 1) {
-                    const account = rows[0].account;
-                    db.get(sql.last_account_record, account, (err, data) => {
-                        callback({ membership: data });
-                    });
-                } else if (rows.length > 1) {
-                    callback({ memberships: rows });
-                } else {
-                    callback({ membership: null });
-                }
-            });
+            if (phone) {
+                console.log(phone);
+                db.all(sql.find_phone, phone, (err, rows) => {
+                    // db.all(sql.find_phone, [phone, account], (err, rows) => {
+                    if (err) return console.log(err.message);
+                    // console.log(row)
+                    if (rows && rows.length === 1) {
+                        // const user_account = rows[0].account;
+                        const phone = rows[0].phone;
+                        db.get(
+                            sql.last_phone_record,
+                            // user_account,
+                            phone,
+                            (err, row) => {
+                                if (err) return console.log(err.message);
+                                callback({ membership: row });
+                            }
+                        );
+                    } else {
+                        db.all(
+                            sql.find_accounts_by_phone,
+                            phone,
+                            (err, rows) => {
+                                if (rows && rows.length === 1) {
+                                    const account = rows[0].account;
+                                    db.get(
+                                        sql.last_account_record,
+                                        account,
+                                        (err, data) => {
+                                            callback({ membership: data });
+                                        }
+                                    );
+                                } else if (rows && rows.length > 1) {
+                                    callback({ memberships: rows });
+                                } else {
+                                    callback({ membership: null });
+                                }
+                            }
+                        );
+                    }
+                });
+            } else if (account) {
+                db.get(sql.last_account_record, account, (err, row) => {
+                    if (err) return console.log(err.message);
+                    if (row) {
+                        callback({ membership: row });
+                    } else {
+                        callback({ membership: null });
+                    }
+                });
+            } else {
+                db.all(sql.find_name, fullname, (err, rows) => {
+                    if (rows.length === 1) {
+                        const account = rows[0].account;
+                        db.get(
+                            sql.last_account_record,
+                            account,
+                            (err, data) => {
+                                callback({ membership: data });
+                            }
+                        );
+                    } else if (rows.length > 1) {
+                        callback({ memberships: rows });
+                    } else {
+                        callback({ membership: null });
+                    }
+                });
+            }
         }
+
+        //     if (phone) {
+        //         console.log(phone);
+        //         db.all(sql.find_phone, phone, (err, rows) => {
+        //             // db.all(sql.find_phone, [phone, account], (err, rows) => {
+        //             if (err) return console.log(err.message);
+        //             // console.log(row)
+        //             if (rows && rows.length === 1) {
+        //                 // const user_account = rows[0].account;
+        //                 const phone = rows[0].phone;
+        //                 db.get(
+        //                     sql.last_phone_record,
+        //                     // user_account,
+        //                     phone,
+        //                     (err, row) => {
+        //                         if (err) return console.log(err.message);
+        //                         callback({ membership: row });
+        //                     }
+        //                 );
+        //             } else {
+        //                 db.all(sql.find_accounts_by_phone, phone, (err, rows) => {
+        //                     if (rows && rows.length === 1) {
+        //                         const account = rows[0].account;
+        //                         db.get(
+        //                             sql.last_account_record,
+        //                             account,
+        //                             (err, data) => {
+        //                                 callback({ membership: data });
+        //                             }
+        //                         );
+        //                     } else if (rows && rows.length > 1) {
+        //                         callback({ memberships: rows });
+        //                     } else {
+        //                         callback({ membership: null });
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     } else if (account) {
+        //         db.get(sql.last_account_record, account, (err, row) => {
+        //             if (err) return console.log(err.message);
+        //             if (row) {
+        //                 callback({ membership: row });
+        //             } else {
+        //                 callback({ membership: null });
+        //             }
+        //         });
+        //     } else {
+        //         db.all(sql.find_name, fullname, (err, rows) => {
+        //             if (rows.length === 1) {
+        //                 const account = rows[0].account;
+        //                 db.get(sql.last_account_record, account, (err, data) => {
+        //                     callback({ membership: data });
+        //                 });
+        //             } else if (rows.length > 1) {
+        //                 callback({ memberships: rows });
+        //             } else {
+        //                 callback({ membership: null });
+        //             }
+        //         });
+        //     }
     },
     buy: function (db, args, callback) {
         console.log('BUY: ', { args });
@@ -135,19 +222,66 @@ module.exports = {
         });
     },
     history: function (db, args, callback) {
-        const { account, limit, offset } = args;
-        db.all(sql.history, [account, limit, offset], (err, rows) => {
-            if (err) return console.log(err.message);
-            callback(rows);
-        });
+        console.log('HISTORY', args);
+        // const { account, limit, offset, phone } = args;
+        const {
+            account,
+            limit,
+            offset,
+            phone,
+            firstName,
+            lastName,
+            memberSince,
+        } = args;
+        console.log(phone);
+
+        const first = firstName || '';
+        const last = lastName || '';
+
+        const fullName = first + ' ' + last;
+        console.log({ fullName });
+        console.log(fullName.trim());
+        db.all(
+            sql.history,
+            // [account, firstName, lastName, limit, offset],
+            [
+                account,
+                // fullName.trim(),
+                memberSince,
+                // fullName.trim(),
+                limit,
+                offset,
+            ],
+            (err, rows) => {
+                if (err) return console.log(err.message);
+                callback(rows);
+            }
+        );
     },
     total_account_invoices: function (db, args, callback) {
-        const { account } = args;
-        db.get(sql.total_account_invoices, account, (err, count) => {
-            if (err) return console.log(err.message);
-            console.log('TOTAL ACCOUNT INVOICES: ', count.count);
-            callback(count.count);
+        const { account, firstName, lastName, memberSince } = args;
+        console.log('TOTAL ACCOUNT INVOICE', {
+            account,
+            firstName,
+            lastName,
+            memberSince,
         });
+        // db.get(sql.total_account_invoices, account, (err, count) => {
+        const first = firstName || '';
+        const last = lastName || '';
+        const fullName = first + ' ' + last;
+
+        db.get(
+            sql.total_account_invoices,
+            // [account, fullName.trim(), memberSince, fullName.trim()],
+            [account, memberSince],
+            (err, count) => {
+                // db.get(sql.total_account_invoices, account, (err, count) => {
+                if (err) return console.log(err.message);
+                console.log('TOTAL ACCOUNT INVOICES: ', count.count);
+                callback(count.count);
+            }
+        );
     },
     last_record: function (db, callback) {
         db.get(sql.last_row_record, (err, row) => {
@@ -159,48 +293,83 @@ module.exports = {
         });
     },
     totalFee: function (db, args, callback) {
-        const { account } = args;
-        db.get(sql.totalFee, account, (err, row) => {
-            if (err) {
-                return console.log(err.message);
+        // const { account } = args;
+        const { account, firstName, lastName, memberSince } = args;
+
+        const first = firstName || '';
+        const last = lastName || '';
+        const fullName = first + ' ' + last;
+
+        // db.get(sql.totalFee, account, (err, row) => {
+        db.get(
+            sql.totalFee,
+            // [account, fullName.trim(), memberSince, fullName.trim()],
+            [account, memberSince],
+            (err, row) => {
+                if (err) {
+                    return console.log(err.message);
+                }
+                const { totalRenewalFee } = row;
+                console.log('TOTAL RENEWAL FEE:', totalRenewalFee);
+                callback(totalRenewalFee);
             }
-            const { totalRenewalFee } = row;
-            console.log('TOTAL RENEWAL FEE:', totalRenewalFee);
-            callback(totalRenewalFee);
-        });
+        );
     },
     totalRenew: function (db, args, callback) {
-        const { account } = args;
-        db.all(sql.totalRenew, account, (err, row) => {
-            if (err) {
-                return console.log(err.message);
-            }
-            let sum = 0;
-            row.forEach((data) => {
-                if (parseInt(data.field19) === 0 && data.field28 === null) {
-                    sum = sum + parseInt(data.field31);
-                } else {
-                    if (data.field28 !== null) {
-                        sum = sum + parseInt(data.field28);
-                    }
+        // const { account } = args;
+        const { account, firstName, lastName, memberSince } = args;
+
+        const first = firstName || '';
+        const last = lastName || '';
+        const fullName = first + ' ' + last;
+        // db.all(sql.totalRenew, account, (err, row) => {
+        db.all(
+            sql.totalRenew,
+            // [account, fullName.trim(), memberSince, fullName.trim()],
+            [account, memberSince],
+            (err, row) => {
+                if (err) {
+                    return console.log(err.message);
                 }
-            });
+                let sum = 0;
+                row.forEach((data) => {
+                    if (parseInt(data.field19) === 0 && data.field28 === null) {
+                        sum = sum + parseInt(data.field31);
+                    } else {
+                        if (data.field28 !== null) {
+                            sum = sum + parseInt(data.field28);
+                        }
+                    }
+                });
 
-            console.log('TOTAL RENEW:', sum);
+                console.log('TOTAL RENEW:', sum);
 
-            callback({
-                totalRenewalGallon: sum,
-            });
-        });
+                callback({
+                    totalRenewalGallon: sum,
+                });
+            }
+        );
     },
     totalBuy: function (db, args, callback) {
-        const { account } = args;
-        db.get(sql.totalBuy, account, (err, row) => {
-            if (err) return console.log(err.message);
-            const { totalBuyGallon } = row;
-            console.log('TOTAL BUY:', totalBuyGallon);
-            callback({ totalBuyGallon });
-        });
+        // const { account } = args;
+        const { account, firstName, lastName, memberSince } = args;
+
+        const first = firstName || '';
+        const last = lastName || '';
+        const fullName = first + ' ' + last;
+
+        // db.get(sql.totalBuy, account, (err, row) => {
+        db.get(
+            sql.totalBuy,
+            // [account, fullName.trim(), memberSince, fullName.trim()],
+            [account, memberSince],
+            (err, row) => {
+                if (err) return console.log(err.message);
+                const { totalBuyGallon } = row;
+                console.log('TOTAL BUY:', totalBuyGallon);
+                callback({ totalBuyGallon });
+            }
+        );
     },
     dailyReport: function (db, args, callback) {
         const { date, time } = args;

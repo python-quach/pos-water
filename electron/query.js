@@ -22,8 +22,67 @@ const last_record = `SELECT * FROM test WHERE rowid = ?`;
 const login = 'SELECT * FROM users WHERE username = ? AND password = ? ';
 
 // FIND MEMBERSHIP SQL
-const find_phone = `SELECT DISTINCT field22 account FROM test WHERE field8 = ?`;
-const last_account_record = `SELECT 
+// const find_phone = `SELECT DISTINCT field22 account FROM test WHERE field8 = ?`;
+// const find_phone = `SELECT DISTINCT field8 phone, field22 account, field4 fullname FROM test WHERE field8 = ? AND field4 = ?`;
+const find_phone = `SELECT DISTINCT field8 phone, field22 account, field4 fullname FROM test WHERE field8 = ? `;
+const find_account = `SELECT DISTINCT field8 phone, field22 account FROM test WHERE field22 = ?`;
+const find_account_phone = `SELECT * FROM test WHERE field8 = '258-3381' AND field22 = '?'`;
+// const find_account = `SELECT DISTINCT`
+
+const last_both_phone_account = `
+SELECT
+	field20 record_id,
+	field22 account,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field10 memberSince,
+	field28 renew,
+	field31 prev,
+	field19 buy,
+	field12 remain,
+	field9 fee,
+	field15 invoiceDate,
+	field32 invoiceTime
+FROM
+	test
+WHERE
+	 field22 = ? AND field8 = ?  
+ORDER BY
+	field20
+DESC LIMIT 1
+`;
+
+const last_account_record = `SELECT
+	field20 record_id,
+	field22 account,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field10 memberSince,
+	field28 renew,
+	field31 prev,
+	field19 buy,
+	field12 remain,
+	field9 fee,
+	field15 invoiceDate,
+	field32 invoiceTime
+FROM
+	test
+WHERE
+	field22 = ?
+ORDER BY
+	field20
+DESC LIMIT 1`;
+const last_phone_record = `SELECT 
 	field20 record_id,
 	field22 account,
 	field1 firstName,
@@ -44,7 +103,7 @@ const last_account_record = `SELECT
 FROM 
 	test 
 WHERE 
-	field22 = ? 
+	field8 = ? 
 ORDER BY 
 	field20 
 DESC LIMIT 1`;
@@ -60,6 +119,23 @@ const find_name = `SELECT * FROM
             FROM test 
                 WHERE
     		        fullname like ?
+    		        ORDER BY
+    		    fullname
+            ) 
+        WHERE 
+            account IS NOT NULL 
+			AND phone IS NOT NULL`;
+const find_accounts_by_account = `SELECT * FROM
+            ( SELECT DISTINCT
+    		    field22 account,
+    		    field1 firstName,
+    		    field2 lastName,
+    		    field4 fullname,
+                field5 areaCode,
+    		    field8 phone
+            FROM test 
+                WHERE
+                    account = ?
     		        ORDER BY
     		    fullname
             ) 
@@ -204,7 +280,27 @@ const edit_last_account_record = `SELECT
         account = ? ORDER BY record_id DESC LIMIT 1 `;
 
 // HISTORY
-const history = `SELECT   
+// const history = `SELECT
+//                     field20 record_id,
+//                     field22 account,
+//                     field1 firstName,
+//                     field2 lastName,
+//                     field4 fullname,
+//                     field5 areaCode,
+//                     field6 threeDigit,
+//                     field7 fourDigit,
+//                     field8 phone,
+//                     field10 memberSince,
+//                     field31 prev,
+//                     field19 buy,
+//                     field12 remain,
+//                     field9 fee,
+//                     field28 renew,
+//                     field15 invoiceDate,
+//                     field32 invoiceTime
+//                 FROM test WHERE field22 = ? AND fullname = ? OR field10 = ? AND fullname= ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
+
+const history = `SELECT
                     field20 record_id,
                     field22 account,
                     field1 firstName,
@@ -221,16 +317,62 @@ const history = `SELECT
                     field9 fee,
                     field28 renew,
                     field15 invoiceDate,
-                    field32 invoiceTime  
-                FROM test WHERE field22 = ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
+                    field32 invoiceTime
+                FROM test WHERE field22 = ? AND memberSince = ?  ORDER BY field20 DESC LIMIT ? OFFSET ?`;
+
+// const history = `SELECT
+//                     field20 record_id,
+//                     field22 account,
+//                     field1 firstName,
+//                     field2 lastName,
+//                     field4 fullname,
+//                     field5 areaCode,
+//                     field6 threeDigit,
+//                     field7 fourDigit,
+//                     field8 phone,
+//                     field10 memberSince,
+//                     field31 prev,
+//                     field19 buy,
+//                     field12 remain,
+//                     field9 fee,
+//                     field28 renew,
+//                     field15 invoiceDate,
+//                     field32 invoiceTime
+//                 FROM test WHERE field22 = ? AND field8 = ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
 
 // TOTAL ACCOUNT INVOICES
-const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ?`;
+// const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field4 = ?`;
+// const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field4 = ?`;
+
+// const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?`;
+const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field10  = ?`;
 
 // LAST RECORD
 const last_row_record = ` SELECT field20 record_id FROM test ORDER BY record_id DESC LIMIT 1`;
 
 // TOTAL RENEW FEE
+// const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
+// (SELECT
+// 	field19 buyGallon,
+// 	field28 renewAmount,
+// 	field31 currentGallon,
+// 	field9 fees
+// FROM
+// test
+// WHERE field22 = ?)
+// WHERE buyGallon = 0 OR buyGallon IS NULL`;
+
+// const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
+// (SELECT
+// 	field19 buyGallon,
+// 	field28 renewAmount,
+// 	field31 currentGallon,
+// 	field9 fees
+// FROM
+// test
+// WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?)
+// WHERE buyGallon = 0 OR buyGallon IS NULL`;
+
 const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
 (SELECT 
 	field19 buyGallon,
@@ -239,10 +381,21 @@ const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
 	field9 fees
 FROM 
 test
-WHERE field22 = ?)
+WHERE field22 = ? AND  field10  = ?)
 WHERE buyGallon = 0 OR buyGallon IS NULL`;
 
 // TOTAL RENEW GALLON
+// const totalRenew = `SELECT * FROM
+// (SELECT
+// 	field19 ,
+// 	field28 ,
+// 	field31,
+// 	field9
+// FROM
+// test
+// WHERE field22 = ?)
+// WHERE field19 = 0 OR field19 IS NULL`;
+
 const totalRenew = `SELECT * FROM
 (SELECT 
 	field19 ,
@@ -251,10 +404,41 @@ const totalRenew = `SELECT * FROM
 	field9 
 FROM 
 test
-WHERE field22 = ?)
+WHERE field22 = ? AND  field10 = ? )
 WHERE field19 = 0 OR field19 IS NULL`;
 
+// const totalRenew = `SELECT * FROM
+// (SELECT
+// 	field19 ,
+// 	field28 ,
+// 	field31,
+// 	field9
+// FROM
+// test
+// WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?)
+// WHERE field19 = 0 OR field19 IS NULL`;
+
 // TOTAL BUY GALLON
+// const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
+// (SELECT
+// 	field19 ,
+// 	field28 ,
+// 	field31,
+// 	field9
+// FROM
+// test
+// WHERE field22 = ?)`;
+
+// const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
+// (SELECT
+// 	field19 ,
+// 	field28 ,
+// 	field31,
+// 	field9
+// FROM
+// test
+// WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?)`;
+
 const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
 (SELECT 
 	field19 ,
@@ -263,7 +447,7 @@ const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
 	field9 
 FROM 
 test
-WHERE field22 = ?)`;
+WHERE field22 = ? AND field10 = ? )`;
 
 // DAILY REPORT
 const reportRenew = `SELECT SUM(renewAmount) totalRenewAmount, SUM(fee) totalFee FROM 
@@ -349,9 +533,14 @@ module.exports = {
         last_record,
         login,
         find_phone,
+        find_account,
         last_account_record,
+        last_phone_record,
         find_name,
         find_accounts_by_phone,
+        find_accounts_by_account,
+        find_account_phone,
+        last_both_phone_account,
         buy,
         buy_lastRecord,
         renew,

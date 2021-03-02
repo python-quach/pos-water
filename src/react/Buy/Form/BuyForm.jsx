@@ -311,7 +311,7 @@ const BuyForm = ({
                         <BuyButton values={values} disable={disable} />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Input type='hidden' width={14} />
+                        <Form.Input type='hidden' width={13} />
                         <Fee
                             name='fee'
                             edit={edit}

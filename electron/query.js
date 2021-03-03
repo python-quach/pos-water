@@ -1,33 +1,38 @@
 const duplicate = `SELECT * FROM test WHERE field22 = ?`;
+
 const add = `INSERT INTO test (
-		            field20,
-                    field22,
-                    field1,
-                    field2,
-                    field4,
-                    field5,
-                    field6,
-                    field7,
-                    field8,
-                    field10,
-                    field31,
-                    field28,
-                    field19,
-                    field12,
-                    field9,
-                    field15,
-                    field32 
-		        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
+    field20,
+    field22,
+    field1,
+    field2,
+    field4,
+    field5,
+    field6,
+    field7,
+    field8,
+    field10,
+    field31,
+    field28,
+    field19,
+    field12,
+    field9,
+    field15,
+    field32 
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
+
 const last_record = `SELECT * FROM test WHERE rowid = ?`;
+
 const login = 'SELECT * FROM users WHERE username = ? AND password = ? ';
 
-// FIND MEMBERSHIP SQL
-// const find_phone = `SELECT DISTINCT field22 account FROM test WHERE field8 = ?`;
-// const find_phone = `SELECT DISTINCT field8 phone, field22 account, field4 fullname FROM test WHERE field8 = ? AND field4 = ?`;
 const find_phone = `SELECT DISTINCT field8 phone, field22 account, field4 fullname FROM test WHERE field8 = ? `;
-const find_account = `SELECT DISTINCT field8 phone, field22 account FROM test WHERE field22 = ?`;
+
+// const find_account = `SELECT DISTINCT field8 phone, field22 account FROM test WHERE field22 = ?`;
+// const find_account = `SELECT DISTINCT field8 phone, field22 account FROM test WHERE field22 = ?`;
+
+const find_account = `SELECT DISTINCT field10 memberSince, field22 account FROM test WHERE field22 = ?`;
+// const find_account = `SELECT DISTINCT field10 memberSince  FROM test WHERE field22 = ?`;
+
 const find_account_phone = `SELECT * FROM test WHERE field8 = '258-3381' AND field22 = '?'`;
-// const find_account = `SELECT DISTINCT`
 
 const last_both_phone_account = `
 SELECT
@@ -56,7 +61,6 @@ ORDER BY
 	field20
 DESC LIMIT 1
 `;
-
 const last_account_record = `SELECT
 	field20 record_id,
 	field22 account,
@@ -107,7 +111,6 @@ WHERE
 ORDER BY 
 	field20 
 DESC LIMIT 1`;
-
 const find_name = `SELECT * FROM
             ( SELECT DISTINCT
     		    field22 account,
@@ -125,23 +128,27 @@ const find_name = `SELECT * FROM
         WHERE 
             account IS NOT NULL 
 			AND phone IS NOT NULL`;
+
 const find_accounts_by_account = `SELECT * FROM
-            ( SELECT DISTINCT
-    		    field22 account,
-    		    field1 firstName,
-    		    field2 lastName,
-    		    field4 fullname,
-                field5 areaCode,
-    		    field8 phone
-            FROM test 
-                WHERE
-                    account = ?
-    		        ORDER BY
-    		    fullname
-            ) 
-        WHERE 
-            account IS NOT NULL 
-			AND phone IS NOT NULL`;
+( SELECT DISTINCT
+    field22 account,
+    field10 memberSince,
+    field8 phone,
+    field4 fullname,
+    field1 firstName,
+    field5 areaCode,
+    field2 lastName
+    
+FROM test 
+    WHERE
+        field22 =  ? 
+        ORDER BY
+      memberSince
+) 
+WHERE 
+account IS NOT NULL 
+AND memberSince IS NOT NULL`;
+
 const find_accounts_by_phone = `SELECT * FROM
             ( SELECT DISTINCT
     		    field22 account,
@@ -160,7 +167,6 @@ const find_accounts_by_phone = `SELECT * FROM
             account IS NOT NULL 
 			AND phone IS NOT NULL`;
 
-// BUY
 const buy = `INSERT INTO test(
   	field20,
 	field22,
@@ -179,9 +185,7 @@ const buy = `INSERT INTO test(
 	field28,
 	field15,
 	field32 
-
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 const buy_lastRecord = `SELECT 
     rowid,
     field20 record_id,
@@ -201,8 +205,6 @@ const buy_lastRecord = `SELECT
 	field28 renew,
 	field15 invoiceDate,
     field32 invoiceTime FROM test WHERE rowid = ? `;
-
-// RENEW
 const renew = `INSERT INTO test(
   	field20,
 	field22,
@@ -221,8 +223,7 @@ const renew = `INSERT INTO test(
 	field28,
 	field15,
 	field32 
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 const renew_lastRecord = `SELECT 
     rowid,
     field20 record_id,
@@ -241,20 +242,20 @@ const renew_lastRecord = `SELECT
 	field9 fee,
 	field28 renew,
 	field15 invoiceDate,
-    field32 invoiceTime FROM test WHERE rowid = ? `;
-
-// EDIT
-const edit = `UPDATE
-                   test 
-                SET
-                    field5 = ?,
-                    field8 = ?,
-                    field1 = ?,
-                    field2 = ?,
-                    field4 = ?,
-                    field6 = ?,
-                    field7 = ?
-                WHERE field22 = ?`;
+    field32 invoiceTime 
+FROM 
+    test 
+WHERE rowid = ? `;
+const edit = `UPDATE test 
+    SET
+        field5 = ?,
+        field8 = ?,
+        field1 = ?,
+        field2 = ?,
+        field4 = ?,
+        field6 = ?,
+        field7 = ?
+    WHERE field22 = ? AND field10 = ?`;
 
 const edit_last_account_record = `SELECT   
         field20 record_id,
@@ -277,28 +278,7 @@ const edit_last_account_record = `SELECT
     FROM 
     test
     WHERE 
-        account = ? ORDER BY record_id DESC LIMIT 1 `;
-
-// HISTORY
-// const history = `SELECT
-//                     field20 record_id,
-//                     field22 account,
-//                     field1 firstName,
-//                     field2 lastName,
-//                     field4 fullname,
-//                     field5 areaCode,
-//                     field6 threeDigit,
-//                     field7 fourDigit,
-//                     field8 phone,
-//                     field10 memberSince,
-//                     field31 prev,
-//                     field19 buy,
-//                     field12 remain,
-//                     field9 fee,
-//                     field28 renew,
-//                     field15 invoiceDate,
-//                     field32 invoiceTime
-//                 FROM test WHERE field22 = ? AND fullname = ? OR field10 = ? AND fullname= ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
+        account = ? AND memberSince = ? ORDER BY record_id DESC LIMIT 1 `;
 
 const history = `SELECT
                     field20 record_id,
@@ -320,59 +300,8 @@ const history = `SELECT
                     field32 invoiceTime
                 FROM test WHERE field22 = ? AND memberSince = ?  ORDER BY field20 DESC LIMIT ? OFFSET ?`;
 
-// const history = `SELECT
-//                     field20 record_id,
-//                     field22 account,
-//                     field1 firstName,
-//                     field2 lastName,
-//                     field4 fullname,
-//                     field5 areaCode,
-//                     field6 threeDigit,
-//                     field7 fourDigit,
-//                     field8 phone,
-//                     field10 memberSince,
-//                     field31 prev,
-//                     field19 buy,
-//                     field12 remain,
-//                     field9 fee,
-//                     field28 renew,
-//                     field15 invoiceDate,
-//                     field32 invoiceTime
-//                 FROM test WHERE field22 = ? AND field8 = ? ORDER BY field20 DESC LIMIT ? OFFSET ?`;
-
-// TOTAL ACCOUNT INVOICES
-// const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field4 = ?`;
-// const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field4 = ?`;
-
-// const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?`;
 const total_account_invoices = `SELECT COUNT(*) as count FROM test WHERE field22 = ? AND field10  = ?`;
-
-// LAST RECORD
 const last_row_record = ` SELECT field20 record_id FROM test ORDER BY record_id DESC LIMIT 1`;
-
-// TOTAL RENEW FEE
-// const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
-// (SELECT
-// 	field19 buyGallon,
-// 	field28 renewAmount,
-// 	field31 currentGallon,
-// 	field9 fees
-// FROM
-// test
-// WHERE field22 = ?)
-// WHERE buyGallon = 0 OR buyGallon IS NULL`;
-
-// const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
-// (SELECT
-// 	field19 buyGallon,
-// 	field28 renewAmount,
-// 	field31 currentGallon,
-// 	field9 fees
-// FROM
-// test
-// WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?)
-// WHERE buyGallon = 0 OR buyGallon IS NULL`;
-
 const totalFee = `SELECT SUM(fees) totalRenewalFee FROM
 (SELECT 
 	field19 buyGallon,
@@ -384,18 +313,6 @@ test
 WHERE field22 = ? AND  field10  = ?)
 WHERE buyGallon = 0 OR buyGallon IS NULL`;
 
-// TOTAL RENEW GALLON
-// const totalRenew = `SELECT * FROM
-// (SELECT
-// 	field19 ,
-// 	field28 ,
-// 	field31,
-// 	field9
-// FROM
-// test
-// WHERE field22 = ?)
-// WHERE field19 = 0 OR field19 IS NULL`;
-
 const totalRenew = `SELECT * FROM
 (SELECT 
 	field19 ,
@@ -406,38 +323,6 @@ FROM
 test
 WHERE field22 = ? AND  field10 = ? )
 WHERE field19 = 0 OR field19 IS NULL`;
-
-// const totalRenew = `SELECT * FROM
-// (SELECT
-// 	field19 ,
-// 	field28 ,
-// 	field31,
-// 	field9
-// FROM
-// test
-// WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?)
-// WHERE field19 = 0 OR field19 IS NULL`;
-
-// TOTAL BUY GALLON
-// const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
-// (SELECT
-// 	field19 ,
-// 	field28 ,
-// 	field31,
-// 	field9
-// FROM
-// test
-// WHERE field22 = ?)`;
-
-// const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
-// (SELECT
-// 	field19 ,
-// 	field28 ,
-// 	field31,
-// 	field9
-// FROM
-// test
-// WHERE field22 = ? AND field4 = ? OR field10 = ? AND field4 = ?)`;
 
 const totalBuy = `SELECT SUM(field19) totalBuyGallon FROM
 (SELECT 
@@ -684,6 +569,7 @@ module.exports = {
         areaCode,
         phone,
         account,
+        memberSince,
     }) {
         const newPhone = phone.replace(/[^\d+]/g, '');
         const threeDigit = newPhone.slice(0, 3);
@@ -698,7 +584,8 @@ module.exports = {
             threeDigit,
             fourDigit,
             account,
+            memberSince,
         ];
-        return [account, data];
+        return [account, memberSince, data];
     },
 };

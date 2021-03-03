@@ -53,21 +53,13 @@ module.exports = {
             if (phone) {
                 console.log(phone);
                 db.all(sql.find_phone, phone, (err, rows) => {
-                    // db.all(sql.find_phone, [phone, account], (err, rows) => {
                     if (err) return console.log(err.message);
-                    // console.log(row)
                     if (rows && rows.length === 1) {
-                        // const user_account = rows[0].account;
                         const phone = rows[0].phone;
-                        db.get(
-                            sql.last_phone_record,
-                            // user_account,
-                            phone,
-                            (err, row) => {
-                                if (err) return console.log(err.message);
-                                callback({ membership: row });
-                            }
-                        );
+                        db.get(sql.last_phone_record, phone, (err, row) => {
+                            if (err) return console.log(err.message);
+                            callback({ membership: row });
+                        });
                     } else {
                         db.all(
                             sql.find_accounts_by_phone,
@@ -92,14 +84,49 @@ module.exports = {
                     }
                 });
             } else if (account) {
-                db.get(sql.last_account_record, account, (err, row) => {
+                db.all(sql.find_account, account, (err, rows) => {
+                    console.log('ACCOUNT FIND: ', rows);
                     if (err) return console.log(err.message);
-                    if (row) {
-                        callback({ membership: row });
+                    if (rows && rows.length === 1) {
+                        const account = rows[0].account;
+                        db.get(sql.last_account_record, account, (err, row) => {
+                            if (err) return console.log(err.message);
+                            callback({ membership: row });
+                        });
                     } else {
-                        callback({ membership: null });
+                        console.log('else', account);
+                        db.all(
+                            sql.find_accounts_by_account,
+                            account,
+                            (err, rows) => {
+                                console.log('More Account: ', { rows });
+                                if (rows && rows.length === 1) {
+                                    const account = rows[0].account;
+                                    db.get(
+                                        sql.last_account_record,
+                                        account,
+                                        (err, data) => {
+                                            callback({ membership: data });
+                                        }
+                                    );
+                                } else if (rows && rows.length > 1) {
+                                    callback({ memberships: rows });
+                                } else {
+                                    callback({ membership: null });
+                                }
+                            }
+                        );
                     }
                 });
+
+                // db.get(sql.last_account_record, account, (err, row) => {
+                //     if (err) return console.log(err.message);
+                //     if (row) {
+                //         callback({ membership: row });
+                //     } else {
+                //         callback({ membership: null });
+                //     }
+                // });
             } else {
                 db.all(sql.find_name, fullname, (err, rows) => {
                     if (rows.length === 1) {
@@ -119,67 +146,6 @@ module.exports = {
                 });
             }
         }
-
-        //     if (phone) {
-        //         console.log(phone);
-        //         db.all(sql.find_phone, phone, (err, rows) => {
-        //             // db.all(sql.find_phone, [phone, account], (err, rows) => {
-        //             if (err) return console.log(err.message);
-        //             // console.log(row)
-        //             if (rows && rows.length === 1) {
-        //                 // const user_account = rows[0].account;
-        //                 const phone = rows[0].phone;
-        //                 db.get(
-        //                     sql.last_phone_record,
-        //                     // user_account,
-        //                     phone,
-        //                     (err, row) => {
-        //                         if (err) return console.log(err.message);
-        //                         callback({ membership: row });
-        //                     }
-        //                 );
-        //             } else {
-        //                 db.all(sql.find_accounts_by_phone, phone, (err, rows) => {
-        //                     if (rows && rows.length === 1) {
-        //                         const account = rows[0].account;
-        //                         db.get(
-        //                             sql.last_account_record,
-        //                             account,
-        //                             (err, data) => {
-        //                                 callback({ membership: data });
-        //                             }
-        //                         );
-        //                     } else if (rows && rows.length > 1) {
-        //                         callback({ memberships: rows });
-        //                     } else {
-        //                         callback({ membership: null });
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     } else if (account) {
-        //         db.get(sql.last_account_record, account, (err, row) => {
-        //             if (err) return console.log(err.message);
-        //             if (row) {
-        //                 callback({ membership: row });
-        //             } else {
-        //                 callback({ membership: null });
-        //             }
-        //         });
-        //     } else {
-        //         db.all(sql.find_name, fullname, (err, rows) => {
-        //             if (rows.length === 1) {
-        //                 const account = rows[0].account;
-        //                 db.get(sql.last_account_record, account, (err, data) => {
-        //                     callback({ membership: data });
-        //                 });
-        //             } else if (rows.length > 1) {
-        //                 callback({ memberships: rows });
-        //             } else {
-        //                 callback({ membership: null });
-        //             }
-        //         });
-        //     }
     },
     buy: function (db, args, callback) {
         console.log('BUY: ', { args });
@@ -205,13 +171,13 @@ module.exports = {
         });
     },
     edit: function (db, args, callback) {
-        const [account, data] = editData(args);
+        console.log('EDIT:', args);
+        const [account, memberSince, data] = editData(args);
         db.run(sql.edit, data, function (err) {
             if (err) return console.log(err.message);
-
             db.get(
                 sql.edit_last_account_record,
-                account,
+                [account, memberSince],
                 (err, lastAccountRecord) => {
                     console.log(lastAccountRecord);
                     if (err) return console.log(err.message);
@@ -223,7 +189,6 @@ module.exports = {
     },
     history: function (db, args, callback) {
         console.log('HISTORY', args);
-        // const { account, limit, offset, phone } = args;
         const {
             account,
             limit,
@@ -243,15 +208,7 @@ module.exports = {
         console.log(fullName.trim());
         db.all(
             sql.history,
-            // [account, firstName, lastName, limit, offset],
-            [
-                account,
-                // fullName.trim(),
-                memberSince,
-                // fullName.trim(),
-                limit,
-                offset,
-            ],
+            [account, memberSince, limit, offset],
             (err, rows) => {
                 if (err) return console.log(err.message);
                 callback(rows);
@@ -266,17 +223,10 @@ module.exports = {
             lastName,
             memberSince,
         });
-        // db.get(sql.total_account_invoices, account, (err, count) => {
-        const first = firstName || '';
-        const last = lastName || '';
-        const fullName = first + ' ' + last;
-
         db.get(
             sql.total_account_invoices,
-            // [account, fullName.trim(), memberSince, fullName.trim()],
             [account, memberSince],
             (err, count) => {
-                // db.get(sql.total_account_invoices, account, (err, count) => {
                 if (err) return console.log(err.message);
                 console.log('TOTAL ACCOUNT INVOICES: ', count.count);
                 callback(count.count);
@@ -293,83 +243,48 @@ module.exports = {
         });
     },
     totalFee: function (db, args, callback) {
-        // const { account } = args;
-        const { account, firstName, lastName, memberSince } = args;
+        const { account, memberSince } = args;
 
-        const first = firstName || '';
-        const last = lastName || '';
-        const fullName = first + ' ' + last;
-
-        // db.get(sql.totalFee, account, (err, row) => {
-        db.get(
-            sql.totalFee,
-            // [account, fullName.trim(), memberSince, fullName.trim()],
-            [account, memberSince],
-            (err, row) => {
-                if (err) {
-                    return console.log(err.message);
-                }
-                const { totalRenewalFee } = row;
-                console.log('TOTAL RENEWAL FEE:', totalRenewalFee);
-                callback(totalRenewalFee);
+        db.get(sql.totalFee, [account, memberSince], (err, row) => {
+            if (err) {
+                return console.log(err.message);
             }
-        );
+            const { totalRenewalFee } = row;
+            console.log('TOTAL RENEWAL FEE:', totalRenewalFee);
+            callback(totalRenewalFee);
+        });
     },
     totalRenew: function (db, args, callback) {
-        // const { account } = args;
-        const { account, firstName, lastName, memberSince } = args;
-
-        const first = firstName || '';
-        const last = lastName || '';
-        const fullName = first + ' ' + last;
-        // db.all(sql.totalRenew, account, (err, row) => {
-        db.all(
-            sql.totalRenew,
-            // [account, fullName.trim(), memberSince, fullName.trim()],
-            [account, memberSince],
-            (err, row) => {
-                if (err) {
-                    return console.log(err.message);
-                }
-                let sum = 0;
-                row.forEach((data) => {
-                    if (parseInt(data.field19) === 0 && data.field28 === null) {
-                        sum = sum + parseInt(data.field31);
-                    } else {
-                        if (data.field28 !== null) {
-                            sum = sum + parseInt(data.field28);
-                        }
-                    }
-                });
-
-                console.log('TOTAL RENEW:', sum);
-
-                callback({
-                    totalRenewalGallon: sum,
-                });
+        const { account, memberSince } = args;
+        db.all(sql.totalRenew, [account, memberSince], (err, row) => {
+            if (err) {
+                return console.log(err.message);
             }
-        );
+            let sum = 0;
+            row.forEach((data) => {
+                if (parseInt(data.field19) === 0 && data.field28 === null) {
+                    sum = sum + parseInt(data.field31);
+                } else {
+                    if (data.field28 !== null) {
+                        sum = sum + parseInt(data.field28);
+                    }
+                }
+            });
+            console.log('TOTAL RENEW:', sum);
+
+            callback({
+                totalRenewalGallon: sum,
+            });
+        });
     },
     totalBuy: function (db, args, callback) {
-        // const { account } = args;
-        const { account, firstName, lastName, memberSince } = args;
-
-        const first = firstName || '';
-        const last = lastName || '';
-        const fullName = first + ' ' + last;
-
-        // db.get(sql.totalBuy, account, (err, row) => {
-        db.get(
-            sql.totalBuy,
-            // [account, fullName.trim(), memberSince, fullName.trim()],
-            [account, memberSince],
-            (err, row) => {
-                if (err) return console.log(err.message);
-                const { totalBuyGallon } = row;
-                console.log('TOTAL BUY:', totalBuyGallon);
-                callback({ totalBuyGallon });
-            }
-        );
+        const { account, memberSince } = args;
+        db.get(sql.totalBuy, [account, memberSince], (err, row) => {
+            if (err) return console.log(err.message);
+            const { totalBuyGallon } = row;
+            console.log('TOTAL BUY:', totalBuyGallon);
+            callback({ totalBuyGallon });
+        });
     },
     dailyReport: function (db, args, callback) {
         const { date, time } = args;

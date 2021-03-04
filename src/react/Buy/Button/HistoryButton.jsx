@@ -13,6 +13,7 @@ const HistoryButton = ({
     console.log('LOOK HERE:', { data });
     return (
         <Form.Button
+            style={{ width: '160px', marginRight: '15px' }}
             size={size}
             content={open ? 'Close' : 'History'}
             color={open ? 'red' : 'teal'}

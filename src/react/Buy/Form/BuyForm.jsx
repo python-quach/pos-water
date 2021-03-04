@@ -108,7 +108,6 @@ const BuyForm = ({
                     (response) => {
                         setRecord(response);
                         setActivePage(1);
-                        // api.totalFee(data.account, (response) => {
                         api.totalFee(
                             {
                                 account: data.account,
@@ -120,7 +119,6 @@ const BuyForm = ({
                             (response) => {
                                 console.log('totalFee', response);
                                 setTotalFee(response);
-                                // api.totalRenew(data.account, (response) => {
                                 api.totalRenew(
                                     {
                                         account: data.account,
@@ -133,7 +131,6 @@ const BuyForm = ({
                                         console.log('totalRenew', response);
                                         setTotalRenew(response);
                                         api.totalBuy(
-                                            // data.account,
                                             {
                                                 account: data.account,
                                                 phone: data.phone,
@@ -163,7 +160,6 @@ const BuyForm = ({
                 setReceipt(data);
                 setOpenReceipt(true);
                 api.history(
-                    // { account: data.account, limit: 10, offset: 0 },
                     {
                         account: data.account,
                         limit: 10,
@@ -289,7 +285,7 @@ const BuyForm = ({
                                 />
                             </>
                         )}
-                        <Form.Input type='hidden' width={!edit ? 4 : 1} />
+                        <Form.Input type='hidden' width={!edit ? 5 : 1} />
                         <PreviousGallon edited={edit} name='prev' />
                         <BuyGallon
                             name='buy'
@@ -311,7 +307,7 @@ const BuyForm = ({
                         <BuyButton values={values} disable={disable} />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Input type='hidden' width={13} />
+                        <Form.Input type='hidden' width={14} />
                         <Fee
                             name='fee'
                             edit={edit}

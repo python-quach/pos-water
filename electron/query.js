@@ -142,6 +142,7 @@ DESC LIMIT 1`;
 const find_name = `SELECT * FROM
             ( SELECT DISTINCT
     		    field22 account,
+                field10 memberSince,
     		    field1 firstName,
     		    field2 lastName,
     		    field4 fullname,

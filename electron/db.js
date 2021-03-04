@@ -135,7 +135,7 @@ module.exports = {
                 });
             } else {
                 db.all(sql.find_name, fullname, (err, rows) => {
-                    if (rows.length === 1) {
+                    if (rows && rows.length === 1) {
                         const name = rows[0].fullname;
                         db.get(sql.last_name_record, name, (err, data) => {
                             callback({ membership: data });

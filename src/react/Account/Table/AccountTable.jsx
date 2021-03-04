@@ -6,11 +6,13 @@ const AccountTable = ({ children }) => {
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell content='Account' />
+                    <Table.HeaderCell content='Member Since' />
                     <Table.HeaderCell content='First Name' />
                     <Table.HeaderCell content='Last Name' />
                     <Table.HeaderCell content='Full Name' />
                     <Table.HeaderCell content='Area Code' />
                     <Table.HeaderCell content='Phone' />
+                    <Table.HeaderCell content='Action' />
                 </Table.Row>
             </Table.Header>
             <Table.Body>{children}</Table.Body>

@@ -27,6 +27,7 @@ const {
     totalRenew,
     totalBuy,
     dailyReport,
+    deleteAccount,
     // totalInvoices,
 } = require('./db');
 
@@ -395,4 +396,18 @@ ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
 
         event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: false });
     }
+});
+
+// Delete Account
+ipcMain.on(channels.DELETE_ACCOUNT, (event, args) => {
+    console.log('DELETE:', args);
+    deleteAccount(db, args, (err, result) => {
+        if (err) {
+            event.sender.send(channels.DELETE_ACCOUNT, { delete: false });
+        }
+        event.sender.send(channels.DELETE_ACCOUNT, {
+            delete: true,
+            result: result,
+        });
+    });
 });

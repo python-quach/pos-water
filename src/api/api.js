@@ -9,6 +9,17 @@ export const login = ({ password, username }, callback) => {
     });
 };
 
+// Delete Membership
+export const deleteAccount = (data, callback) => {
+    console.table([{ ...data }]);
+    ipcRenderer.send(channels.DELETE_ACCOUNT, data);
+    ipcRenderer.on(channels.DELETE_ACCOUNT, (_, arg) => {
+        ipcRenderer.removeAllListeners(channels.DELETE_ACCOUNT);
+        console.log('DELETE COMPLETED', arg);
+        callback(arg);
+    });
+};
+
 // Add Membership
 export const add = (data, callback) => {
     console.table([{ ...data }]);
@@ -232,4 +243,5 @@ export const api = {
     printBuyReceipt,
     printRenewReceipt,
     print,
+    deleteAccount,
 };

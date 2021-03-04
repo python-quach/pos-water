@@ -156,6 +156,7 @@ const find_accounts_by_phone = `SELECT * FROM
     		    field2 lastName,
     		    field4 fullname,
                 field5 areaCode,
+                field10 memberSince,
     		    field8 phone
             FROM test 
                 WHERE

@@ -1,6 +1,21 @@
 const { sql, addData, buyData, renewData, editData } = require('./query');
 
 module.exports = {
+    deleteAccount: function (db, arg, callback) {
+        const { account, memberSince, password } = arg;
+        const sql_delete = `DELETE FROM test WHERE field22 = ? AND field10 = ? `;
+
+        if (password === '911') {
+            db.run(sql_delete, [account, memberSince], function (err) {
+                if (err) return console.log(err.message);
+                console.log('DELETED RESULT:', this);
+                callback(false, this.changes);
+            });
+        } else {
+            console.log('Unable to delete', account);
+            callback(true, null);
+        }
+    },
     addMemberShip: function (db, args, callback) {
         console.log('ADD: ', { ...args });
         const [account, data] = addData(args);

@@ -20,10 +20,15 @@ export const config = {
     gridColumn: {},
 };
 
-const renderRows = function (account, history) {
+const renderRows = function (account, history, setAccount) {
     return account
         ? account.map((member, index) => (
-              <Row key={index} {...member} history={history} />
+              <Row
+                  key={index}
+                  {...member}
+                  history={history}
+                  setAccount={setAccount}
+              />
           ))
         : null;
 };
@@ -45,6 +50,7 @@ const AccountScreen = ({ history }) => {
         }
     });
 
+    // This will show max 10 member per page
     useEffect(() => {
         setAccount(
             memberships
@@ -53,9 +59,13 @@ const AccountScreen = ({ history }) => {
         );
     }, [setOffset, setAccount, activePage, offset, memberships]);
 
+    useEffect(() => {
+        console.log(account);
+    });
+
     return (
         <Portal {...config}>
-            <Table>{renderRows(account, history)}</Table>
+            <Table>{renderRows(account, history, setAccount)}</Table>
             <Pagination
                 size='massive'
                 activePage={activePage}

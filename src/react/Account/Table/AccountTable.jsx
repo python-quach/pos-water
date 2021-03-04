@@ -2,7 +2,7 @@ import { Table } from 'semantic-ui-react';
 
 const AccountTable = ({ children }) => {
     return (
-        <Table celled selectable color='blue' size='large'>
+        <Table celled color='blue' size='large'>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell content='Account' />

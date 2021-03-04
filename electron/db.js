@@ -133,26 +133,13 @@ module.exports = {
                         );
                     }
                 });
-
-                // db.get(sql.last_account_record, account, (err, row) => {
-                //     if (err) return console.log(err.message);
-                //     if (row) {
-                //         callback({ membership: row });
-                //     } else {
-                //         callback({ membership: null });
-                //     }
-                // });
             } else {
                 db.all(sql.find_name, fullname, (err, rows) => {
                     if (rows.length === 1) {
-                        const account = rows[0].account;
-                        db.get(
-                            sql.last_account_record,
-                            account,
-                            (err, data) => {
-                                callback({ membership: data });
-                            }
-                        );
+                        const name = rows[0].fullname;
+                        db.get(sql.last_name_record, name, (err, data) => {
+                            callback({ membership: data });
+                        });
                     } else if (rows.length > 1) {
                         callback({ memberships: rows });
                     } else {

@@ -86,6 +86,34 @@ WHERE
 ORDER BY
 	field20
 DESC LIMIT 1`;
+
+const last_name_record = `SELECT
+	field20 record_id,
+	field22 account,
+	field1 firstName,
+	field2 lastName,
+	field4 fullname,
+	field5 areaCode,
+	field6 threeDigit,
+	field7 fourDigit,
+	field8 phone,
+	field10 memberSince,
+	field28 renew,
+	field31 prev,
+	field19 buy,
+	field12 remain,
+	field9 fee,
+	field15 invoiceDate,
+	field32 invoiceTime
+FROM
+	test
+WHERE
+	field4 = ?
+ORDER BY
+	field20
+DESC LIMIT 1
+`;
+
 const last_phone_record = `SELECT 
 	field20 record_id,
 	field22 account,
@@ -422,6 +450,7 @@ module.exports = {
         find_account,
         last_account_record,
         last_phone_record,
+        last_name_record,
         find_name,
         find_accounts_by_phone,
         find_accounts_by_account,

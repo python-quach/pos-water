@@ -175,3 +175,9 @@
     font-size: 24px;
     font-weight: bold;
 }
+
+/* ACCOUNT TABLE */
+.ui.blue.large.celled.table {
+    font-size: 24px;
+    font-weight: bold;
+}

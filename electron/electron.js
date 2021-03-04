@@ -28,7 +28,6 @@ const {
     totalBuy,
     dailyReport,
     deleteAccount,
-    // totalInvoices,
 } = require('./db');
 
 // NOTE NEED TO CHANGE AREA CODE INTO STRING
@@ -150,7 +149,6 @@ ipcMain.on(channels.ADD, (event, arg) => {
         if (duplicateAccount) {
             event.sender.send(channels.ADD, duplicateAccount);
         } else {
-            // if (device) printAddReceipt(device, printer, data);
             event.sender.send(channels.ADD, data);
         }
     });
@@ -173,8 +171,6 @@ ipcMain.on(channels.FIND, (event, arg) => {
 // BUY
 ipcMain.on(channels.BUY, (event, arg) => {
     buy(db, arg, (data) => {
-        // Remove to prevent automatic printing
-        // if (device) printBuyReceipt(device, printer, data);
         event.sender.send(channels.BUY, data);
     });
 });
@@ -182,7 +178,6 @@ ipcMain.on(channels.BUY, (event, arg) => {
 // RENEW
 ipcMain.on(channels.RENEW, (event, arg) => {
     renew(db, arg, (data) => {
-        // if (device) printRenewReceipt(device, printer, data);
         event.sender.send(channels.RENEW, data);
     });
 });
@@ -270,7 +265,8 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
     dialog
         .showSaveDialog({
             properties: ['openFile', 'multiSelections'],
-            defaultPath: `backup-${datetime}.sqlite3`,
+            // defaultPath: `backup-${datetime}.sqlite3`,
+            defaultPath: `membership.sqlite3`,
             filters: [{ name: 'Sqlite3', extensions: ['sqlite3'] }],
         })
         .then((result) => {

@@ -1,22 +1,12 @@
 import { channels } from '../shared/constants';
 const { ipcRenderer } = window;
 
+// LOGIN
 export const login = ({ password, username }, callback) => {
     ipcRenderer.send(channels.LOGIN, { username, password });
     ipcRenderer.on(channels.LOGIN, (_, { login }) => {
         ipcRenderer.removeAllListeners(channels.LOGIN);
         callback(login);
-    });
-};
-
-// Delete Membership
-export const deleteAccount = (data, callback) => {
-    console.table([{ ...data }]);
-    ipcRenderer.send(channels.DELETE_ACCOUNT, data);
-    ipcRenderer.on(channels.DELETE_ACCOUNT, (_, arg) => {
-        ipcRenderer.removeAllListeners(channels.DELETE_ACCOUNT);
-        console.log('DELETE COMPLETED', arg);
-        callback(arg);
     });
 };
 
@@ -117,13 +107,11 @@ export const lastRecord = (callback) => {
 };
 
 // GET TOTAL RENEWAL FEE
-// export const getTotalRenewalFee = (account, callback) => {
 export const getTotalRenewalFee = (
     { account, firstName, lastName, memberSince },
     callback
 ) => {
     console.log('total fee', account);
-    // ipcRenderer.send(channels.TOTAL_FEE, { account });
     ipcRenderer.send(channels.TOTAL_FEE, {
         account,
         firstName,
@@ -138,7 +126,6 @@ export const getTotalRenewalFee = (
 };
 
 // GET TOTAL RENEWAL GALLON
-// export const getTotalRenewalGallon = (account, callback) => {
 export const getTotalRenewalGallon = (
     { account, firstName, lastName, memberSince },
     callback
@@ -197,7 +184,7 @@ export const backup = (callback) => {
     });
 };
 
-// PRINT RECEIPT
+// PRINT NEW MEMBERSHIP RECEIPT
 export const print = (data, callback) => {
     ipcRenderer.send(channels.PRINT_RECEIPT, data);
     ipcRenderer.on(channels.PRINT_RECEIPT, (_, response) => {
@@ -216,12 +203,24 @@ export const printBuyReceipt = (data, callback) => {
     });
 };
 
+// PRINT RENEW RECEIPT
 export const printRenewReceipt = (data, callback) => {
     console.log('API RENEW PRINT:', data);
     ipcRenderer.send(channels.PRINT_RENEW_RECEIPT, data);
     ipcRenderer.on(channels.PRINT_RENEW_RECEIPT, (_, response) => {
         ipcRenderer.removeAllListeners(channels.PRINT_RENEW_RECEIPT);
         callback(response);
+    });
+};
+
+// Delete Membership
+export const deleteAccount = (data, callback) => {
+    console.table([{ ...data }]);
+    ipcRenderer.send(channels.DELETE_ACCOUNT, data);
+    ipcRenderer.on(channels.DELETE_ACCOUNT, (_, arg) => {
+        ipcRenderer.removeAllListeners(channels.DELETE_ACCOUNT);
+        console.log('DELETE COMPLETED', arg);
+        callback(arg);
     });
 };
 

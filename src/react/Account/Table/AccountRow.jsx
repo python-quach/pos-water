@@ -95,71 +95,89 @@ const AccountRow = ({
                             Delete
                         </Button>
                     }>
-                    <Modal.Header>Account: {account}</Modal.Header>
-                    <Modal.Header>MemberSince: {memberSince}</Modal.Header>
-                    <Modal.Header>Name: {fullname}</Modal.Header>
-                    <Modal.Header>
-                        Phone: ({areaCode})-{phone}
-                    </Modal.Header>
-                    <Modal.Content image>
+                    <Modal.Content>
                         <Modal.Description>
-                            <Header>Admin Password Required to Delete</Header>
-                            <FinalForm
-                                onSubmit={onSubmit}
-                                initialValues={{
-                                    account,
-                                    memberSince,
-                                    phone,
-                                    lastName,
-                                    firstName,
-                                    fullname,
-                                }}
-                                render={({ handleSubmit, values }) => {
-                                    return (
-                                        <Form
-                                            onSubmit={(event) => {
-                                                handleSubmit(event);
-                                            }}>
-                                            <Form.Group inline>
-                                                <Field
-                                                    name='password'
-                                                    render={({ input }) => (
-                                                        <Form.Input
-                                                            {...input}
-                                                            type='password'
-                                                            id='password'
-                                                            label='Password'
-                                                            placeholder='Enter Admin Password'
-                                                        />
-                                                    )}
-                                                />
-                                                <Form.Button negative>
-                                                    Confirm Delete
-                                                </Form.Button>
-                                            </Form.Group>
-                                            {errorMessage && (
-                                                <Message
-                                                    negative
-                                                    content={errorMessage}
-                                                />
-                                            )}
-                                        </Form>
-                                    );
-                                }}
-                            />
+                            <Header>
+                                Admin Password Required to Delete Account
+                            </Header>
+                            <Table celled size='large' striped>
+                                <Table.Header>
+                                    <Table.HeaderCell>Account</Table.HeaderCell>
+                                    <Table.HeaderCell>
+                                        MemberSince
+                                    </Table.HeaderCell>
+                                    <Table.HeaderCell>Name</Table.HeaderCell>
+                                    <Table.HeaderCell>Phone</Table.HeaderCell>
+                                </Table.Header>
+                                <Table.Body>
+                                    <Table.Row>
+                                        <Table.Cell>{account}</Table.Cell>
+                                        <Table.Cell>{memberSince}</Table.Cell>
+                                        <Table.Cell>{fullname}</Table.Cell>
+                                        <Table.Cell>
+                                            ({areaCode})-{phone}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                </Table.Body>
+                            </Table>
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button color='black' onClick={() => setOpen(false)}>
-                            Cancel
-                        </Button>
-                        <Button
+                        <FinalForm
+                            onSubmit={onSubmit}
+                            initialValues={{
+                                account,
+                                memberSince,
+                                phone,
+                                lastName,
+                                firstName,
+                                fullname,
+                            }}
+                            render={({ handleSubmit, values }) => {
+                                return (
+                                    <Form
+                                        onSubmit={(event) => {
+                                            handleSubmit(event);
+                                        }}>
+                                        <Form.Group inline>
+                                            <Field
+                                                name='password'
+                                                render={({ input }) => (
+                                                    <Form.Input
+                                                        {...input}
+                                                        type='password'
+                                                        id='password'
+                                                        label='Password'
+                                                        placeholder='Enter Admin Password'
+                                                    />
+                                                )}
+                                            />
+                                            <Form.Button negative>
+                                                Confirm Delete
+                                            </Form.Button>
+                                            <Button
+                                                color='black'
+                                                onClick={() => setOpen(false)}>
+                                                Cancel
+                                            </Button>
+                                        </Form.Group>
+                                        {errorMessage && (
+                                            <Message
+                                                negative
+                                                content={errorMessage}
+                                            />
+                                        )}
+                                    </Form>
+                                );
+                            }}
+                        />
+                        {/* <Button
                             negative
                             content='Delete'
                             labelPosition='right'
                             icon='remove'
                             onClick={() => setOpen(false)}
-                        />
+                        /> */}
                     </Modal.Actions>
                 </Modal>
             </Table.Cell>

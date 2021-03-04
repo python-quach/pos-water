@@ -351,7 +351,7 @@ ipcMain.on(channels.PRINT_BUY_RECEIPT, (event, arg) => {
 
     if (device) {
         printBuyReceipt(device, printer, arg);
-        event.sender.send(channels.PRINT_RECEIPT, { done: true });
+        event.sender.send(channels.PRINT_BUY_RECEIPT, { done: true });
     } else {
         console.log(blank);
         console.log(fullname);

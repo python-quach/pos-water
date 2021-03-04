@@ -89,6 +89,7 @@ const NewReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
 
                             print(printData, (done) => {
                                 console.log({ done });
+                                setOpenReceipt(false);
                             });
                         }}
                     />

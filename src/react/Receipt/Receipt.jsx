@@ -15,8 +15,8 @@ const Receipt = ({ receipt, setOpenReceipt, openReceipt }) => {
         return (
             <BuyReceipt
                 receipt={receipt}
-                setOpenReceipt={setOpenReceipt}
                 openReceipt={openReceipt}
+                setOpenReceipt={setOpenReceipt}
             />
         );
     return (

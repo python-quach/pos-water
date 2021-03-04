@@ -7,7 +7,7 @@ const DoneButton = ({ values }) => {
             type='submit'
             content='Done'
             color='facebook'
-            style={{ marginTop: '30px' }}
+            style={{ marginTop: '30px', width: '130px' }}
             disabled={
                 !values.fee ||
                 !values.renew ||

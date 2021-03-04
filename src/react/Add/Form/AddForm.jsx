@@ -98,7 +98,7 @@ const AddForm = ({ history, record }) => {
                         <Phone width={2} />
                         <FirstName width={2} />
                         <LastName width={2} />
-                        <Form.Input type='hidden' width={3} />
+                        <Form.Input type='hidden' width={4} />
                         <Fee width={1} />
                         <Renew width={1} />
                         <DoneButton values={values} />

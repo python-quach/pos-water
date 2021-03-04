@@ -6,7 +6,7 @@ const CancelButton = ({ history }) => {
             size='huge'
             color='google plus'
             content='Cancel'
-            style={{ marginTop: '30px' }}
+            style={{ marginTop: '30px', width: '160px' }}
             onClick={(e) => {
                 e.preventDefault();
                 history.push('/dashboard');

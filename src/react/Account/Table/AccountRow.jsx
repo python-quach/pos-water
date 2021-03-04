@@ -43,7 +43,7 @@ const AccountRow = ({
     };
 
     return (
-        <Table.Row style={{ cursor: 'pointer' }}>
+        <Table.Row>
             <Table.Cell content={account} />
             <Table.Cell content={memberSince} />
             <Table.Cell content={firstName} />

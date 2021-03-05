@@ -15,6 +15,8 @@ const DoneButton = ({ values }) => {
                 !values.lastName ||
                 !values.phone ||
                 !values.areaCode ||
+                values.areaCode.length < 3 ||
+                values.phone.length < 8 ||
                 !values.account
             }
         />

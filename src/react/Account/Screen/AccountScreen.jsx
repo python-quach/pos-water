@@ -54,7 +54,8 @@ const AccountScreen = ({ history }) => {
     useEffect(() => {
         setAccount(
             memberships
-                ? memberships.slice((activePage - 1) * 10, activePage * 10)
+                ? // ? memberships.slice((activePage - 1) * 10, activePage * 10)
+                  memberships.slice((activePage - 1) * 5, activePage * 5)
                 : null
         );
     }, [setOffset, setAccount, activePage, offset, memberships]);
@@ -71,7 +72,8 @@ const AccountScreen = ({ history }) => {
                 activePage={activePage}
                 onPageChange={onChange}
                 totalPages={
-                    memberships ? Math.ceil(memberships.length / 10) : 0
+                    // memberships ? Math.ceil(memberships.length / 10) : 0
+                    memberships ? Math.ceil(memberships.length / 5) : 0
                 }
             />
             <Button

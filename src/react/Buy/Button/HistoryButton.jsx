@@ -10,7 +10,7 @@ const HistoryButton = ({
     edit,
     size,
 }) => {
-    console.log('LOOK HERE:', { data });
+    // console.log('LOOK HERE:', { data });
     return (
         <Form.Button
             style={{ width: '160px', marginRight: '15px' }}

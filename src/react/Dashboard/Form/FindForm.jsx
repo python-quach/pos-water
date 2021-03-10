@@ -17,14 +17,14 @@ const FindForm = ({ history }) => {
         api.find({ phone, account, firstName, lastName }, (data) => {
             if (data.membership) {
                 api.lastRecord(({ record_id }) => {
-                    console.log({ data, record_id });
+                    // console.log({ data, record_id });
                     history.push({
                         pathname: '/buy',
                         state: { ...data.membership, newRecordID: record_id },
                     });
                 });
             } else if (data.memberships) {
-                console.table(data.memberships);
+                // console.table(data.memberships);
                 history.push({
                     pathname: '/accounts',
                     state: data.memberships,

@@ -117,7 +117,7 @@ const BuyForm = ({
                                 memberSince: data.memberSince,
                             },
                             (response) => {
-                                console.log('totalFee', response);
+                                // console.log('totalFee', response);
                                 setTotalFee(response);
                                 api.totalRenew(
                                     {
@@ -128,7 +128,7 @@ const BuyForm = ({
                                         memberSince: data.memberSince,
                                     },
                                     (response) => {
-                                        console.log('totalRenew', response);
+                                        // console.log('totalRenew', response);
                                         setTotalRenew(response);
                                         api.totalBuy(
                                             {
@@ -139,10 +139,10 @@ const BuyForm = ({
                                                 memberSince: data.memberSince,
                                             },
                                             (response) => {
-                                                console.log(
-                                                    'totalBuy',
-                                                    response
-                                                );
+                                                // console.log(
+                                                //     'totalBuy',
+                                                //     response
+                                                // );
                                                 setTotalBuy(response);
                                             }
                                         );
@@ -173,13 +173,13 @@ const BuyForm = ({
                         setRecord(response);
                         setActivePage(1);
                         api.totalFee(data.account, (response) => {
-                            console.log('totalFee', response);
+                            // console.log('totalFee', response);
                             setTotalFee(response);
                             api.totalRenew(data.account, (response) => {
-                                console.log('totalRenew', response);
+                                // console.log('totalRenew', response);
                                 setTotalRenew(response);
                                 api.totalBuy(data.account, (response) => {
-                                    console.log('totalBuy', response);
+                                    // console.log('totalBuy', response);
                                     setTotalBuy(response);
                                 });
                             });

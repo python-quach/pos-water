@@ -16,7 +16,7 @@ const AccountRow = ({
 }) => {
     const [open, setOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    console.log({ memberSince });
+    // console.log({ memberSince });
 
     const onSubmit = async (values) => {
         console.log('onSubmit:', values);
@@ -58,12 +58,12 @@ const AccountRow = ({
                     primary
                     onClick={(e) => {
                         e.preventDefault();
-                        console.log('account', account);
+                        // console.log('account', account);
                         api.find(
                             { account, phone, firstName, lastName },
                             (data) => {
                                 api.lastRecord(({ record_id }) => {
-                                    console.log({ data, record_id });
+                                    // console.log({ data, record_id });
                                     history.push({
                                         pathname: '/buy',
                                         state: {

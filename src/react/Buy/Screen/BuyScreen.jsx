@@ -13,14 +13,9 @@ import ReceiptPortal from '../Portal/ReceiptPortal';
 import { api } from '../../../api/api';
 
 const BuyScreen = ({ history }) => {
-    console.log(history.location.state);
-    const {
-        account,
-        phone,
-        firstName,
-        lastName,
-        memberSince,
-    } = history.location.state;
+    // console.log(history.location.state);
+    const { account, phone, firstName, lastName, memberSince } =
+        history.location.state || {};
 
     const [openReceipt, setOpenReceipt] = useState(false);
     const [receipt, setReceipt] = useState(history.location.state || {});
@@ -82,7 +77,7 @@ const BuyScreen = ({ history }) => {
                             memberSince,
                         },
                         (response) => {
-                            console.log('totalFee', response);
+                            // console.log('totalFee', response);
                             setTotalFee(response);
                             api.totalRenew(
                                 {
@@ -92,7 +87,7 @@ const BuyScreen = ({ history }) => {
                                     memberSince,
                                 },
                                 (response) => {
-                                    console.log('totalRenew', response);
+                                    // console.log('totalRenew', response);
                                     setTotalRenew(response);
                                     api.totalBuy(
                                         {
@@ -102,7 +97,7 @@ const BuyScreen = ({ history }) => {
                                             memberSince,
                                         },
                                         (response) => {
-                                            console.log('totalBuy', response);
+                                            // console.log('totalBuy', response);
                                             setTotalBuy(response);
                                         }
                                     );

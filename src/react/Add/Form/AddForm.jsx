@@ -39,7 +39,7 @@ const AddForm = ({ history, record }) => {
                 } else {
                     find({ account: data.account }, (data) => {
                         lastRecord(({ record_id }) => {
-                            console.log({ data, record_id });
+                            // console.log({ data, record_id });
                             history.push({
                                 pathname: '/buy',
                                 state: {
@@ -77,9 +77,10 @@ const AddForm = ({ history, record }) => {
                 <Form
                     size='huge'
                     onSubmit={(event) => {
-                        handleSubmit(event).then(() => {
-                            console.log('form submit', error, values);
-                        });
+                        handleSubmit(event);
+                        // handleSubmit(event).then(() => {
+                        // console.log('form submit', error, values);
+                        // });
                     }}>
                     <Form.Group>
                         <Form.Input type='hidden' width={12} />

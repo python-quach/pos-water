@@ -12,22 +12,22 @@ export const login = ({ password, username }, callback) => {
 
 // Add Membership
 export const add = (data, callback) => {
-    console.table([{ ...data }]);
+    // console.table([{ ...data }]);
     ipcRenderer.send(channels.ADD, data);
     ipcRenderer.on(channels.ADD, (event, arg) => {
         ipcRenderer.removeAllListeners(channels.ADD);
-        console.table(arg);
+        // console.table(arg);
         callback(arg);
     });
 };
 
 // Find Membership
 export const find = ({ phone, account, firstName, lastName }, callback) => {
-    console.log('Find', phone, account, firstName, lastName);
+    // console.log('Find', phone, account, firstName, lastName);
     ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
     ipcRenderer.on(channels.FIND, (_, data) => {
         ipcRenderer.removeAllListeners(channels.FIND);
-        console.log(data);
+        // console.log(data);
         callback(data);
     });
 };
@@ -63,7 +63,7 @@ export const history = (
     { account, limit, offset, phone, firstName, lastName, memberSince },
     callback
 ) => {
-    console.log(firstName, lastName);
+    // console.log(firstName, lastName);
     ipcRenderer.send(channels.HISTORY, {
         account,
         limit,
@@ -101,7 +101,7 @@ export const lastRecord = (callback) => {
     ipcRenderer.send(channels.LAST_RECORD);
     ipcRenderer.on(channels.LAST_RECORD, (_, response) => {
         ipcRenderer.removeAllListeners(channels.LAST_RECORD);
-        console.log({ response });
+        // console.log({ response });
         callback(response);
     });
 };
@@ -111,7 +111,7 @@ export const getTotalRenewalFee = (
     { account, firstName, lastName, memberSince },
     callback
 ) => {
-    console.log('total fee', account);
+    // console.log('total fee', account);
     ipcRenderer.send(channels.TOTAL_FEE, {
         account,
         firstName,
@@ -195,7 +195,7 @@ export const print = (data, callback) => {
 
 // PRINT BUY RECEIPT
 export const printBuyReceipt = (data, callback) => {
-    console.log('API BUY PRINT:', data);
+    // console.log('API BUY PRINT:', data);
     ipcRenderer.send(channels.PRINT_BUY_RECEIPT, data);
     ipcRenderer.on(channels.PRINT_BUY_RECEIPT, (_, response) => {
         ipcRenderer.removeAllListeners(channels.PRINT_BUY_RECEIPT);
@@ -205,7 +205,7 @@ export const printBuyReceipt = (data, callback) => {
 
 // PRINT RENEW RECEIPT
 export const printRenewReceipt = (data, callback) => {
-    console.log('API RENEW PRINT:', data);
+    // console.log('API RENEW PRINT:', data);
     ipcRenderer.send(channels.PRINT_RENEW_RECEIPT, data);
     ipcRenderer.on(channels.PRINT_RENEW_RECEIPT, (_, response) => {
         ipcRenderer.removeAllListeners(channels.PRINT_RENEW_RECEIPT);
@@ -215,55 +215,55 @@ export const printRenewReceipt = (data, callback) => {
 
 // Delete Membership
 export const deleteAccount = (data, callback) => {
-    console.table([{ ...data }]);
+    // console.table([{ ...data }]);
     ipcRenderer.send(channels.DELETE_ACCOUNT, data);
     ipcRenderer.on(channels.DELETE_ACCOUNT, (_, arg) => {
         ipcRenderer.removeAllListeners(channels.DELETE_ACCOUNT);
-        console.log('DELETE COMPLETED', arg);
+        // console.log('DELETE COMPLETED', arg);
         callback(arg);
     });
 };
 
 // Get all users
 export const getUsers = (callback) => {
-    console.log('GET ALL USER');
+    // console.log('GET ALL USER');
     ipcRenderer.send(channels.GET_USERS);
     ipcRenderer.on(channels.GET_USERS, (_, arg) => {
         ipcRenderer.removeAllListeners(channels.GET_USERS);
-        console.log('GET USERS', arg);
+        // console.log('GET USERS', arg);
         callback(arg);
     });
 };
 
 // Add new users
 export const addUser = (data, callback) => {
-    console.log('Add User:', data);
+    // console.log('Add User:', data);
     ipcRenderer.send(channels.ADD_USER, data);
     ipcRenderer.on(channels.ADD_USER, (_, arg) => {
         ipcRenderer.removeAllListeners(channels.ADD_USER);
-        console.log('Add User:', arg);
+        // console.log('Add User:', arg);
         callback(arg);
     });
 };
 
 // Edit user
 export const editUser = (data, callback) => {
-    console.log('Edit User:', data);
+    // console.log('Edit User:', data);
     ipcRenderer.send(channels.EDIT_USER, data);
     ipcRenderer.on(channels.EDIT_USER, (_, arg) => {
         ipcRenderer.removeAllListeners(channels.EDIT_USER);
-        console.log('Edit User:', arg);
+        // console.log('Edit User:', arg);
         callback(arg);
     });
 };
 
 // Delete users
 export const deleteUser = (data, callback) => {
-    console.log('Delete User:', data);
+    // console.log('Delete User:', data);
     ipcRenderer.send(channels.DELETE_USER, data);
     ipcRenderer.on(channels.DELETE_USER, (_, arg) => {
         ipcRenderer.removeAllListeners(channels.DELETE_USER);
-        console.log('Delete User:', arg);
+        // console.log('Delete User:', arg);
         callback(arg);
     });
 };

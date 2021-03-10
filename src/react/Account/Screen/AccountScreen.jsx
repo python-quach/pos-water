@@ -60,9 +60,9 @@ const AccountScreen = ({ history }) => {
         );
     }, [setOffset, setAccount, activePage, offset, memberships]);
 
-    useEffect(() => {
-        console.log(account);
-    });
+    // useEffect(() => {
+    //     console.log(account);
+    // });
 
     return (
         <Portal {...config}>

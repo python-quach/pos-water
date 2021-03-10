@@ -67,7 +67,7 @@ const BuyReceipt = ({ receipt, setOpenReceipt, openReceipt }) => (
                         color='red'
                         content='Print Receipt'
                         onClick={() => {
-                            console.log('Print Buy Receipt', receipt);
+                            // console.log('Print Buy Receipt', receipt);
                             printBuyReceipt(receipt, (done) => {
                                 console.log('Print Buy', done);
                                 setOpenReceipt(false);

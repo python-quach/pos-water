@@ -330,7 +330,7 @@ const LoginForm = ({ size, history }) => {
                         icon='database'
                         labelPosition='right'
                         circular
-                        negative
+                        color='yellow'
                         fluid
                         onClick={(e) => {
                             e.preventDefault();

@@ -63,10 +63,10 @@ usbDetect.startMonitoring();
 usbDetect
     .find()
     .then(function (devices) {
-        console.log(devices);
+        // console.log(devices);
         devices.forEach(function (item) {
             if (item.deviceName === 'USB Printing Support') {
-                console.log('Found USB: ', { ...item });
+                // console.log('Found USB: ', { ...item });
                 escpos = require('escpos');
                 escpos.USB = require('escpos-usb');
                 device = new escpos.USB();
@@ -75,7 +75,7 @@ usbDetect
         });
     })
     .catch(function (err) {
-        console.log('71', err);
+        // console.log('71', err);
         escpos = null;
         device = null;
         printer = null;
@@ -88,7 +88,7 @@ usbDetect.on('add', function (usbDevice) {
         .then(function (devices) {
             devices.forEach(function (item) {
                 if (item.deviceName === 'USB Printing Support') {
-                    console.log('Found USB: ', { ...item });
+                    // console.log('Found USB: ', { ...item });
                     escpos = require('escpos');
                     escpos.USB = require('escpos-usb');
                     setTimeout(function () {
@@ -249,13 +249,13 @@ ipcMain.on(channels.REPORT, (event, arg) => {
 // Close Application
 ipcMain.on(channels.CLOSE_APP, (event, _) => {
     ipcMain.removeAllListeners(channels.CLOSE_APP);
-    console.log('Closing App');
+    // console.log('Closing App');
     app.quit();
 });
 
 // BACK UP DATABASE
 ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
-    console.log('open dialog box');
+    // console.log('open dialog box');
     const currentdate = new Date();
     const datetime =
         currentdate.getMonth() +
@@ -274,7 +274,7 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
             filters: [{ name: 'Sqlite3', extensions: ['sqlite3'] }],
         })
         .then((result) => {
-            console.log(result);
+            // console.log(result);
             if (result.filePath) {
                 fs.copyFile(dbFile, result.filePath, function (err) {
                     if (err) {
@@ -300,7 +300,7 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
             }
         })
         .catch((err) => {
-            console.log('catch', err);
+            // console.log('catch', err);
             event.sender.send(channels.SHOW_BACKUP_DIALOG, {
                 open: false,
             });
@@ -309,30 +309,30 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
 
 // PRINT NEW MEMBERSHIP
 ipcMain.on(channels.PRINT_RECEIPT, (event, arg) => {
-    const renewFee = `Membership Fee: $${arg.field9}`;
-    const fullname = `${arg.field4} -- ${arg.field7}`;
-    const gallonLeft = `Gallon Total  : ${arg.field31}`;
-    const blank = '';
-    const time = `${arg.field15}  ${arg.field32}`;
-    const message = `Thank You                [Account#: ${arg.field22}]`;
+    // const renewFee = `Membership Fee: $${arg.field9}`;
+    // const fullname = `${arg.field4} -- ${arg.field7}`;
+    // const gallonLeft = `Gallon Total  : ${arg.field31}`;
+    // const blank = '';
+    // const time = `${arg.field15}  ${arg.field32}`;
+    // const message = `Thank You                [Account#: ${arg.field22}]`;
 
-    const receipt = () => {
-        console.log(fullname);
-        console.log(renewFee);
-        console.log(gallonLeft);
-        console.log(time);
-        console.log(blank);
-        console.log(message);
-        console.log('Mckee Pure Water');
-        console.log('(408) 729-1319');
-    };
+    // const receipt = () => {
+    //     console.log(fullname);
+    //     console.log(renewFee);
+    //     console.log(gallonLeft);
+    //     console.log(time);
+    //     console.log(blank);
+    //     console.log(message);
+    //     console.log('Mckee Pure Water');
+    //     console.log('(408) 729-1319');
+    // };
 
-    console.log('PRINT: ', arg);
-    receipt();
+    // console.log('PRINT: ', arg);
+    // receipt();
 
     if (device) {
         printAddReceipt(device, printer, arg, (done) => {
-            console.log({ done });
+            // console.log({ done });
             event.sender.send(channels.PRINT_RECEIPT, { done: true });
         });
     } else {
@@ -342,57 +342,57 @@ ipcMain.on(channels.PRINT_RECEIPT, (event, arg) => {
 
 // PRINT BUY RECEIPT
 ipcMain.on(channels.PRINT_BUY_RECEIPT, (event, arg) => {
-    const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
-    const prevGallon = `Gallon Prev: ${arg.prev}`;
-    const gallonBuy = `Gallon Buy : ${arg.buy}`;
-    const blank = '';
-    const gallonLeft = `Gallon Left: ${arg.remain}`;
-    const message = `Thank You                [Account#: ${arg.account}]`;
+    // const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
+    // const prevGallon = `Gallon Prev: ${arg.prev}`;
+    // const gallonBuy = `Gallon Buy : ${arg.buy}`;
+    // const blank = '';
+    // const gallonLeft = `Gallon Left: ${arg.remain}`;
+    // const message = `Thank You                [Account#: ${arg.account}]`;
 
     if (device) {
         printBuyReceipt(device, printer, arg);
         event.sender.send(channels.PRINT_BUY_RECEIPT, { done: true });
     } else {
-        console.log(blank);
-        console.log(fullname);
-        console.log(prevGallon);
-        console.log(gallonBuy);
-        console.log(gallonLeft);
-        console.log(arg.invoiceDate + ' ' + arg.invoiceTime);
-        console.log(blank);
-        console.log(message);
-        console.log('Mckee Pure Water');
-        console.log('(408) 729-1319');
-        console.log(blank);
+        // console.log(blank);
+        // console.log(fullname);
+        // console.log(prevGallon);
+        // console.log(gallonBuy);
+        // console.log(gallonLeft);
+        // console.log(arg.invoiceDate + ' ' + arg.invoiceTime);
+        // console.log(blank);
+        // console.log(message);
+        // console.log('Mckee Pure Water');
+        // console.log('(408) 729-1319');
+        // console.log(blank);
         event.sender.send(channels.PRINT_BUY_RECEIPT, { done: false });
     }
 });
 
 // PRINT RENEW RECEIPT
 ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
-    const renewGallon = `Gallon Renew: ${arg.renew}`;
-    const renewFee = `Renew Fee   : $${arg.fee}`;
-    const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
-    const totalGallon = `Gallon Left : ${arg.remain}`;
-    const message = `Thank You                [Account#: ${arg.account}]`;
-    const blank = '';
+    // const renewGallon = `Gallon Renew: ${arg.renew}`;
+    // const renewFee = `Renew Fee   : $${arg.fee}`;
+    // const fullname = `${arg.fullname} -- ${arg.fourDigit}`;
+    // const totalGallon = `Gallon Left : ${arg.remain}`;
+    // const message = `Thank You                [Account#: ${arg.account}]`;
+    // const blank = '';
 
     if (device) {
         printRenewReceipt(device, printer, arg);
         event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: true });
     } else {
-        console.log(blank);
-        console.log(fullname.trim());
-        console.log(renewFee);
-        console.log(`Gallon Prev : ${arg.prev}`);
-        console.log(renewGallon);
-        console.log(totalGallon);
-        console.log(arg.invoiceDate + ' ' + arg.invoiceTime);
-        console.log(blank);
-        console.log(message);
-        console.log('Mckee Pure Water');
-        console.log('(408) 729-1319');
-        console.log(blank);
+        // console.log(blank);
+        // console.log(fullname.trim());
+        // console.log(renewFee);
+        // console.log(`Gallon Prev : ${arg.prev}`);
+        // console.log(renewGallon);
+        // console.log(totalGallon);
+        // console.log(arg.invoiceDate + ' ' + arg.invoiceTime);
+        // console.log(blank);
+        // console.log(message);
+        // console.log('Mckee Pure Water');
+        // console.log('(408) 729-1319');
+        // console.log(blank);
 
         event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: false });
     }
@@ -400,7 +400,7 @@ ipcMain.on(channels.PRINT_RENEW_RECEIPT, (event, arg) => {
 
 // Delete Account
 ipcMain.on(channels.DELETE_ACCOUNT, (event, args) => {
-    console.log('DELETE:', args);
+    // console.log('DELETE:', args);
     deleteAccount(db, args, (err, result) => {
         if (err) {
             event.sender.send(channels.DELETE_ACCOUNT, { delete: false });
@@ -414,36 +414,36 @@ ipcMain.on(channels.DELETE_ACCOUNT, (event, args) => {
 
 // Get User Account
 ipcMain.on(channels.GET_USERS, (event, args) => {
-    console.log('Users Account', args);
+    // console.log('Users Account', args);
     getAllUsers(db, args, (err, result) => {
-        console.log({ err, result });
+        // console.log({ err, result });
         event.sender.send(channels.GET_USERS, result);
     });
 });
 
 // Add New User
 ipcMain.on(channels.ADD_USER, (event, args) => {
-    console.log('Add User:', args);
+    // console.log('Add User:', args);
     addUser(db, args, (err, result) => {
-        console.log({ err, result });
+        // console.log({ err, result });
         event.sender.send(channels.ADD_USER, result);
     });
 });
 
 // Delete User
 ipcMain.on(channels.DELETE_USER, (event, args) => {
-    console.log('Delete User:', args);
+    // console.log('Delete User:', args);
     deleteUser(db, args, (err, result) => {
-        console.log({ err, result });
+        // console.log({ err, result });
         event.sender.send(channels.DELETE_USER, result);
     });
 });
 
 // Edit User
 ipcMain.on(channels.EDIT_USER, (event, args) => {
-    console.log('Edit User:', args);
+    // console.log('Edit User:', args);
     editUser(db, args, (err, result) => {
-        console.log({ err, result });
+        // console.log({ err, result });
         event.sender.send(channels.EDIT_USER, result);
     });
 });

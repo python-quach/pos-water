@@ -12,12 +12,12 @@ module.exports = {
                 callback(false, this.changes);
             });
         } else {
-            console.log('Unable to delete', account);
+            // console.log('Unable to delete', account);
             callback(true, null);
         }
     },
     addMemberShip: function (db, args, callback) {
-        console.log('ADD: ', { ...args });
+        // console.log('ADD: ', { ...args });
         const [account, data] = addData(args);
         db.get(sql.duplicate, account, (err, duplicate) => {
             if (err) return console.log(err.message);
@@ -26,7 +26,7 @@ module.exports = {
                     if (err) return console.log(err.message);
                     db.get(sql.last_record, this.lastID, (err, row) => {
                         if (err) return console.log(err.message);
-                        console.log('ADD NEW ACCOUNT', row);
+                        // console.log('ADD NEW ACCOUNT', row);
                         callback(null, row);
                     });
                 });
@@ -34,28 +34,28 @@ module.exports = {
                 const duplicateAccount = {
                     error: `${account} already existed, Please use another account`,
                 };
-                console.log(duplicateAccount);
+                // console.log(duplicateAccount);
                 callback(duplicateAccount, null);
             }
         });
     },
     login: function (db, args, callback) {
-        console.log('LOGIN:', { args });
+        // console.log('LOGIN:', { args });
         const { username, password } = args;
         db.get(sql.login, [username, password], (err, row) => {
             if (err) return console.log(err.message);
-            if (!row) console.log('LOGIN FAILED', row, args);
+            // if (!row) console.log('LOGIN FAILED', row, args);
             callback(row);
         });
     },
     find: function (db, args, callback) {
-        console.log('FIND:', { args });
+        // console.log('FIND:', { args });
         const { phone, account, firstName, lastName } = args;
 
         const fullname = firstName + '%' + lastName;
 
         if (phone && account) {
-            console.log({ phone, account });
+            // console.log({ phone, account });
             db.all(
                 sql.last_both_phone_account,
                 [account, phone],
@@ -66,7 +66,7 @@ module.exports = {
             );
         } else {
             if (phone) {
-                console.log(phone);
+                // console.log(phone);
                 db.all(sql.find_phone, phone, (err, rows) => {
                     if (err) return console.log(err.message);
                     if (rows && rows.length === 1) {
@@ -100,7 +100,7 @@ module.exports = {
                 });
             } else if (account) {
                 db.all(sql.find_account, account, (err, rows) => {
-                    console.log('ACCOUNT FIND: ', rows);
+                    // console.log('ACCOUNT FIND: ', rows);
                     if (err) return console.log(err.message);
                     if (rows && rows.length === 1) {
                         const account = rows[0].account;
@@ -109,12 +109,12 @@ module.exports = {
                             callback({ membership: row });
                         });
                     } else {
-                        console.log('else', account);
+                        // console.log('else', account);
                         db.all(
                             sql.find_accounts_by_account,
                             account,
                             (err, rows) => {
-                                console.log('More Account: ', { rows });
+                                // console.log('More Account: ', { rows });
                                 if (rows && rows.length === 1) {
                                     const account = rows[0].account;
                                     db.get(
@@ -150,13 +150,13 @@ module.exports = {
         }
     },
     buy: function (db, args, callback) {
-        console.log('BUY: ', { args });
+        // console.log('BUY: ', { args });
         const data = buyData(args);
         db.run(sql.buy, data, function (err) {
             if (err) return console.log(err.message);
             db.get(sql.buy_lastRecord, this.lastID, (err, row) => {
                 if (err) return console.log(err.message);
-                console.log(`BUY: ${this.lastID}: record: ${row.record_id}`);
+                // console.log(`BUY: ${this.lastID}: record: ${row.record_id}`);
                 callback(row);
             });
         });
@@ -167,13 +167,13 @@ module.exports = {
             if (err) return console.log(err.message);
             db.get(sql.renew_lastRecord, this.lastID, (err, row) => {
                 if (err) return console.log(err.message);
-                console.log(`RENEW: ${this.lastID} record: ${row.record_id}`);
+                // console.log(`RENEW: ${this.lastID} record: ${row.record_id}`);
                 callback(row);
             });
         });
     },
     edit: function (db, args, callback) {
-        console.log('EDIT:', args);
+        // console.log('EDIT:', args);
         const [account, memberSince, data] = editData(args);
         db.run(sql.edit, data, function (err) {
             if (err) return console.log(err.message);
@@ -181,16 +181,16 @@ module.exports = {
                 sql.edit_last_account_record,
                 [account, memberSince],
                 (err, lastAccountRecord) => {
-                    console.log(lastAccountRecord);
+                    // console.log(lastAccountRecord);
                     if (err) return console.log(err.message);
-                    console.log(`EDIT: record: ${lastAccountRecord.record_id}`);
+                    // console.log(`EDIT: record: ${lastAccountRecord.record_id}`);
                     callback(lastAccountRecord);
                 }
             );
         });
     },
     history: function (db, args, callback) {
-        console.log('HISTORY', args);
+        // console.log('HISTORY', args);
         const {
             account,
             limit,
@@ -218,19 +218,20 @@ module.exports = {
         );
     },
     total_account_invoices: function (db, args, callback) {
-        const { account, firstName, lastName, memberSince } = args;
-        console.log('TOTAL ACCOUNT INVOICE', {
-            account,
-            firstName,
-            lastName,
-            memberSince,
-        });
+        // const { account, firstName, lastName, memberSince } = args;
+        const { account, memberSince } = args;
+        // console.log('TOTAL ACCOUNT INVOICE', {
+        //     account,
+        //     firstName,
+        //     lastName,
+        //     memberSince,
+        // });
         db.get(
             sql.total_account_invoices,
             [account, memberSince],
             (err, count) => {
                 if (err) return console.log(err.message);
-                console.log('TOTAL ACCOUNT INVOICES: ', count.count);
+                // console.log('TOTAL ACCOUNT INVOICES: ', count.count);
                 callback(count.count);
             }
         );
@@ -238,7 +239,7 @@ module.exports = {
     last_record: function (db, callback) {
         db.get(sql.last_row_record, (err, row) => {
             const { record_id } = row;
-            console.log('LAST RECORD ID:', record_id);
+            // console.log('LAST RECORD ID:', record_id);
             callback({
                 record_id: record_id + 1,
             });
@@ -252,7 +253,7 @@ module.exports = {
                 return console.log(err.message);
             }
             const { totalRenewalFee } = row;
-            console.log('TOTAL RENEWAL FEE:', totalRenewalFee);
+            // console.log('TOTAL RENEWAL FEE:', totalRenewalFee);
             callback(totalRenewalFee);
         });
     },
@@ -272,7 +273,7 @@ module.exports = {
                     }
                 }
             });
-            console.log('TOTAL RENEW:', sum);
+            // console.log('TOTAL RENEW:', sum);
 
             callback({
                 totalRenewalGallon: sum,
@@ -284,7 +285,7 @@ module.exports = {
         db.get(sql.totalBuy, [account, memberSince], (err, row) => {
             if (err) return console.log(err.message);
             const { totalBuyGallon } = row;
-            console.log('TOTAL BUY:', totalBuyGallon);
+            // console.log('TOTAL BUY:', totalBuyGallon);
             callback({ totalBuyGallon });
         });
     },
@@ -309,18 +310,18 @@ module.exports = {
                         time,
                     };
 
-                    console.log('DAILY REPORT:', {
-                        data,
-                        date,
-                        time,
-                    });
+                    // console.log('DAILY REPORT:', {
+                    //     data,
+                    //     date,
+                    //     time,
+                    // });
                     callback(data);
                 });
             });
         });
     },
     getAllUsers: function (db, args, callback) {
-        console.log('USERS: ', args);
+        // console.log('USERS: ', args);
         const sql = `SELECT * FROM users`;
         db.all(sql, [], (err, rows) => {
             if (err) {
@@ -328,16 +329,16 @@ module.exports = {
                 callback(err, null);
             }
 
-            rows.forEach((row) => {
-                console.log(row);
-            });
+            // rows.forEach((row) => {
+            //     console.log(row);
+            // });
 
             callback(null, rows);
         });
     },
     addUser: function (db, args, callback) {
         const { username, password } = args;
-        console.log('ADD USER', args);
+        // console.log('ADD USER', args);
         const sql = `INSERT into users ( username, password) VALUES (?, ?)`;
         db.run(sql, [username, password], function (err) {
             if (err) return console.log(err.message);
@@ -346,7 +347,7 @@ module.exports = {
                 this.lastID,
                 (err, row) => {
                     if (err) return console.log(err.message);
-                    console.log('ADD NEW USER', row);
+                    // console.log('ADD NEW USER', row);
                     callback(null, row);
                 }
             );
@@ -354,21 +355,21 @@ module.exports = {
     },
     editUser: function (db, args, callback) {
         const { username, password, user_id } = args;
-        console.log('Edit User', args);
+        // console.log('Edit User', args);
         const sql = `UPDATE users SET username = ?, password = ? WHERE rowid = ?`;
         db.run(sql, [username, password, user_id], function (err) {
             if (err) return console.log(err.message);
-            console.log(`Row(s) updated: ${this.changes}`);
+            // console.log(`Row(s) updated: ${this.changes}`);
             callback(false, this.changes);
         });
     },
     deleteUser: function (db, args, callback) {
         const { user_id } = args;
-        console.log('DELETE USER', args);
+        // console.log('DELETE USER', args);
         const sql_delete = `DELETE FROM users WHERE rowid = ?`;
         db.run(sql_delete, [user_id], function (err) {
             if (err) return console.log(err.message);
-            console.log('DELETED RESULT:', this);
+            // console.log('DELETED RESULT:', this);
             callback(false, this.changes);
         });
     },

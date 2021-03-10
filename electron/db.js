@@ -319,4 +319,57 @@ module.exports = {
             });
         });
     },
+    getAllUsers: function (db, args, callback) {
+        console.log('USERS: ', args);
+        const sql = `SELECT * FROM users`;
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                // throw err;
+                callback(err, null);
+            }
+
+            rows.forEach((row) => {
+                console.log(row);
+            });
+
+            callback(null, rows);
+        });
+    },
+    addUser: function (db, args, callback) {
+        const { username, password } = args;
+        console.log('ADD USER', args);
+        const sql = `INSERT into users ( username, password) VALUES (?, ?)`;
+        db.run(sql, [username, password], function (err) {
+            if (err) return console.log(err.message);
+            db.get(
+                `SELECT * FROM users WHERE rowid = ?`,
+                this.lastID,
+                (err, row) => {
+                    if (err) return console.log(err.message);
+                    console.log('ADD NEW USER', row);
+                    callback(null, row);
+                }
+            );
+        });
+    },
+    editUser: function (db, args, callback) {
+        const { username, password, user_id } = args;
+        console.log('Edit User', args);
+        const sql = `UPDATE users SET username = ?, password = ? WHERE rowid = ?`;
+        db.run(sql, [username, password, user_id], function (err) {
+            if (err) return console.log(err.message);
+            console.log(`Row(s) updated: ${this.changes}`);
+            callback(false, this.changes);
+        });
+    },
+    deleteUser: function (db, args, callback) {
+        const { user_id } = args;
+        console.log('DELETE USER', args);
+        const sql_delete = `DELETE FROM users WHERE rowid = ?`;
+        db.run(sql_delete, [user_id], function (err) {
+            if (err) return console.log(err.message);
+            console.log('DELETED RESULT:', this);
+            callback(false, this.changes);
+        });
+    },
 };

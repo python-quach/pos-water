@@ -28,6 +28,10 @@ const {
     totalBuy,
     dailyReport,
     deleteAccount,
+    getAllUsers,
+    addUser,
+    deleteUser,
+    editUser,
 } = require('./db');
 
 // NOTE NEED TO CHANGE AREA CODE INTO STRING
@@ -120,7 +124,7 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -405,5 +409,41 @@ ipcMain.on(channels.DELETE_ACCOUNT, (event, args) => {
             delete: true,
             result: result,
         });
+    });
+});
+
+// Get User Account
+ipcMain.on(channels.GET_USERS, (event, args) => {
+    console.log('Users Account', args);
+    getAllUsers(db, args, (err, result) => {
+        console.log({ err, result });
+        event.sender.send(channels.GET_USERS, result);
+    });
+});
+
+// Add New User
+ipcMain.on(channels.ADD_USER, (event, args) => {
+    console.log('Add User:', args);
+    addUser(db, args, (err, result) => {
+        console.log({ err, result });
+        event.sender.send(channels.ADD_USER, result);
+    });
+});
+
+// Delete User
+ipcMain.on(channels.DELETE_USER, (event, args) => {
+    console.log('Delete User:', args);
+    deleteUser(db, args, (err, result) => {
+        console.log({ err, result });
+        event.sender.send(channels.DELETE_USER, result);
+    });
+});
+
+// Edit User
+ipcMain.on(channels.EDIT_USER, (event, args) => {
+    console.log('Edit User:', args);
+    editUser(db, args, (err, result) => {
+        console.log({ err, result });
+        event.sender.send(channels.EDIT_USER, result);
     });
 });

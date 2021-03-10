@@ -23,5 +23,9 @@ module.exports = {
         PRINT_RENEW_RECEIPT: 'PRINT_RENEW_RECEIPT',
         HISTORY_REPORT: 'HISTORY_REPORT',
         DELETE_ACCOUNT: 'DELETE_ACCOUNT',
+        GET_USERS: 'GET_USERS',
+        ADD_USER: 'ADD_USER',
+        DELETE_USER: 'DELETE_USER',
+        EDIT_USER: 'EDIT_USER',
     },
 };

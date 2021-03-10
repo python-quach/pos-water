@@ -4,7 +4,6 @@ import { api } from '../../../api/api';
 import { withRouter } from 'react-router';
 import Header from '../Header/LoginHeader';
 import Form from '../Form/LoginForm';
-// import { Login } from '../index';
 
 export const LoginContext = createContext();
 
@@ -50,8 +49,7 @@ const LoginScreen = ({ history }) => {
         <LoginContext.Provider value={store}>
             <Portal>
                 <Header title='Mckee Pure Water' content='User Login' />
-                {/* <Login.Header title='Mckee Pure Water' content='User Login' /> */}
-                <Form size='large' />
+                <Form size='large' history={history} />
             </Portal>
         </LoginContext.Provider>
     );

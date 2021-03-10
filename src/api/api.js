@@ -224,6 +224,50 @@ export const deleteAccount = (data, callback) => {
     });
 };
 
+// Get all users
+export const getUsers = (callback) => {
+    console.log('GET ALL USER');
+    ipcRenderer.send(channels.GET_USERS);
+    ipcRenderer.on(channels.GET_USERS, (_, arg) => {
+        ipcRenderer.removeAllListeners(channels.GET_USERS);
+        console.log('GET USERS', arg);
+        callback(arg);
+    });
+};
+
+// Add new users
+export const addUser = (data, callback) => {
+    console.log('Add User:', data);
+    ipcRenderer.send(channels.ADD_USER, data);
+    ipcRenderer.on(channels.ADD_USER, (_, arg) => {
+        ipcRenderer.removeAllListeners(channels.ADD_USER);
+        console.log('Add User:', arg);
+        callback(arg);
+    });
+};
+
+// Edit user
+export const editUser = (data, callback) => {
+    console.log('Edit User:', data);
+    ipcRenderer.send(channels.EDIT_USER, data);
+    ipcRenderer.on(channels.EDIT_USER, (_, arg) => {
+        ipcRenderer.removeAllListeners(channels.EDIT_USER);
+        console.log('Edit User:', arg);
+        callback(arg);
+    });
+};
+
+// Delete users
+export const deleteUser = (data, callback) => {
+    console.log('Delete User:', data);
+    ipcRenderer.send(channels.DELETE_USER, data);
+    ipcRenderer.on(channels.DELETE_USER, (_, arg) => {
+        ipcRenderer.removeAllListeners(channels.DELETE_USER);
+        console.log('Delete User:', arg);
+        callback(arg);
+    });
+};
+
 export const api = {
     login,
     find,
@@ -243,4 +287,8 @@ export const api = {
     printRenewReceipt,
     print,
     deleteAccount,
+    getUsers,
+    deleteUser,
+    addUser,
+    editUser,
 };

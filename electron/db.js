@@ -60,7 +60,7 @@ module.exports = {
                 sql.last_both_phone_account,
                 [account, phone],
                 (err, data) => {
-                    console.log(data);
+                    // console.log(data);
                     callback({ membership: data[0] });
                 }
             );
@@ -195,19 +195,19 @@ module.exports = {
             account,
             limit,
             offset,
-            phone,
-            firstName,
-            lastName,
+            // phone,
+            // firstName,
+            // lastName,
             memberSince,
         } = args;
-        console.log(phone);
+        // console.log(phone);
 
-        const first = firstName || '';
-        const last = lastName || '';
+        // const first = firstName || '';
+        // const last = lastName || '';
 
-        const fullName = first + ' ' + last;
-        console.log({ fullName });
-        console.log(fullName.trim());
+        // const fullName = first + ' ' + last;
+        // console.log({ fullName });
+        // console.log(fullName.trim());
         db.all(
             sql.history,
             [account, memberSince, limit, offset],

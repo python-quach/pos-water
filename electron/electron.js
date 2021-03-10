@@ -82,7 +82,7 @@ usbDetect
     });
 
 usbDetect.on('add', function (usbDevice) {
-    console.log(usbDevice);
+    // console.log(usbDevice);
     usbDetect
         .find()
         .then(function (devices) {
@@ -124,7 +124,7 @@ function createWindow() {
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -264,7 +264,7 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
         currentdate.getDate() +
         '-' +
         currentdate.getFullYear();
-    console.log(datetime);
+    // console.log(datetime);
 
     dialog
         .showSaveDialog({
@@ -283,10 +283,10 @@ ipcMain.on(channels.SHOW_BACKUP_DIALOG, (event, request) => {
                         });
                         throw err;
                     } else {
-                        console.log(
-                            'Successfully copied and moved the file!',
-                            result.filePath
-                        );
+                        // console.log(
+                        //     'Successfully copied and moved the file!',
+                        //     result.filePath
+                        // );
                         event.sender.send(channels.SHOW_BACKUP_DIALOG, {
                             open: `backup-${datetime}.sqlite3`,
                         });

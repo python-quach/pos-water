@@ -7,7 +7,7 @@ export const Username = () => (
         render={({ input }) => (
             <Form.Input
                 id='username'
-                label='Username'
+                // label='Username'
                 placeholder='Enter Username'
                 {...input}
             />
@@ -18,12 +18,18 @@ export const Username = () => (
 export const Password = () => (
     <Field
         name='password'
-        type='password'
         render={({ input }) => (
             <Form.Input
+                type='password'
                 id='password'
-                label='Password'
+                // size='massive'
+                // label='Password'
                 placeholder='Enter Password'
+                // icon='lock'
+                // iconPosition='left'
+                // focus
+                // fluid
+                // transparent
                 {...input}
             />
         )}

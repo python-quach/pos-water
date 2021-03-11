@@ -40,7 +40,8 @@ const FindForm = (props) => (
                         color='green'
                         onClick={(e) => {
                             e.preventDefault();
-                            console.log('Logout');
+                            props.setOpenDashBoard(false);
+                            props.setOpenLogin(true);
                         }}
                     />
                 </Form.Group>

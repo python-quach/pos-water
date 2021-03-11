@@ -1,24 +1,26 @@
 import { Form as FinalForm, FormSpy } from 'react-final-form';
-import { Form } from 'semantic-ui-react';
+import { Form, Segment } from 'semantic-ui-react';
 import { Username, Password } from '../Field/LoginField';
 
 const LoginForm = (props) => (
-    <FinalForm
-        onSubmit={props.onSubmit}
-        render={({ handleSubmit }) => (
-            <Form
-                onSubmit={(event) => {
-                    handleSubmit(event);
-                }}>
-                <Username />
-                <Password />
-                <Form.Button primary content='Login' />
-                {/* <FormSpy>
+    <Segment clearing raised>
+        <FinalForm
+            onSubmit={props.onSubmit}
+            render={({ handleSubmit, form }) => (
+                <Form
+                    onSubmit={(event) => {
+                        handleSubmit(event).then(form.reset);
+                    }}>
+                    <Username />
+                    <Password />
+                    <Form.Button fluid primary content='Login' />
+                    {/* <FormSpy>
                     {(values) => <pre>{JSON.stringify(values, 0, 2)}</pre>}
                 </FormSpy> */}
-            </Form>
-        )}
-    />
+                </Form>
+            )}
+        />
+    </Segment>
 );
 
 export default LoginForm;

@@ -5,13 +5,19 @@ const handleFindMembership = async (values) => {
     console.log('handleFindMembership', values);
 };
 
-const DashBoardScreen = () => (
-    <Segment raised clearing>
-        <Header size='huge' block>
-            DashBoard Screen
-        </Header>
-        <FindForm onSubmit={handleFindMembership} />
-    </Segment>
-);
+const DashBoardScreen = (props) => {
+    return (
+        <Segment raised clearing>
+            <Header size='huge' block>
+                DashBoard Screen
+            </Header>
+            <FindForm
+                setOpenDashBoard={props.setOpenDashBoard}
+                setOpenLogin={props.setOpenLogin}
+                onSubmit={handleFindMembership}
+            />
+        </Segment>
+    );
+};
 
 export default DashBoardScreen;

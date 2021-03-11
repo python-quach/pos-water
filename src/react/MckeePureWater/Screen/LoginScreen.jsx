@@ -1,18 +1,44 @@
-import { Segment, Header } from 'semantic-ui-react';
+import { Segment, Header, TransitionablePortal, Grid } from 'semantic-ui-react';
 import LoginForm from '../Form/LoginForm';
+import { channels } from '../../../shared/constants';
+const { ipcRenderer } = window;
 
-const onSubmit = async (values) => {
-    console.log('Login:', values);
-};
+const LoginScreen = (props) => {
+    const onSubmit = async (values) => {
+        ipcRenderer.send(channels.LOGIN, values);
+        ipcRenderer.on(channels.LOGIN, (_, { login }) => {
+            ipcRenderer.removeAllListeners(channels.LOGIN);
+            if (login) {
+                props.setOpenLogin(false);
+                props.setOpenDashBoard(true);
+            }
+        });
+    };
 
-const LoginScreen = () => {
     return (
-        <Segment raised>
-            <Header size='huge' block>
-                Login Screen
-            </Header>
-            <LoginForm onSubmit={onSubmit} />
-        </Segment>
+        <TransitionablePortal open={true}>
+            <Segment
+                raised
+                style={{
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    // backgroundColor: '#002b487d',
+                }}>
+                <Grid
+                    textAlign='center'
+                    verticalAlign='middle'
+                    style={{ height: '100vh' }}>
+                    <Grid.Column style={{ maxWidth: 450 }}>
+                        {/* <Header size='huge' block>
+                            Login Screen
+                        </Header> */}
+                        <LoginForm onSubmit={onSubmit} />
+                    </Grid.Column>
+                </Grid>
+            </Segment>
+        </TransitionablePortal>
     );
 };
 

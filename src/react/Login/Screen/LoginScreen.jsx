@@ -48,7 +48,7 @@ const LoginScreen = ({ history }) => {
     return (
         <LoginContext.Provider value={store}>
             <Portal>
-                <Header title='Mckee Pure Water' content='User Login' />
+                <Header title='Senter Pure Water' content='User Login' />
                 <Form size='large' history={history} />
             </Portal>
         </LoginContext.Provider>

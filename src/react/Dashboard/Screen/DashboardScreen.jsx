@@ -20,7 +20,7 @@ const DashBoardScreen = ({ history }) => {
 
     return (
         <Portal>
-            <Header title='Mckee Pure Water' content='Dashboard' />
+            <Header title='Senter Pure Water' content='Dashboard' />
             <FindForm api={api} history={history} />
             <Divider hidden />
             <AddButton add={addNewMembership} />

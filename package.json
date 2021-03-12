@@ -1,5 +1,5 @@
 {
-    "productName": "MPW-POS",
+    "productName": "SPW-POS",
     "main": "electron/electron.js",
     "name": "electron-react-sqlite",
     "version": "1.1.0",

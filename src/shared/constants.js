@@ -27,5 +27,8 @@ module.exports = {
         ADD_USER: 'ADD_USER',
         DELETE_USER: 'DELETE_USER',
         EDIT_USER: 'EDIT_USER',
+        SENTER_RECORD: 'SENTER_RECORD',
+        SENTER_ADD: 'SENTER_ADD',
+        SENTER_BUY: 'SENTER_BUY',
     },
 };

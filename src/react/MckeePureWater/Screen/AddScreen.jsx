@@ -1,27 +1,50 @@
-import { useEffect, useState } from 'react';
-import { Segment, Header } from 'semantic-ui-react';
+import { Segment, TransitionablePortal, Grid } from 'semantic-ui-react';
 import AddForm from '../Form/AddForm';
 
-import { channels } from '../../../shared/constants';
-const { ipcRenderer } = window;
+const AddScreen = (props) => {
+    const { setOpenAdd, setOpenDashBoard, error, handleAddMembership } = props;
 
-const AddScreen = () => {
-    const [newRecord, setNewRecord] = useState(null);
-
-    useEffect(() => {
-        ipcRenderer.send(channels.LAST_RECORD);
-        ipcRenderer.on(channels.LAST_RECORD, (_, { record_id }) => {
-            ipcRenderer.removeAllListeners(channels.LAST_RECORD);
-            setNewRecord(record_id);
-        });
-    }, []);
+    const close = (e) => {
+        e.preventDefault();
+        setOpenAdd(false);
+        setOpenDashBoard(true);
+    };
 
     return (
-        <Segment>
-            <Header block size='huge' content='Add Screen' />
-            <AddForm newRecord={newRecord} />
-        </Segment>
+        <TransitionablePortal open={props.open}>
+            <Segment
+                style={{
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                }}>
+                <Grid verticalAlign='top' style={{ height: '100vh' }}>
+                    <Grid.Column>
+                        <AddForm
+                            onSubmit={handleAddMembership}
+                            error={error}
+                            close={close}
+                        />
+                    </Grid.Column>
+                </Grid>
+            </Segment>
+        </TransitionablePortal>
     );
 };
 
 export default AddScreen;
+
+// return new Promise((resolve, reject) => {
+//     ipcRenderer.send(channels.SENTER_ADD, data);
+//     ipcRenderer.on(channels.SENTER_ADD, (_, args) => {
+//         ipcRenderer.removeAllListeners(channels.SENTER_ADD);
+//         if (args.error) {
+//             setError(args.error);
+//             reject(args.data);
+//         } else {
+//             resolve(args);
+//         }
+//     });
+// });

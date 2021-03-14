@@ -6,6 +6,7 @@ const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
+const senterDbFile = path.resolve(userData, 'senter.sqlite3');
 const usbDetect = require('usb-detection');
 const {
     printAddReceipt,
@@ -39,6 +40,7 @@ let mainWindow;
 
 // SQLITE DATABASE
 let db;
+let dbSenter;
 
 // POS PRINTER SETUP
 const options = { encoding: 'GB18030' /* default */ };
@@ -56,6 +58,270 @@ const devHTMLFile = process.env.ELECTRON_START_URL;
 const startUrl = devHTMLFile || productionHTMLFile;
 
 db = new sqlite3.Database(dbFile);
+dbSenter = new sqlite3.Database(senterDbFile);
+console.log(dbSenter, senterDbFile);
+
+ipcMain.on(channels.SENTER_RECORD, (event, _) => {
+    console.log('SENTER_RECORD: REQUEST');
+    dbSenter.get(
+        `SELECT rowid FROM memberships DESC LIMIT 1`,
+        function (err, row) {
+            if (err) return console.log(err.message);
+            if (!row) {
+                console.log('SENTER_RECORD: RESPONSE NO RECORD ID YET');
+                event.sender.send(channels.SENTER_RECORD, { record: 1 });
+            } else {
+                console.log('SENTER_RECORD: RESPONSE', row);
+                event.sender.send(channels.SENTER_RECORD, row);
+            }
+        }
+    );
+});
+
+// INSERT NEW MEMBERSHIP INTO TABLE
+ipcMain.on(channels.SENTER_ADD, (event, args) => {
+    console.log('SENTER_ADD: REQUEST', args);
+    const {
+        account,
+        phone,
+        first,
+        last,
+        since,
+        fee,
+        gallon,
+        buy,
+        remain,
+        type,
+        date,
+        time,
+        previous,
+    } = args;
+
+    dbSenter.get(
+        `SELECT * FROM memberships WHERE account = ?`,
+        account,
+        (err, duplicate) => {
+            console.log(duplicate);
+            if (!duplicate) {
+                dbSenter.run(
+                    `INSERT INTO memberships ( 
+            account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time,
+            previous 
+        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        account,
+                        phone,
+                        first,
+                        last,
+                        since,
+                        fee,
+                        gallon,
+                        buy,
+                        remain,
+                        type,
+                        date,
+                        time,
+                        previous,
+                    ],
+                    function (err) {
+                        if (err) {
+                            console.log(err.message);
+                            event.sender.send(channels.SENTER_ADD, {
+                                error: `Account ${account} already existed`,
+                                data: args,
+                            });
+                        } else {
+                            console.log(
+                                `A row has been inserted with rowid ${this.lastID}`
+                            );
+                            dbSenter.get(
+                                `SELECT     account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time  FROM memberships WHERE rowid = ?`,
+                                this.lastID,
+                                function (err, row) {
+                                    if (err) return console.log(err.message);
+                                    event.sender.send(channels.SENTER_ADD, row);
+                                }
+                            );
+                        }
+                    }
+                );
+            } else {
+                event.sender.send(channels.SENTER_ADD, {
+                    error: `Account ${account} already existed`,
+                    data: args,
+                });
+            }
+        }
+    );
+
+    // Check for duplicate account
+    // dbSenter.run(
+    //     `INSERT INTO memberships (
+    //         account,
+    //         phone,
+    //         first,
+    //         last,
+    //         since,
+    //         fee,
+    //         gallon,
+    //         buy,
+    //         remain,
+    //         type,
+    //         date,
+    //         time
+    //     ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    //     [
+    //         account,
+    //         phone,
+    //         first,
+    //         last,
+    //         since,
+    //         fee,
+    //         gallon,
+    //         buy,
+    //         remain,
+    //         type,
+    //         date,
+    //         time,
+    //     ],
+    //     function (err) {
+    //         if (err) {
+    //             console.log(err.message);
+    //             event.sender.send(channels.SENTER_ADD, {
+    //                 error: `Account ${account} already existed`,
+    //                 data: args,
+    //             });
+    //         } else {
+    //             console.log(
+    //                 `A row has been inserted with rowid ${this.lastID}`
+    //             );
+    //             dbSenter.get(
+    //                 `SELECT     account,
+    //         phone,
+    //         first,
+    //         last,
+    //         since,
+    //         fee,
+    //         gallon,
+    //         buy,
+    //         remain,
+    //         type,
+    //         date,
+    //         time  FROM memberships WHERE rowid = ?`,
+    //                 this.lastID,
+    //                 function (err, row) {
+    //                     if (err) return console.log(err.message);
+    //                     event.sender.send(channels.SENTER_ADD, row);
+    //                 }
+    //             );
+    //         }
+    //     }
+    // );
+});
+
+// INSERT BUY GALLON
+ipcMain.on(channels.SENTER_BUY, (event, args) => {
+    console.log('SENTER_BUY: REQUEST', args);
+    const {
+        account,
+        phone,
+        first,
+        last,
+        since,
+        fee,
+        gallon,
+        buy,
+        remain,
+        type,
+        date,
+        time,
+        previous,
+    } = args;
+    dbSenter.run(
+        `INSERT INTO memberships ( 
+            account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time, 
+            previous
+        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time,
+            previous,
+        ],
+        function (err) {
+            if (err) {
+                console.log(err.message);
+                event.removeAllListeners(channels.SENTER_BUY);
+                return console.log(err.message);
+            } else {
+                console.log(
+                    `A row has been inserted with rowid ${this.lastID}`
+                );
+                dbSenter.get(
+                    `SELECT     account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time  FROM memberships WHERE rowid = ?`,
+                    this.lastID,
+                    function (err, row) {
+                        if (err) return console.log(err.message);
+                        event.sender.send(channels.SENTER_BUY, row);
+                    }
+                );
+            }
+        }
+    );
+});
 
 usbDetect.startMonitoring();
 usbDetect

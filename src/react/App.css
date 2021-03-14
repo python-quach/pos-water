@@ -90,6 +90,30 @@
     color: #00bcd4;
 }
 
+.two.wide.field.TodayDate label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.two.wide.field.TodayDate div.ui.inverted.left.icon.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+.two.wide.field.two.wide.field.TodayDate div.ui.inverted.left.icon.input i {
+    color: #00bcd4;
+}
+
+.one.wide.field.TodayDate label {
+    color: #fff;
+    margin-bottom: 10px;
+}
+.one.wide.field.TodayDate div.ui.inverted.input input {
+    color: white;
+    background-color: #d5c1c124;
+}
+.one.wide.field.one.wide.field.TodayDate div.ui.inverted.input i {
+    color: #00bcd4;
+}
+
 /* BuyAccount */
 .two.wide.field.BuyAccount label {
     color: #fff;

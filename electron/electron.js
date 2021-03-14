@@ -311,7 +311,7 @@ ipcMain.on(channels.SENTER_BUY, (event, args) => {
             remain,
             type,
             date,
-            time  FROM memberships WHERE rowid = ?`,
+            time, previous  FROM memberships WHERE rowid = ?`,
                     this.lastID,
                     function (err, row) {
                         if (err) return console.log(err.message);

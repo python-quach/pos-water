@@ -27,7 +27,9 @@ const MckeePureWater = (props) => {
             fee: parseInt(values.fee),
             gallon: parseInt(values.gallon),
             remain: parseInt(values.gallon),
-            previous: parseInt(values.gallon),
+            // remain: 0,
+            // previous: parseInt(values.gallon),
+            previous: 0,
         };
 
         ipcRenderer.send(channels.SENTER_ADD, data);
@@ -38,7 +40,8 @@ const MckeePureWater = (props) => {
                 document.getElementById('account').focus();
             } else {
                 // setRecord(args);
-                setRecord({ ...args, gallon: 0 });
+                // setRecord({ ...args, gallon: 0 });
+                setRecord(args);
                 setOpenBuy(true);
                 setOpenAdd(false);
             }
@@ -51,6 +54,8 @@ const MckeePureWater = (props) => {
         if (values.gallon !== 0 && values.fee !== 0) {
             const renew = {
                 ...values,
+                remain: values.gallon + values.remain,
+                // previous: values.remain,
                 type: 'RENEW',
             };
             console.log('RENEW:', renew);
@@ -58,7 +63,10 @@ const MckeePureWater = (props) => {
                 ipcRenderer.send(channels.SENTER_BUY, renew);
                 ipcRenderer.on(channels.SENTER_BUY, (_, args) => {
                     ipcRenderer.removeAllListeners(channels.SENTER_BUY);
-                    setRecord({ ...args, remain: args.remain + args.gallon });
+                    console.log('LOOK HERE', args);
+                    // setRecord({ ...args, remain: args.remain + args.gallon });
+                    setRecord({ ...args, remain: args.remain });
+                    // setRecord(args);
                     document.getElementById('buy').focus();
                     resolve(args);
                 });
@@ -66,6 +74,7 @@ const MckeePureWater = (props) => {
         } else {
             const buy = {
                 ...values,
+                // previous: values.previous,
                 type: 'BUY',
             };
             console.log('BUY:', buy);

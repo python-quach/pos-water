@@ -58,59 +58,51 @@ export const RenewButton = () => (
     />
 );
 
+const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
+    <FinalField name={set} subscription={{}}>
+        {({ input: { onChange } }) => (
+            <FormSpy subscription={{}}>
+                {() => (
+                    <OnChange name={field}>
+                        {() => {
+                            if (becomes) {
+                                onChange(to);
+                            } else {
+                                onChange(reset);
+                            }
+                        }}
+                    </OnChange>
+                )}
+            </FormSpy>
+        )}
+    </FinalField>
+);
+
 export const BuyForm = (props) => {
     const [edit, setEdit] = useState(false);
-
-    // const onSubmit = async (values) => {
-    //     console.log('Buy Submit', values);
-    //     props.setRecord(values);
-    //     return values;
-    // };
-
-    const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
-        <FinalField name={set} subscription={{}}>
-            {({ input: { onChange } }) => (
-                <FormSpy subscription={{}}>
-                    {() => (
-                        <OnChange name={field}>
-                            {() => {
-                                if (becomes) {
-                                    onChange(to);
-                                } else {
-                                    onChange(reset);
-                                }
-                            }}
-                        </OnChange>
-                    )}
-                </FormSpy>
-            )}
-        </FinalField>
-    );
 
     return (
         <FinalForm
             onSubmit={props.onSubmit}
-            // onSubmit={onSubmit}
             initialValuesEqual={() => true}
             initialValues={{
                 ...props.record,
-                remain: props.record.remain + props.record.gallon,
                 date: new Date().toLocaleDateString(),
                 time: new Date().toLocaleTimeString(),
-                previous: props.record.remain + props.record.gallon,
                 buy: 0,
                 fee: 0,
                 type: 'BUY',
                 gallon: 0,
+                previous: props.record.remain,
             }}
             render={({ handleSubmit, form, values }) => (
                 <Form
                     onSubmit={(event) => {
                         handleSubmit(event).then((data) => {
+                            console.log('handleSubmit LOOK AT ME BUY', data);
                             form.reset({
                                 ...data,
-                                remain: data.remain + data.gallon,
-                                previous: data.remain + data.gallon,
+                                previous: data.remain,
                                 buy: 0,
                                 fee: 0,
                                 gallon: 0,

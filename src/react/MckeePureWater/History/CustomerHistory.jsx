@@ -11,7 +11,7 @@ const CustomerHistory = (props) => (
         <Modal.Header>Account History</Modal.Header>
         <Modal.Content image>
             <Modal.Description>
-                <Table celled>
+                <Table celled color='blue'>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Account</Table.HeaderCell>

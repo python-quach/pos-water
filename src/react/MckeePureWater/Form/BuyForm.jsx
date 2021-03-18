@@ -4,7 +4,7 @@ import {
     Field as FinalField,
     FormSpy,
 } from 'react-final-form';
-import { Form, Table, Divider } from 'semantic-ui-react';
+import { Form, Divider } from 'semantic-ui-react';
 import {
     TodayDate,
     CurrentTime,
@@ -19,60 +19,9 @@ import {
     LastName,
 } from '../Field/BuyField';
 import { OnChange } from 'react-final-form-listeners';
-
-export const EditButton = ({
-    values,
-    setEdit,
-    edit,
-    handleEdit,
-    setOpenReceipt,
-}) => (
-    <Form.Button
-        type='button'
-        disabled={!values.first || !values.last}
-        content={edit ? 'Save' : 'Edit'}
-        color={edit ? 'google plus' : 'vk'}
-        size='huge'
-        style={{ marginTop: '30px' }}
-        onClick={(e) => {
-            e.preventDefault();
-            console.log('Edit', values);
-            if (edit) handleEdit(values);
-            // setOpenReceipt(false);
-            setEdit((prevEdit) => !prevEdit);
-        }}
-    />
-);
-
-export const BuyButton = ({ disabled, setOpenReceipt }) => (
-    <Form.Button
-        disabled={disabled}
-        style={{ width: '250px', marginTop: '30px' }}
-        content='Buy'
-        icon='cart'
-        labelPosition='right'
-        positive
-        size='huge'
-        onClick={() => {
-            setOpenReceipt(false);
-        }}
-    />
-);
-
-export const RenewButton = ({ disabled, setOpenReceipt }) => (
-    <Form.Button
-        disabled={disabled}
-        style={{ marginTop: '30px', width: '250px' }}
-        icon='redo'
-        labelPosition='right'
-        content='Renew'
-        primary
-        size='huge'
-        onClick={() => {
-            setOpenReceipt(false);
-        }}
-    />
-);
+import { EditButton } from '../Button/EditButton';
+import { BuyButton } from '../Button/BuyButton';
+import { RenewButton } from '../Button/RenewButton';
 
 const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
     <FinalField name={set} subscription={{}}>

@@ -115,7 +115,7 @@ export const LastName = () => (
                 id='lastName'
                 label='Last Name'
                 className='TodayDate'
-                placeholder='Enter Last Name'
+                placeholder='Last Name'
                 {...input}
                 size='huge'
                 icon='user'

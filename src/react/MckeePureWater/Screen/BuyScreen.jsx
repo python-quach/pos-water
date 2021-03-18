@@ -27,8 +27,13 @@ const BuyScreen = (props) => {
                     zIndex: 1000,
                     backgroundColor: '#002b487d',
                 }}>
-                <Grid verticalAlign='top' style={{ height: '100vh' }}>
-                    <Grid.Column>
+                <Grid
+                    verticalAlign='top'
+                    style={{ height: '100vh', backgroundColor: '#002b487d' }}>
+                    <Grid.Column
+                        style={{
+                            backgroundColor: '#002b487d',
+                        }}>
                         <Receipt open={openReceipt} record={props.record} />
                         <Divider />
                         <BuyForm

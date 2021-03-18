@@ -313,6 +313,7 @@ const MckeePureWater = (props) => {
             console.log('handleEdit Look Here', data);
             setRecord(data[data.length - 1]);
             setHistory(data);
+            return data;
             // return await edit(values);
         } catch (err) {
             console.log(err);

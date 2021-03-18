@@ -1,5 +1,6 @@
 import { Form as FinalForm, FormSpy } from 'react-final-form';
 import { Form, Divider } from 'semantic-ui-react';
+import { backup } from '../../../api/api';
 import { Username, Password } from '../Field/LoginField';
 
 const LoginForm = (props) => (
@@ -54,14 +55,14 @@ const LoginForm = (props) => (
                     <Form.Button
                         circular
                         size='huge'
-                        content='Backup'
+                        content={props.file ? props.file : 'Backup'}
                         icon='database'
-                        labelPosition='right'
                         color='pink'
                         fluid
                         onClick={(e) => {
                             e.preventDefault();
                             console.log('Backup');
+                            props.backup();
                         }}
                     />
                 </Form.Group>

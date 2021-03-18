@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
@@ -8,6 +9,7 @@ const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
 const senterDbFile = path.resolve(userData, 'senter.sqlite3');
 const usbDetect = require('usb-detection');
+const { addNewAccount, findAccount, lastRecord, add } = require('./sql');
 const {
     printAddReceipt,
     printBuyReceipt,
@@ -61,18 +63,246 @@ db = new sqlite3.Database(dbFile);
 dbSenter = new sqlite3.Database(senterDbFile);
 console.log(dbSenter, senterDbFile);
 
-ipcMain.on(channels.SENTER_RECORD, (event, _) => {
-    console.log('SENTER_RECORD: REQUEST');
+// FIND ACCOUNT
+ipcMain.on(channels.SENTER_FIND_ACCOUNT, (event, account) => {
+    console.log('SENTER_FIND_ACCOUNT:', account);
     dbSenter.get(
-        `SELECT rowid FROM memberships DESC LIMIT 1`,
-        function (err, row) {
-            if (err) return console.log(err.message);
-            if (!row) {
-                console.log('SENTER_RECORD: RESPONSE NO RECORD ID YET');
-                event.sender.send(channels.SENTER_RECORD, { record: 1 });
+        `SELECT * FROM memberships WHERE account = ? ORDER BY rowid  DESC LIMIT 1`,
+        account,
+        (err, lastAccountRecord) => {
+            if (err) {
+                console.log(err.message);
+                event.sender.send(channels.SENTER_FIND_ACCOUNT, { error: err });
             } else {
-                console.log('SENTER_RECORD: RESPONSE', row);
-                event.sender.send(channels.SENTER_RECORD, row);
+                console.log('LAST ACCOUNT RECORD', lastAccountRecord);
+                event.sender.send(
+                    channels.SENTER_FIND_ACCOUNT,
+                    lastAccountRecord
+                );
+            }
+        }
+    );
+});
+
+// FIND FIRST NAME
+ipcMain.on(channels.SENTER_FIND_FIRST_NAME, (event, firstName) => {
+    console.log(`SENTER_FIND_FIRST_NAME`, firstName);
+
+    dbSenter.all(
+        `SELECT DISTINCT account, since, last, phone  FROM memberships WHERE first = ?`,
+        firstName,
+        async (err, rows) => {
+            if (err) {
+                console.log(err.message);
+                event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
+                    error: err.message,
+                });
+            } else if (rows && rows.length === 1) {
+                // Find only one match
+                dbSenter.get(
+                    `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                    rows[0].account,
+                    (err, row) => {
+                        if (err) {
+                            console.log(err.message);
+                            event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
+                                error: err.message,
+                            });
+                        } else {
+                            console.log(row);
+                            event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
+                                account: row,
+                            });
+                        }
+                    }
+                );
+            } else if (rows && rows.length > 1) {
+                const test = [];
+                rows.forEach((row) => {
+                    dbSenter.get(
+                        `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                        row.account,
+                        (err, lastAccountRecord) => {
+                            test.push(lastAccountRecord);
+                            event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
+                                accounts: test,
+                            });
+                        }
+                    );
+                });
+            } else {
+                event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
+                    account: null,
+                });
+            }
+        }
+    );
+});
+
+// FIND LAST  NAME
+ipcMain.on(channels.SENTER_FIND_LAST_NAME, (event, lastName) => {
+    console.log(`SENTER_FIND_LAST_NAME`, lastName);
+
+    dbSenter.all(
+        `SELECT DISTINCT account, since, first, phone  FROM memberships WHERE last= ?`,
+        lastName,
+        async (err, rows) => {
+            if (err) {
+                console.log(err.message);
+                event.sender.send(channels.SENTER_FIND_LAST_NAME, {
+                    error: err.message,
+                });
+            } else if (rows && rows.length === 1) {
+                dbSenter.get(
+                    `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                    rows[0].account,
+                    (err, row) => {
+                        if (err) {
+                            console.log(err.message);
+                            event.sender.send(channels.SENTER_FIND_LAST_NAME, {
+                                error: err.message,
+                            });
+                        } else {
+                            console.log(row);
+                            event.sender.send(channels.SENTER_FIND_LAST_NAME, {
+                                account: row,
+                            });
+                        }
+                    }
+                );
+            } else if (rows && rows.length > 1) {
+                const test = [];
+                rows.forEach((row) => {
+                    dbSenter.get(
+                        `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                        row.account,
+                        (err, lastAccountRecord) => {
+                            test.push(lastAccountRecord);
+                            event.sender.send(channels.SENTER_FIND_LAST_NAME, {
+                                accounts: test,
+                            });
+                        }
+                    );
+                });
+            } else {
+                event.sender.send(channels.SENTER_FIND_LAST_NAME, {
+                    account: null,
+                });
+            }
+        }
+    );
+});
+
+// FIND MEMBER PHONE
+ipcMain.on(channels.SENTER_FIND_PHONE, (event, phone) => {
+    console.log('SENTER_FIND_PHONE: ', phone);
+
+    // Check if there are same phone with different account
+    dbSenter.all(
+        `SELECT DISTINCT account, since, first, last  FROM memberships WHERE phone = ?`,
+        phone,
+        async (err, rows) => {
+            // console.log(rows);
+            if (err) {
+                console.log(err.message);
+                event.sender.send(channels.SENTER_FIND_PHONE, {
+                    error: err.message,
+                });
+            } else if (rows && rows.length === 1) {
+                console.log(rows);
+                dbSenter.get(
+                    `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                    rows[0].account,
+                    (err, row) => {
+                        if (err) {
+                            console.log(err.message);
+                            event.sender.send(channels.SENTER_FIND_PHONE, {
+                                error: err.message,
+                            });
+                        } else {
+                            console.log(row);
+                            event.sender.send(channels.SENTER_FIND_PHONE, {
+                                account: row,
+                            });
+                        }
+                    }
+                );
+            } else if (rows && rows.length > 1) {
+                const test = [];
+                rows.forEach((row) => {
+                    dbSenter.get(
+                        `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                        row.account,
+                        (err, lastAccountRecord) => {
+                            test.push(lastAccountRecord);
+                            event.sender.send(channels.SENTER_FIND_PHONE, {
+                                accounts: test,
+                            });
+                        }
+                    );
+                });
+                // event.sender.send(channels.SENTER_FIND_PHONE, {
+                //     accounts: rows,
+                // });
+            } else {
+                event.sender.send(channels.SENTER_FIND_PHONE, {
+                    account: null,
+                });
+            }
+        }
+    );
+});
+
+// FIND MEMBER BOTH FIRST AND LAST
+ipcMain.on(channels.SENTER_FIND_BOTH_NAME, (event, { first, last }) => {
+    console.log(`FIND BOTH FIRST AND LAST`, first, last);
+    dbSenter.all(
+        `SELECT DISTINCT account, since, phone FROM memberships WHERE first = ? and last =?`[
+            (first, last)
+        ],
+        (err, rows) => {
+            if (err) {
+                console.log(err.message);
+                event.sender.send(channels.SENTER_FIND_BOTH_NAME, {
+                    error: err.message,
+                });
+            } else if (rows && rows.length === 1) {
+                console.log(rows);
+                dbSenter.get(
+                    `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                    rows[0].account,
+                    (err, row) => {
+                        if (err) {
+                            console.log(err.message);
+                            event.sender.send(channels.SENTER_FIND_BOTH_NAME, {
+                                error: err.message,
+                            });
+                        } else {
+                            console.log(row);
+                            event.sender.send(channels.SENTER_FIND_BOTH_NAME, {
+                                account: row,
+                            });
+                        }
+                    }
+                );
+            } else if (rows && rows.length > 1) {
+                const test = [];
+                rows.forEach((row) => {
+                    dbSenter.get(
+                        `SELECT * FROM memberships WHERE account = ? ORDER BY rowid DESC LIMIT 1`,
+                        row.account,
+                        (err, lastAccountRecord) => {
+                            test.push(lastAccountRecord);
+                            event.sender.send(channels.SENTER_FIND_BOTH_NAME, {
+                                accounts: test,
+                            });
+                        }
+                    );
+                });
+            } else {
+                event.sender.send(channels.SENTER_FIND_BOTH_NAME, {
+                    account: null,
+                });
             }
         }
     );
@@ -97,148 +327,43 @@ ipcMain.on(channels.SENTER_ADD, (event, args) => {
         previous,
     } = args;
 
-    dbSenter.get(
-        `SELECT * FROM memberships WHERE account = ?`,
+    const data = [
         account,
-        (err, duplicate) => {
-            console.log(duplicate);
-            if (!duplicate) {
-                dbSenter.run(
-                    `INSERT INTO memberships ( 
-            account,
-            phone,
-            first,
-            last,
-            since,
-            fee,
-            gallon,
-            buy,
-            remain,
-            type,
-            date,
-            time,
-            previous 
-        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [
-                        account,
-                        phone,
-                        first,
-                        last,
-                        since,
-                        fee,
-                        gallon,
-                        buy,
-                        remain,
-                        type,
-                        date,
-                        time,
-                        previous,
-                    ],
-                    function (err) {
-                        if (err) {
-                            console.log(err.message);
-                            event.sender.send(channels.SENTER_ADD, {
-                                error: `Account ${account} already existed`,
-                                data: args,
-                            });
-                        } else {
-                            console.log(
-                                `A row has been inserted with rowid ${this.lastID}`
-                            );
-                            dbSenter.get(
-                                `SELECT     account,
-            phone,
-            first,
-            last,
-            since,
-            fee,
-            gallon,
-            buy,
-            remain,
-            type,
-            date,
-            time  FROM memberships WHERE rowid = ?`,
-                                this.lastID,
-                                function (err, row) {
-                                    if (err) return console.log(err.message);
-                                    event.sender.send(channels.SENTER_ADD, row);
-                                }
-                            );
-                        }
-                    }
-                );
-            } else {
-                event.sender.send(channels.SENTER_ADD, {
-                    error: `Account ${account} already existed`,
-                    data: args,
-                });
-            }
-        }
-    );
+        phone,
+        first,
+        last,
+        since,
+        fee,
+        gallon,
+        buy,
+        remain,
+        type,
+        date,
+        time,
+        previous,
+    ];
 
-    // Check for duplicate account
-    // dbSenter.run(
-    //     `INSERT INTO memberships (
-    //         account,
-    //         phone,
-    //         first,
-    //         last,
-    //         since,
-    //         fee,
-    //         gallon,
-    //         buy,
-    //         remain,
-    //         type,
-    //         date,
-    //         time
-    //     ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    //     [
-    //         account,
-    //         phone,
-    //         first,
-    //         last,
-    //         since,
-    //         fee,
-    //         gallon,
-    //         buy,
-    //         remain,
-    //         type,
-    //         date,
-    //         time,
-    //     ],
-    //     function (err) {
-    //         if (err) {
-    //             console.log(err.message);
-    //             event.sender.send(channels.SENTER_ADD, {
-    //                 error: `Account ${account} already existed`,
-    //                 data: args,
-    //             });
-    //         } else {
-    //             console.log(
-    //                 `A row has been inserted with rowid ${this.lastID}`
-    //             );
-    //             dbSenter.get(
-    //                 `SELECT     account,
-    //         phone,
-    //         first,
-    //         last,
-    //         since,
-    //         fee,
-    //         gallon,
-    //         buy,
-    //         remain,
-    //         type,
-    //         date,
-    //         time  FROM memberships WHERE rowid = ?`,
-    //                 this.lastID,
-    //                 function (err, row) {
-    //                     if (err) return console.log(err.message);
-    //                     event.sender.send(channels.SENTER_ADD, row);
-    //                 }
-    //             );
-    //         }
-    //     }
-    // );
+    dbSenter.get(findAccount, account, (err, duplicate) => {
+        if (err) return console.log(err.message);
+
+        if (!duplicate) {
+            dbSenter.run(addNewAccount, data, function (err) {
+                if (err) {
+                    return console.log(err.message);
+                } else {
+                    dbSenter.get(lastRecord, this.lastID, function (err, row) {
+                        if (err) return console.log(err.message);
+                        event.sender.send(channels.SENTER_ADD, row);
+                    });
+                }
+            });
+        } else {
+            event.sender.send(channels.SENTER_ADD, {
+                error: `Account ${account} already existed`,
+                data: args,
+            });
+        }
+    });
 });
 
 // INSERT BUY GALLON
@@ -319,6 +444,80 @@ ipcMain.on(channels.SENTER_BUY, (event, args) => {
                     }
                 );
             }
+        }
+    );
+});
+
+// GET ACCOUNT HISTORY
+ipcMain.on(channels.SENTER_ACCOUNT_HISTORY, (event, account) => {
+    console.log('SENTER_FIND_ACCOUNT_HISTORY', account);
+    dbSenter.all(
+        `SELECT * FROM memberships WHERE account = ?`,
+        account,
+        (err, records) => {
+            if (err) return console.log('hhaha', err);
+            console.log('RECORDS', records);
+            event.sender.send(channels.SENTER_ACCOUNT_HISTORY, records);
+        }
+    );
+});
+
+// BACKUP SENTER DATABASE
+ipcMain.on(channels.SENTER_BACKUP, (event, request) => {
+    const currentdate = new Date().toLocaleDateString();
+
+    dialog
+        .showSaveDialog({
+            properties: ['openFile', 'multiSelections'],
+            defaultPath: `senter.sqlite3`,
+            filters: [{ name: 'Sqlite3', extensions: ['sqlite3'] }],
+        })
+        .then((result) => {
+            if (result.filePath) {
+                fs.copyFile(dbFile, result.filePath, function (err) {
+                    if (err) {
+                        event.sender.send(channels.SENTER_BACKUP, {
+                            open: false,
+                        });
+                        throw err;
+                    } else {
+                        event.sender.send(channels.SENTER_BACKUP, {
+                            open: `${currentdate.trim()}`,
+                        });
+                    }
+                });
+            } else {
+                event.sender.send(channels.SENTER_BACKUP, {
+                    open: false,
+                });
+            }
+        })
+        .catch((err) => {
+            event.sender.send(channels.SENTER_BACKUP, {
+                open: false,
+            });
+        });
+});
+
+// EDIT SENTER USER
+ipcMain.on(channels.SENTER_EDIT, (event, args) => {
+    console.log('EDIT:', args);
+    const { account, phone, first, last } = args;
+
+    dbSenter.run(
+        `UPDATE memberships SET first = ?, last = ?, phone = ? WHERE account = ?`,
+        [first, last, phone, account],
+        function (err) {
+            if (err) return console.log(err.message);
+            // console.log(this.lastID);
+            dbSenter.all(
+                `SELECT * FROM memberships WHERE account = ?`,
+                account,
+                function (err, rows) {
+                    if (err) return console.log(err.message);
+                    event.sender.send(channels.SENTER_EDIT, rows);
+                }
+            );
         }
     );
 });

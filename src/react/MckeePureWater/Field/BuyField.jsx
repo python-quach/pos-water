@@ -1,5 +1,6 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
+import { normalize } from '../Normalize';
 
 const normalizePhone = (value) => {
     if (!value) return value;
@@ -12,18 +13,6 @@ const normalizePhone = (value) => {
         10
     )}`;
 };
-
-// const normalizePhone = (value) => {
-//     if (!value) return value;
-//     const onlyNums = value.replace(/[^\d]/g, '');
-//     if (onlyNums.length <= 3) return onlyNums;
-//     if (onlyNums.length <= 7)
-//         return `(${onlyNums.slice(0, 3)}) ${onlyNums.slice(3, 7)}`;
-//     return `(${onlyNums.slice(0, 3)}) ${onlyNums.slice(3, 6)}-${onlyNums.slice(
-//         6,
-//         10
-//     )}`;
-// };
 
 const normalizeAccount = (value) => {
     if (!value) return value;
@@ -58,11 +47,12 @@ const normalizeGallon = (value) => {
     }
 };
 
-export const TodayDate = () => (
+export const TodayDate = ({ edit }) => (
     <Field
         name='date'
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 className='TodayDate'
                 id='date'
                 label='Today Date'
@@ -78,11 +68,12 @@ export const TodayDate = () => (
     />
 );
 
-export const CurrentTime = () => (
+export const CurrentTime = ({ edit }) => (
     <Field
         name='time'
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 className='TodayDate'
                 width={2}
                 id='time'
@@ -98,11 +89,12 @@ export const CurrentTime = () => (
     />
 );
 
-export const MemberSince = () => (
+export const MemberSince = ({ edit }) => (
     <Field
         name='since'
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 className='TodayDate'
                 id='memberSince'
                 label='Member Since'
@@ -118,12 +110,13 @@ export const MemberSince = () => (
     />
 );
 
-export const Account = () => (
+export const Account = ({ edit }) => (
     <Field
         name='account'
         parse={normalizeAccount}
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 id='account'
                 size='huge'
                 className='TodayDate'
@@ -150,7 +143,7 @@ export const PhoneNumber = (props) => (
                 className='TodayDate'
                 label='Phone Number'
                 size='huge'
-                width={2}
+                width={3}
                 icon='phone'
                 iconPosition='left'
                 inverted
@@ -186,7 +179,8 @@ export const FullName = (props) => (
 export const FirstName = (props) => (
     <Field
         name='first'
-        parse={normalizeName}
+        // parse={normalizeName}
+        parse={normalize.name}
         render={({ input }) => (
             <Form.Input
                 id='first'
@@ -208,7 +202,8 @@ export const FirstName = (props) => (
 export const LastName = (props) => (
     <Field
         name='last'
-        parse={normalizeName}
+        parse={normalize.name}
+        // parse={normalizeName}
         render={({ input }) => (
             <Form.Input
                 id='last'
@@ -227,12 +222,13 @@ export const LastName = (props) => (
     />
 );
 
-export const Buy = () => (
+export const Buy = ({ edit }) => (
     <Field
         name='buy'
         parse={normalizeGallon}
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 className='TodayDate'
                 id='buy'
                 label='Buy'
@@ -245,11 +241,12 @@ export const Buy = () => (
     />
 );
 
-export const Remain = () => (
+export const Remain = ({ edit }) => (
     <Field
         name='remain'
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 className='TodayDate'
                 inverted
                 id='remain'
@@ -263,12 +260,13 @@ export const Remain = () => (
     />
 );
 
-export const Fee = () => (
+export const Fee = ({ edit }) => (
     <Field
         name='fee'
         parse={normalizeFee}
         render={({ input }) => (
             <Form.Input
+                disabled={edit}
                 className='TodayDate'
                 id='fee'
                 label='Fee'
@@ -281,13 +279,14 @@ export const Fee = () => (
     />
 );
 
-export const Renew = () => (
+export const Renew = ({ edit }) => (
     <Field
         name='gallon'
         parse={normalizeGallon}
         render={({ input }) => (
             <Form.Input
                 id='renew'
+                disabled={edit}
                 className='TodayDate'
                 label='Renew'
                 {...input}

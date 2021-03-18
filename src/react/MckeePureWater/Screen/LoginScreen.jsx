@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
     Segment,
     TransitionablePortal,
@@ -8,64 +7,80 @@ import {
     Divider,
 } from 'semantic-ui-react';
 import LoginForm from '../Form/LoginForm';
-import { channels } from '../../../shared/constants';
-const { ipcRenderer } = window;
 
-const LoginScreen = (props) => {
-    const { setOpenLogin, setOpenDashBoard } = props;
-    const [error, setError] = useState(false);
+const LoginScreen = ({
+    onSubmit,
+    error,
+    setError,
+    segment,
+    grid,
+    column,
+    header,
+    icon,
+    content,
+    version,
+    open,
+    backup,
+    fileSave,
+}) => (
+    <TransitionablePortal open={open}>
+        <Segment {...segment}>
+            <Grid {...grid}>
+                <Grid.Column {...column}>
+                    <Header {...header}>
+                        <Icon {...icon} />
+                        <Header.Content>
+                            {content}
+                            <Header.Subheader content={version} />
+                        </Header.Content>
+                    </Header>
+                    <Divider />
+                    <LoginForm
+                        onSubmit={onSubmit}
+                        error={error}
+                        backup={backup}
+                        file={fileSave}
+                        setError={setError}
+                    />
+                </Grid.Column>
+            </Grid>
+        </Segment>
+    </TransitionablePortal>
+);
 
-    const onSubmit = async (values) => {
-        ipcRenderer.send(channels.LOGIN, values);
-        ipcRenderer.on(channels.LOGIN, (_, { login }) => {
-            ipcRenderer.removeAllListeners(channels.LOGIN);
-            if (login) {
-                console.log('User Login Successfully:', { login });
-                setError(false);
-                setOpenLogin(false);
-                setOpenDashBoard(true);
-            } else {
-                console.log('Invalid Credential:', { login });
-                setError(true);
-                document.getElementById('username').focus();
-            }
-        });
-    };
-
-    return (
-        <TransitionablePortal open={true}>
-            <Segment
-                raised
-                style={{
-                    margin: 0,
-                    height: '100%',
-                    overflow: 'hidden',
-                    zIndex: 1000,
-                    backgroundColor: '#002b487d',
-                }}>
-                <Grid
-                    textAlign='center'
-                    verticalAlign='middle'
-                    style={{ height: '100vh' }}>
-                    <Grid.Column style={{ maxWidth: 450 }}>
-                        <Header as='h1' inverted size='huge' textAlign='left'>
-                            <Icon name='braille' color='blue' />
-                            <Header.Content>
-                                Senter Pure Water
-                                <Header.Subheader content='Dashboard' />
-                            </Header.Content>
-                        </Header>
-                        <Divider />
-                        <LoginForm
-                            onSubmit={onSubmit}
-                            error={error}
-                            setError={setError}
-                        />
-                    </Grid.Column>
-                </Grid>
-            </Segment>
-        </TransitionablePortal>
-    );
+LoginScreen.defaultProps = {
+    segment: {
+        raised: true,
+        style: {
+            margin: 0,
+            height: '100%',
+            overflow: 'hidden',
+            zIndex: 1000,
+            backgroundColor: '#002b487d',
+        },
+    },
+    grid: {
+        textAlign: 'center',
+        verticalAlign: 'middle',
+        style: {
+            height: '100vh',
+        },
+    },
+    column: {
+        style: { maxWidth: 450 },
+    },
+    header: {
+        as: 'h1',
+        inverted: true,
+        size: 'huge',
+        textAlign: 'left',
+    },
+    icon: {
+        name: 'braille',
+        color: 'blue',
+    },
+    content: 'Senter Pure Water',
+    version: 'Dashboard Version 1.0',
 };
 
 export default LoginScreen;

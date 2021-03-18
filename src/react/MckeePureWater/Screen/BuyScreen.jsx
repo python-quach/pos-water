@@ -1,10 +1,24 @@
-import { Segment, TransitionablePortal, Grid } from 'semantic-ui-react';
+import { useState } from 'react';
+import {
+    Segment,
+    TransitionablePortal,
+    Grid,
+    Divider,
+} from 'semantic-ui-react';
 import BuyForm from '../Form/BuyForm';
+import CustomerHistory from '../History/CustomerHistory';
+import Receipt from '../Receipt';
 
 const BuyScreen = (props) => {
+    const [openReceipt, setOpenReceipt] = useState(true);
+    const [openHistory, setOpenHistory] = useState(false);
     return (
-        // <TransitionablePortal open={true}>
-        <TransitionablePortal open={props.open}>
+        <TransitionablePortal
+            open={props.open}
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
+            closeOnDimmerClick={false}
+            closeOnPortalMouseLeave={false}>
             <Segment
                 style={{
                     margin: 0,
@@ -15,10 +29,24 @@ const BuyScreen = (props) => {
                 }}>
                 <Grid verticalAlign='top' style={{ height: '100vh' }}>
                     <Grid.Column>
+                        <Receipt open={openReceipt} record={props.record} />
+                        <Divider />
                         <BuyForm
+                            setOpenReceipt={setOpenReceipt}
+                            setOpenDashBoard={props.setOpenDashBoard}
+                            setOpenBuyScreen={props.setOpenBuyScreen}
                             onSubmit={props.handleBuy}
                             record={props.record}
                             setRecord={props.setRecord}
+                            setOpenHistory={setOpenHistory}
+                            handleEdit={props.handleEdit}
+                        />
+                        <CustomerHistory
+                            record={props.record}
+                            records={props.records}
+                            open={openHistory}
+                            setOpenBuyScreen={props.setOpenBuyScreen}
+                            setOpenHistory={setOpenHistory}
                         />
                     </Grid.Column>
                 </Grid>

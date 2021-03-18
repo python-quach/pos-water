@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Segment, Header } from 'semantic-ui-react';
 import Login from './Screen/LoginScreen';
 import DashBoard from './Screen/DashBoardScreen';
@@ -7,6 +7,7 @@ import Add from './Screen/AddScreen';
 import Buy from './Screen/BuyScreen';
 import Admin from './Screen/AdminScreen';
 import History from './History/CustomerHistory';
+import { login, backup, renew, buy, add, findPhone, edit } from './Api';
 import { channels } from '../../shared/constants';
 const { ipcRenderer } = window;
 
@@ -19,95 +20,316 @@ const MckeePureWater = (props) => {
     const [openAdmin, setOpenAdmin] = useState(false);
     const [openHistory, setOpenHistory] = useState(false);
     const [record, setRecord] = useState(false);
-    const [error, setError] = useState('');
+    const [records, setRecords] = useState([]);
+    // const [error, setError] = useState('');
+    const [error, setError] = useState(false);
+    const [history, setHistory] = useState(null);
+    const [fileSave, setFileSave] = useState(null);
+    // const [backup, setBackup] = useState(null)
 
-    const handleAddMembership = async (values) => {
-        const data = {
-            ...values,
-            fee: parseInt(values.fee),
-            gallon: parseInt(values.gallon),
-            remain: parseInt(values.gallon),
-            // remain: 0,
-            // previous: parseInt(values.gallon),
-            previous: 0,
-        };
+    // const showBuyScreen = ({ history, record }) => {
+    //     setError(false);
+    //     setHistory(history);
+    //     setRecord(record);
+    //     setOpenBuy(true);
+    //     setOpenDashBoard(false);
+    //     // document.getElementById('buy').focus();
+    // };
 
-        ipcRenderer.send(channels.SENTER_ADD, data);
-        ipcRenderer.on(channels.SENTER_ADD, (_, args) => {
-            ipcRenderer.removeAllListeners(channels.SENTER_ADD);
-            if (args.error) {
-                setError(args.error);
-                document.getElementById('account').focus();
-            } else {
-                // setRecord(args);
-                // setRecord({ ...args, gallon: 0 });
-                setRecord(args);
-                setOpenBuy(true);
-                setOpenAdd(false);
-            }
-        });
-    };
+    const handleFindMembership = async (values) => {
+        console.log(values);
 
-    const handleBuy = async (values) => {
-        // console.log('Buy Submit', values);
-
-        if (values.gallon !== 0 && values.fee !== 0) {
-            const renew = {
-                ...values,
-                remain: values.gallon + values.remain,
-                // previous: values.remain,
-                type: 'RENEW',
-            };
-            console.log('RENEW:', renew);
-            return new Promise((resolve, reject) => {
-                ipcRenderer.send(channels.SENTER_BUY, renew);
-                ipcRenderer.on(channels.SENTER_BUY, (_, args) => {
-                    ipcRenderer.removeAllListeners(channels.SENTER_BUY);
-                    console.log('LOOK HERE', args);
-                    // setRecord({ ...args, remain: args.remain + args.gallon });
-                    setRecord({ ...args, remain: args.remain });
-                    // setRecord(args);
-                    document.getElementById('buy').focus();
-                    resolve(args);
-                });
+        if (values.phone) {
+            ipcRenderer.send(channels.SENTER_FIND_PHONE, values.phone);
+            ipcRenderer.on(channels.SENTER_FIND_PHONE, (_, data) => {
+                console.log('RESPONSE FROM FIND PHONE', data);
+                // We need to check for multiple account with same phone number
+                if (data.account) {
+                    ipcRenderer.send(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        data.account.account
+                        // values.data.account
+                    );
+                    ipcRenderer.on(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        (event, args) => {
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_ACCOUNT_HISTORY
+                            );
+                            console.log('History', args);
+                            setHistory(args);
+                            setRecord(data.account);
+                            setOpenBuy(true);
+                            setOpenDashBoard(false);
+                        }
+                    );
+                } else if (data.accounts) {
+                    console.log('found many account ', data.accounts);
+                    setRecords(data.accounts);
+                    setOpenAccount(true);
+                    setOpenDashBoard(false);
+                } else {
+                    console.log(
+                        'There are not account with the phone number',
+                        values.phone
+                    );
+                }
             });
-        } else {
-            const buy = {
-                ...values,
-                // previous: values.previous,
-                type: 'BUY',
-            };
-            console.log('BUY:', buy);
-            return new Promise((resolve, reject) => {
-                ipcRenderer.send(channels.SENTER_BUY, buy);
-                ipcRenderer.on(channels.SENTER_BUY, (_, args) => {
-                    ipcRenderer.removeAllListeners(channels.SENTER_BUY);
-                    setRecord(args);
-                    resolve(args);
-                });
+        } else if (values.account) {
+            ipcRenderer.send(channels.SENTER_FIND_ACCOUNT, values.account);
+            ipcRenderer.on(
+                channels.SENTER_FIND_ACCOUNT,
+                (_, lastAccountRecord) => {
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_ACCOUNT
+                    );
+                    console.log(
+                        'RESPONSE FROM FIND ACCOUNT',
+                        lastAccountRecord
+                    );
+
+                    if (!lastAccountRecord) {
+                        console.log(
+                            'Unable to find Account',
+                            lastAccountRecord
+                        );
+                    } else {
+                        ipcRenderer.send(
+                            channels.SENTER_ACCOUNT_HISTORY,
+                            values.account
+                        );
+                        ipcRenderer.on(
+                            channels.SENTER_ACCOUNT_HISTORY,
+                            (event, args) => {
+                                ipcRenderer.removeAllListeners(
+                                    channels.SENTER_ACCOUNT_HISTORY
+                                );
+                                console.log('History', args);
+                                setHistory(args);
+                                setRecord(lastAccountRecord);
+                                setOpenBuy(true);
+                                setOpenDashBoard(false);
+                            }
+                        );
+
+                        // setRecord(lastAccountRecord);
+                        // setOpenDashBoard(false);
+                        // setOpenBuy(true);
+                    }
+                }
+            );
+        } else if (values.first) {
+            ipcRenderer.send(channels.SENTER_FIND_FIRST_NAME, values.first);
+            ipcRenderer.on(channels.SENTER_FIND_FIRST_NAME, (_, data) => {
+                console.log('RESPONSE FROM FIND FIRST NAME', data);
+
+                if (data.account && data.account.account) {
+                    ipcRenderer.send(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        data.account.account
+                    );
+                    ipcRenderer.on(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        (event, args) => {
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_ACCOUNT_HISTORY
+                            );
+                            console.log('History', args);
+                            setHistory(args);
+                            setRecord(data.account);
+                            setOpenBuy(true);
+                            setOpenDashBoard(false);
+                        }
+                    );
+                } else if (data.accounts) {
+                    console.log('found many account ', data.accounts);
+                    setRecords(data.accounts);
+                    setOpenAccount(true);
+                    setOpenDashBoard(false);
+                } else {
+                    console.log(
+                        'There are not account with the name',
+                        values.first
+                    );
+                }
+            });
+        } else if (values.last) {
+            ipcRenderer.send(channels.SENTER_FIND_LAST_NAME, values.last);
+            ipcRenderer.on(channels.SENTER_FIND_LAST_NAME, (_, data) => {
+                console.log('RESPONSE FROM FIND LAST NAME', data);
+
+                if (data.account && data.account.account) {
+                    ipcRenderer.send(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        data.account.account
+                    );
+                    ipcRenderer.on(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        (event, args) => {
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_ACCOUNT_HISTORY
+                            );
+                            console.log('History', args);
+                            setHistory(args);
+                            setRecord(data.account);
+                            setOpenBuy(true);
+                            setOpenDashBoard(false);
+                        }
+                    );
+                } else if (data.accounts) {
+                    console.log('found many account ', data.accounts);
+                    setRecords(data.accounts);
+                    setOpenAccount(true);
+                    setOpenDashBoard(false);
+                } else {
+                    console.log(
+                        'There are not account with the name',
+                        values.first
+                    );
+                }
+            });
+        } else if (values.first && values.last) {
+            ipcRenderer.send(channels.SENTER_FIND_BOTH_NAME, {
+                first: values.first,
+                last: values.last,
+            });
+            ipcRenderer.on(channels.SENTER_FIND_BOTH_NAME, (_, data) => {
+                console.log('RESPONSE FROM FIND BOTH NAME', data);
+
+                if (data.account && data.account.account) {
+                    ipcRenderer.send(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        data.account.account
+                    );
+                    ipcRenderer.on(
+                        channels.SENTER_ACCOUNT_HISTORY,
+                        (event, args) => {
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_ACCOUNT_HISTORY
+                            );
+                            console.log('History', args);
+                            setHistory(args);
+                            setRecord(data.account);
+                            setOpenBuy(true);
+                            setOpenDashBoard(false);
+                        }
+                    );
+                } else if (data.accounts) {
+                    console.log('found many account ', data.accounts);
+                    setRecords(data.accounts);
+                    setOpenAccount(true);
+                    setOpenDashBoard(false);
+                } else {
+                    console.log(
+                        'There are not account with the name',
+                        values.first
+                    );
+                }
             });
         }
+    };
 
-        // return new Promise((resolve, reject) => {
-        //     ipcRenderer.send(channels.SENTER_BUY, values);
-        //     ipcRenderer.on(channels.SENTER_BUY, (_, args) => {
-        //         ipcRenderer.removeAllListeners(channels.SENTER_BUY);
-        //         setRecord(args);
-        //         resolve(args);
-        //     });
-        // });
+    const launchBuyScreen = ({ record, history, openBuy, openAdd }) => {
+        setError(false);
+        setRecord(record);
+        setHistory(history);
+        setOpenBuy(openBuy);
+        setOpenAdd(openAdd);
+        document.getElementById('buy').focus();
+    };
+
+    const updateBuyScreen = ({ history, record }) => {
+        setHistory(history);
+        setRecord(record);
+        document.getElementById('buy').focus();
+        return record;
+    };
+
+    const launchDashBoardScreen = (login) => {
+        console.log('User Login Successfully:', { login });
+        setError(false);
+        setOpenLogin(false);
+        setOpenDashBoard(true);
+        document.getElementById('phone').focus();
+    };
+
+    const showLoginButtonError = (login) => {
+        console.log('Invalid Credential:', { login });
+        setError(true);
+        document.getElementById('username').focus();
+    };
+
+    // FORM: ADD SCREEN
+    const handleAddMembership = async (values) => {
+        try {
+            launchBuyScreen(await add(values));
+        } catch (err) {
+            setError(err);
+            document.getElementById('account').focus();
+        }
+    };
+
+    // FORM: LOGIN SCREEN, form onSubmit handler
+    const handleUserLogin = async (values) => {
+        try {
+            launchDashBoardScreen(await login(values));
+        } catch (err) {
+            showLoginButtonError(err);
+        }
+    };
+
+    // FORM:  BACKUP database
+    const handleBackup = async () => {
+        try {
+            const result = await backup();
+            console.log('Backup result', result);
+            setFileSave(result);
+        } catch (err) {
+            setFileSave(err);
+            console.log(err);
+        }
+    };
+
+    // FORM: BUY AND RENEW GALLON
+    const handleBuy = async (values) => {
+        if (values.gallon !== 0 && values.fee !== 0) {
+            try {
+                return updateBuyScreen(await renew(values));
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            try {
+                return updateBuyScreen(await buy(values));
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    };
+
+    const handleEdit = async (values) => {
+        try {
+            const data = await edit(values);
+            console.log('handleEdit Look Here', data);
+            setRecord(data[data.length - 1]);
+            setHistory(data);
+            // return await edit(values);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (
         // <Segment raised style={{ height: '100vh', overflow: 'scroll' }}>
         <>
-            {/* <Add setOpenBuy={setOpenBuy} setRecord={setRecord} /> */}
-            {/* {openBuy && <Buy setOpenBuyScreen={setOpenBuy} record={record} />} */}
-            {/* <Header size='huge'>MckeePureWater</Header> */}
             {openLogin && (
                 <Login
-                    setOpenDashBoard={setOpenDashBoard}
-                    setOpenLogin={setOpenLogin}
+                    open={openLogin}
+                    error={error}
+                    fileSave={fileSave}
+                    onSubmit={handleUserLogin}
+                    backup={handleBackup}
+                    setError={setError}
                 />
             )}
             {openDashBoard && (
@@ -116,12 +338,14 @@ const MckeePureWater = (props) => {
                     setOpenDashBoard={setOpenDashBoard}
                     setOpenLogin={setOpenLogin}
                     setOpenAdd={setOpenAdd}
+                    handleFindMembership={handleFindMembership}
                 />
             )}
             {openAdd && (
                 <Add
                     open={openAdd}
                     error={error}
+                    setError={setError}
                     handleAddMembership={handleAddMembership}
                     setOpenDashBoard={setOpenDashBoard}
                     setOpenBuy={setOpenBuy}
@@ -132,12 +356,26 @@ const MckeePureWater = (props) => {
             {openBuy && (
                 <Buy
                     open={openBuy}
+                    handleEdit={handleEdit}
+                    records={history}
                     handleBuy={handleBuy}
+                    setOpenDashBoard={setOpenDashBoard}
                     setOpenBuyScreen={setOpenBuy}
                     setRecord={setRecord}
                     record={record}
                 />
             )}
+            {openAccount && (
+                <Account
+                    open={openAccount}
+                    records={records}
+                    setOpenDashBoard={setOpenDashBoard}
+                    setOpenAccountScreen={setOpenAccount}
+                    openAccount={openAccount}
+                    find={handleFindMembership}
+                />
+            )}
+
             {/* {openBuy && (
                 <Buy setOpenBuyScreen={setOpenBuy} setRecord={setRecord} />
             )} */}

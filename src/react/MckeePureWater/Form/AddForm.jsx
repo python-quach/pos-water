@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
-import { Form as FinalForm } from 'react-final-form';
+import {
+    Form as FinalForm,
+    Field as FinalField,
+    FormSpy,
+} from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 import Field from '../Field/AddField';
+import { OnChange } from 'react-final-form-listeners';
 
 const initialValues = {
     account: null,
@@ -19,6 +24,26 @@ const initialValues = {
     time: new Date().toLocaleTimeString(),
 };
 
+const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
+    <FinalField name={set} subscription={{}}>
+        {({ input: { onChange } }) => (
+            <FormSpy subscription={{}}>
+                {() => (
+                    <OnChange name={field}>
+                        {() => {
+                            if (becomes) {
+                                onChange(to);
+                            } else {
+                                onChange(reset);
+                            }
+                        }}
+                    </OnChange>
+                )}
+            </FormSpy>
+        )}
+    </FinalField>
+);
+
 const AddForm = (props) => {
     const { onSubmit, close, error } = props;
 
@@ -33,6 +58,13 @@ const AddForm = (props) => {
             render={({ handleSubmit, submitting, values }) => (
                 <Form onSubmit={handleSubmit}>
                     <Form.Group>
+                        <WhenBuyFieldChanges
+                            field='gallon'
+                            becomes={values.gallon > 0}
+                            set='remain'
+                            to={parseInt(values.gallon)}
+                            reset={0}
+                        />
                         <Field.Date />
                         <Field.Time />
                         <Field.Account error={error} />

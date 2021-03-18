@@ -20,7 +20,9 @@ export const normalizeAccount = (value) => {
 export const normalizeName = (value) => {
     if (!value) return value;
     const onlyLetters = value.replace(/[^A-Za-z]/g, '');
-    return onlyLetters.charAt(0).toUpperCase() + onlyLetters.slice(1);
+    return (
+        onlyLetters.charAt(0).toUpperCase() + onlyLetters.slice(1).toLowerCase()
+    );
 };
 
 export const normalizeFee = (value) => {

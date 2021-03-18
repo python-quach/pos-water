@@ -4,7 +4,7 @@ import {
     Field as FinalField,
     FormSpy,
 } from 'react-final-form';
-import { Form, Divider } from 'semantic-ui-react';
+import { Form, Table, Divider } from 'semantic-ui-react';
 import {
     TodayDate,
     CurrentTime,
@@ -20,41 +20,57 @@ import {
 } from '../Field/BuyField';
 import { OnChange } from 'react-final-form-listeners';
 
-export const EditButton = ({ values, setEdit, edit }) => (
+export const EditButton = ({
+    values,
+    setEdit,
+    edit,
+    handleEdit,
+    setOpenReceipt,
+}) => (
     <Form.Button
         type='button'
+        disabled={!values.first || !values.last}
         content={edit ? 'Save' : 'Edit'}
-        color={edit ? 'purple' : 'vk'}
+        color={edit ? 'google plus' : 'vk'}
         size='huge'
         style={{ marginTop: '30px' }}
         onClick={(e) => {
             e.preventDefault();
             console.log('Edit', values);
+            if (edit) handleEdit(values);
+            // setOpenReceipt(false);
             setEdit((prevEdit) => !prevEdit);
         }}
     />
 );
 
-export const BuyButton = () => (
+export const BuyButton = ({ disabled, setOpenReceipt }) => (
     <Form.Button
-        type='submit'
+        disabled={disabled}
         style={{ width: '250px', marginTop: '30px' }}
         content='Buy'
         icon='cart'
         labelPosition='right'
         positive
         size='huge'
+        onClick={() => {
+            setOpenReceipt(false);
+        }}
     />
 );
 
-export const RenewButton = () => (
+export const RenewButton = ({ disabled, setOpenReceipt }) => (
     <Form.Button
+        disabled={disabled}
         style={{ marginTop: '30px', width: '250px' }}
         icon='redo'
         labelPosition='right'
         content='Renew'
         primary
         size='huge'
+        onClick={() => {
+            setOpenReceipt(false);
+        }}
     />
 );
 
@@ -81,6 +97,12 @@ const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
 export const BuyForm = (props) => {
     const [edit, setEdit] = useState(false);
 
+    function onKeyDown(keyEvent) {
+        if ((keyEvent.charCode || keyEvent.keyCode) === 13) {
+            keyEvent.preventDefault();
+        }
+    }
+
     return (
         <FinalForm
             onSubmit={props.onSubmit}
@@ -97,6 +119,7 @@ export const BuyForm = (props) => {
             }}
             render={({ handleSubmit, form, values }) => (
                 <Form
+                    onKeyDown={onKeyDown}
                     onSubmit={(event) => {
                         handleSubmit(event).then((data) => {
                             console.log('handleSubmit LOOK AT ME BUY', data);
@@ -109,6 +132,7 @@ export const BuyForm = (props) => {
                                 date: new Date().toLocaleDateString(),
                                 time: new Date().toLocaleTimeString(),
                             });
+                            props.setOpenReceipt(true);
                         });
                     }}>
                     <WhenBuyFieldChanges
@@ -154,42 +178,93 @@ export const BuyForm = (props) => {
                         reset={values.buy}
                     />
                     <Form.Group>
-                        <Account />
-                        <MemberSince />
+                        <Account edit={edit} />
+                        <MemberSince edit={edit} />
                         <PhoneNumber edit={edit} />
                         <FirstName edit={edit} />
                         <LastName edit={edit} />
                         <EditButton
                             edit={edit}
+                            handleEdit={props.handleEdit}
                             values={values}
                             setEdit={setEdit}
+                            setOpenReceipt={props.setOpenReceipt}
                         />
-                        <Form.Input type='hidden' width={1} />
-                        <TodayDate />
-                        <CurrentTime />
+                        {edit && (
+                            <Form.Button
+                                type='button'
+                                color='black'
+                                size='huge'
+                                style={{ marginTop: '30px' }}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    form.reset({
+                                        ...values,
+                                        first: props.record.first,
+                                        last: props.record.last,
+                                        phone: props.record.phone,
+                                    });
+                                    setEdit(false);
+                                }}>
+                                Cancel
+                            </Form.Button>
+                        )}
+                        {/* <Form.Input type='hidden' width={1} /> */}
+                        <TodayDate edit={edit} />
+                        <CurrentTime edit={edit} />
                     </Form.Group>
                     <Form.Group>
                         <Form.Input type='hidden' width={14} />
-                        <Buy />
-                        <Remain />
-                        <BuyButton />
+                        <Buy edit={edit} />
+                        <Remain edit={edit} />
+                        <BuyButton
+                            disabled={values.buy <= 0}
+                            setOpenReceipt={props.setOpenReceipt}
+                        />
                     </Form.Group>
                     <Form.Group>
                         <Form.Input type='hidden' width={14} />
-                        <Fee />
-                        <Renew />
-                        <RenewButton />
+                        <Fee edit={edit} />
+                        <Renew edit={edit} />
+                        <RenewButton
+                            setOpenReceipt={props.setOpenReceipt}
+                            disabled={values.gallon <= 0 || values.fee <= 0}
+                        />
                     </Form.Group>
                     <Divider hidden />
                     <Divider />
-                    <FormSpy>
+                    <Form.Group>
+                        <Form.Input type='hidden' width={14} />
+                        <Form.Button
+                            type='button'
+                            size='huge'
+                            color='teal'
+                            content='History'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                // props.setOpenBuyScreen(false);
+                                props.setOpenHistory(true);
+                            }}
+                        />
+                        <Form.Button
+                            size='huge'
+                            color='black'
+                            content='Done'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                props.setOpenBuyScreen(false);
+                                props.setOpenDashBoard(true);
+                            }}
+                        />
+                    </Form.Group>
+                    {/* <FormSpy>
                         {(values) => (
                             <>
                                 <pre>{JSON.stringify(values.values, 0, 2)}</pre>
                                 <pre>{JSON.stringify(props.record, 0, 2)}</pre>
                             </>
                         )}
-                    </FormSpy>
+                    </FormSpy> */}
                 </Form>
             )}
         />

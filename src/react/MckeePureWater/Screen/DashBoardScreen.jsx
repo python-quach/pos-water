@@ -8,10 +8,6 @@ import {
 } from 'semantic-ui-react';
 import FindForm from '../Form/FindForm';
 
-const handleFindMembership = async (values) => {
-    console.log('handleFindMembership', values);
-};
-
 const DashBoardScreen = (props) => {
     return (
         <TransitionablePortal open={props.open}>
@@ -40,10 +36,12 @@ const DashBoardScreen = (props) => {
                         <Divider />
                         <Divider hidden />
                         <FindForm
+                            // find={props.handleFindMembership}
                             setOpenAdd={props.setOpenAdd}
                             setOpenDashBoard={props.setOpenDashBoard}
                             setOpenLogin={props.setOpenLogin}
-                            onSubmit={handleFindMembership}
+                            // onSubmit={handleFindMembership}
+                            onSubmit={props.handleFindMembership}
                         />
                     </Grid.Column>
                 </Grid>

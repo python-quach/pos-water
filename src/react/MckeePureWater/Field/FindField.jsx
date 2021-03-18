@@ -1,5 +1,6 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
+import { normalize } from '../Normalize';
 
 const normalizePhone = (value) => {
     if (!value) return value;
@@ -26,10 +27,10 @@ const normalizeName = (value) => {
     return onlyLetters.charAt(0).toUpperCase() + onlyLetters.slice(1);
 };
 
-export const Phone = () => (
+export const Phone = ({ form }) => (
     <Field
         name='phone'
-        parse={normalizePhone}
+        parse={normalize.phone}
         render={({ input }) => (
             <Form.Input
                 id='phone'
@@ -42,14 +43,22 @@ export const Phone = () => (
                 size='massive'
                 iconPosition='left'
                 {...input}
+                onFocus={() => {
+                    form.reset({
+                        account: '',
+                        first: '',
+                        last: '',
+                    });
+                }}
             />
         )}
     />
 );
 
-export const Account = () => (
+export const Account = ({ form }) => (
     <Field
         name='account'
+        parse={normalize.account}
         render={({ input }) => (
             <Form.Input
                 id='phone'
@@ -62,14 +71,22 @@ export const Account = () => (
                 fluid
                 focus
                 {...input}
+                onFocus={() => {
+                    form.reset({
+                        phone: '',
+                        first: '',
+                        last: '',
+                    });
+                }}
             />
         )}
     />
 );
 
-export const FirstName = () => (
+export const FirstName = ({ form, values }) => (
     <Field
-        name='firstName'
+        name='first'
+        parse={normalize.name}
         render={({ input }) => (
             <Form.Input
                 id='firstName'
@@ -80,16 +97,26 @@ export const FirstName = () => (
                 transparent
                 fluid
                 focus
+                spellCheck='false'
                 placeholder='first name'
                 {...input}
+                onFocus={() => {
+                    form.reset({
+                        phone: '',
+                        account: '',
+                        first: values.first,
+                        last: values.last,
+                    });
+                }}
             />
         )}
     />
 );
 
-export const LastName = () => (
+export const LastName = ({ form, values }) => (
     <Field
-        name='lastName'
+        name='last'
+        parse={normalize.name}
         render={({ input }) => (
             <Form.Input
                 {...input}
@@ -101,7 +128,16 @@ export const LastName = () => (
                 transparent
                 fluid
                 focus
+                spellCheck='false'
                 placeholder='last name'
+                onFocus={() => {
+                    form.reset({
+                        phone: '',
+                        account: '',
+                        first: values.first,
+                        last: values.last,
+                    });
+                }}
             />
         )}
     />

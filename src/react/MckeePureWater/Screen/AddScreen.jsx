@@ -8,6 +8,7 @@ const AddScreen = (props) => {
         e.preventDefault();
         setOpenAdd(false);
         setOpenDashBoard(true);
+        props.setError(false);
     };
 
     return (
@@ -26,6 +27,7 @@ const AddScreen = (props) => {
                             onSubmit={handleAddMembership}
                             error={error}
                             close={close}
+                            // setError={props.setError}
                         />
                     </Grid.Column>
                 </Grid>

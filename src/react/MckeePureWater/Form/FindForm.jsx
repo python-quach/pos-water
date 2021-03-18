@@ -5,18 +5,24 @@ import { Phone, Account, FirstName, LastName } from '../Field/FindField';
 const FindForm = (props) => (
     <FinalForm
         onSubmit={props.onSubmit}
-        render={({ handleSubmit, form }) => (
+        render={({ handleSubmit, form, values }) => (
             <Form
                 size='large'
                 onSubmit={(event) => {
                     handleSubmit(event).then(form.reset);
                 }}>
-                <Phone />
-                <Account />
-                <FirstName />
-                <LastName />
+                <Phone form={form} />
+                <Account form={form} />
+                <FirstName form={form} values={values} />
+                <LastName form={form} values={values} />
                 <Divider hidden />
                 <Form.Button
+                    disabled={
+                        (!values.phone || values.phone.length < 14) &&
+                        !values.account &&
+                        !values.first &&
+                        !values.last
+                    }
                     content='Find Membership'
                     primary
                     circular

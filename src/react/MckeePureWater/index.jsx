@@ -7,7 +7,7 @@ import Add from './Screen/AddScreen';
 import Buy from './Screen/BuyScreen';
 import Admin from './Screen/AdminScreen';
 import History from './History/CustomerHistory';
-import { login, backup, renew, buy, add, findPhone, edit } from './Api';
+import { login, backup, renew, buy, add, edit, closeApp } from './Api';
 import { channels } from '../../shared/constants';
 const { ipcRenderer } = window;
 
@@ -283,10 +283,12 @@ const MckeePureWater = (props) => {
         try {
             const result = await backup();
             console.log('Backup result', result);
-            setFileSave(result);
+            if (result.open) {
+                setFileSave(result.open);
+            }
+            throw new Error('Unable to back file');
         } catch (err) {
-            setFileSave(err);
-            console.log(err);
+            return err;
         }
     };
 
@@ -314,7 +316,6 @@ const MckeePureWater = (props) => {
             setRecord(data[data.length - 1]);
             setHistory(data);
             return data;
-            // return await edit(values);
         } catch (err) {
             console.log(err);
         }
@@ -331,6 +332,8 @@ const MckeePureWater = (props) => {
                     onSubmit={handleUserLogin}
                     backup={handleBackup}
                     setError={setError}
+                    closeApp={closeApp}
+                    setFileSave={setFileSave}
                 />
             )}
             {openDashBoard && (

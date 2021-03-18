@@ -522,11 +522,15 @@ ipcMain.on(channels.SENTER_EDIT, (event, args) => {
     );
 });
 
+// SENTER CLOSE APP
+ipcMain.on(channels.SENTER_CLOSE, (event, args) => {
+    ipcMain.removeAllListeners(channels.SENTER_CLOSE);
+    app.quit();
+});
 usbDetect.startMonitoring();
 usbDetect
     .find()
     .then(function (devices) {
-        // console.log(devices);
         devices.forEach(function (item) {
             if (item.deviceName === 'USB Printing Support') {
                 // console.log('Found USB: ', { ...item });
@@ -538,14 +542,12 @@ usbDetect
         });
     })
     .catch(function (err) {
-        // console.log('71', err);
         escpos = null;
         device = null;
         printer = null;
     });
 
 usbDetect.on('add', function (usbDevice) {
-    // console.log(usbDevice);
     usbDetect
         .find()
         .then(function (devices) {

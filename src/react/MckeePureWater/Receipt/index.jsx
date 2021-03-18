@@ -27,8 +27,8 @@ const Receipt = ({ record, open }) => {
             <Segment
                 style={{
                     // margin: 15,
-                    paddingRight: 15,
-                    paddingLeft: 15,
+                    paddingRight: 18,
+                    paddingLeft: 18,
                     paddingTop: 20,
                     left: '0%',
                     right: '0%',

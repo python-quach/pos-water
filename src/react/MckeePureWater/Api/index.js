@@ -155,6 +155,10 @@ export const findPhone = ({ phone }) => {
     });
 };
 
+export const closeApp = () => {
+    ipcRenderer.send(channels.SENTER_CLOSE);
+};
+
 // export const find = (values) => {
 //     const { phone, account, first, last } = values;
 //     return new Promise((resolve, reject) => {

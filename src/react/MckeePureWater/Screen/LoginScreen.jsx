@@ -4,6 +4,7 @@ import {
     Grid,
     Header,
     Icon,
+    Form,
     Divider,
 } from 'semantic-ui-react';
 import LoginForm from '../Form/LoginForm';
@@ -22,6 +23,8 @@ const LoginScreen = ({
     open,
     backup,
     fileSave,
+    closeApp,
+    setFileSave,
 }) => (
     <TransitionablePortal open={open}>
         <Segment {...segment}>
@@ -40,8 +43,63 @@ const LoginScreen = ({
                         error={error}
                         backup={backup}
                         file={fileSave}
+                        setFileSave={setFileSave}
                         setError={setError}
-                    />
+                        closeApp={closeApp}>
+                        <Divider hidden />
+                        <Form.Button
+                            circular
+                            fluid
+                            icon={error ? 'warning' : 'lock'}
+                            labelPosition='right'
+                            primary
+                            size='huge'
+                            negative={error}
+                            content={error ? 'Invalid Credential' : 'Login'}
+                        />
+                        <Form.Button
+                            circular
+                            content='Admin'
+                            size='huge'
+                            color='yellow'
+                            icon='user circle'
+                            labelPosition='right'
+                            fluid
+                            onClick={(e) => {
+                                e.preventDefault();
+                                console.log('Admin Button');
+                            }}
+                        />
+                        <Form.Group widths={2}>
+                            <Form.Button
+                                circular
+                                fluid
+                                size='huge'
+                                content='Close'
+                                icon='close'
+                                labelPosition='right'
+                                color='black'
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    console.log('Close');
+                                    closeApp();
+                                }}
+                            />
+                            <Form.Button
+                                circular
+                                size='huge'
+                                content={fileSave ? fileSave : 'Backup'}
+                                icon='database'
+                                color='pink'
+                                fluid
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    console.log('Backup');
+                                    backup();
+                                }}
+                            />
+                        </Form.Group>
+                    </LoginForm>
                 </Grid.Column>
             </Grid>
         </Segment>

@@ -23,11 +23,9 @@ export const add = (data, callback) => {
 
 // Find Membership
 export const find = ({ phone, account, firstName, lastName }, callback) => {
-    // console.log('Find', phone, account, firstName, lastName);
     ipcRenderer.send(channels.FIND, { phone, account, firstName, lastName });
     ipcRenderer.on(channels.FIND, (_, data) => {
         ipcRenderer.removeAllListeners(channels.FIND);
-        // console.log(data);
         callback(data);
     });
 };

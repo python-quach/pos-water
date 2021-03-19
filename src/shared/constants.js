@@ -41,5 +41,6 @@ module.exports = {
         SENTER_CLOSE: 'SENTER_CLOSE',
         SENTER_PRINT: 'SENTER_PRINT',
         SENTER_REPORT: 'SENTER_REPORT',
+        SENTER_DELETE: 'SENTER_DELETE',
     },
 };

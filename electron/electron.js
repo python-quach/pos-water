@@ -530,6 +530,32 @@ ipcMain.on(channels.SENTER_CLOSE, (event, args) => {
     ipcMain.removeAllListeners(channels.SENTER_CLOSE);
     app.quit();
 });
+
+// SENTER DELETE ACCOUNT
+ipcMain.on(channels.SENTER_DELETE, (event, { account, password }) => {
+    console.log('SENTER DELETE ACCOUNT', account);
+    if (password === '911') {
+        dbSenter.run(
+            `DELETE FROM memberships WHERE account = ?`,
+            account,
+            function (err) {
+                if (err) return console.log(err.message);
+                console.log('DELETED RESULT:', this);
+                event.sender.send(channels.SENTER_DELETE, {
+                    auth: true,
+                    status: this.changes,
+                });
+            }
+        );
+    } else {
+        console.log(`Unable to delete account: ${account}`);
+        event.sender.send(channels.SENTER_DELETE, {
+            auth: false,
+            status: null,
+        });
+    }
+});
+
 usbDetect.startMonitoring();
 usbDetect
     .find()

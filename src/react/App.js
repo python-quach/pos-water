@@ -1,5 +1,6 @@
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import MckeePureWater from './MckeePureWater';
+// import MckeePureWater from './MckeePureWater';
+import SenterPureWater from './SenterPureWater';
 // import LoginScreen from './Login/Screen/LoginScreen';
 // import DashBoardScreen from './Dashboard/Screen/DashboardScreen';
 // import AccountScreen from './Account/Screen/AccountScreen';
@@ -11,7 +12,9 @@ import 'semantic-ui-css/semantic.min.css';
 const App = () => (
     <Router>
         <Switch>
-            <Route exact path='/' component={MckeePureWater} />
+            {/* This is actually for Mckee Pure Water */}
+            <Route exact path='/' component={SenterPureWater} />
+            {/* <Route exact path='/' component={MckeePureWater} /> */}
             {/* <Route exact path='/' component={LoginScreen} />
             <Route exact path='/dashboard' component={DashBoardScreen} />
             <Route exact path='/accounts' component={AccountScreen} />

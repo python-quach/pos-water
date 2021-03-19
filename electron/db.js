@@ -288,11 +288,11 @@ module.exports = {
                                 const { totalBuy } = row;
 
                                 const data = {
-                                    totalNewFee,
-                                    totalNewGallon,
-                                    totalRenewFee,
-                                    totalRenewGallon,
-                                    totalBuy,
+                                    totalNewFee: totalNewFee || 0,
+                                    totalNewGallon: totalNewGallon || 0,
+                                    totalRenewFee: totalRenewFee || 0,
+                                    totalRenewGallon: totalRenewGallon || 0,
+                                    totalBuy: totalBuy || 0,
                                     date,
                                     time,
                                 };

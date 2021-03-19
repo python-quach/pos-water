@@ -122,36 +122,41 @@ export const add = (values) => {
     });
 };
 
-export const findPhone = ({ phone }) => {
+export const getHistory = async (account) => {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, account);
+        ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (event, args) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_ACCOUNT_HISTORY);
+            resolve(args);
+        });
+    });
+};
+
+export const findPhone = async ({ phone }) => {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
-        ipcRenderer.on(channels.SENTER_FIND_PHONE, (_, data) => {
-            // ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
-            console.log('RESPONSE FROM FIND PHONE', data);
+        ipcRenderer.on(channels.SENTER_FIND_PHONE, async (_, data) => {
+            console.log(data);
             if (data.account) {
-                console.log('LOOK HERE FIND PHONE:', data.account);
-                ipcRenderer.send(
-                    channels.SENTER_ACCOUNT_HISTORY,
-                    data.account.account
-                );
-                ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_ACCOUNT_HISTORY
-                    );
-                    resolve({
-                        history: args,
-                        record: data.account,
-                    });
-                });
+                const history = await getHistory(data.account.account);
+                resolve({ history, record: data.account });
             } else if (data.accounts) {
-                console.log(data.accounts);
                 resolve({
-                    records: data.accounts,
+                    history: null,
+                    record: data.accounts,
                 });
             } else {
-                reject(`There are not account with the phone number ${phone}`);
+                reject('There are not account with the phone number', phone);
             }
         });
+    });
+};
+
+export const getDailyReport = (date, time, callback) => {
+    ipcRenderer.send(channels.SENTER_REPORT, { date, time });
+    ipcRenderer.on(channels.REPORT, (event, response) => {
+        ipcRenderer.removeAllListeners(channels.SENTER_REPORT);
+        callback(response);
     });
 };
 

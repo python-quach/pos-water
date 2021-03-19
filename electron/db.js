@@ -266,6 +266,44 @@ module.exports = {
             });
         });
     },
+    report: function (db, args, callback) {
+        const { date, time } = args;
+        console.log('report', { date, time });
+
+        db.get(
+            `SELECT SUM(gallon) totalNewGallon, SUM(fee) totalNewFee FROM memberships WHERE type= ? AND date= ?`,
+            ['NEW', date],
+            (err, row) => {
+                console.log(row);
+                const { totalNewGallon, totalNewFee } = row;
+                db.get(
+                    `SELECT SUM(gallon) totalRenewGallon, SUM(fee) totalRenewFee FROM memberships WHERE type= ? AND date= ?`,
+                    ['RENEW', date],
+                    (err, row) => {
+                        const { totalRenewGallon, totalRenewFee } = row;
+                        db.get(
+                            `SELECT SUM(buy) totalBuy FROM memberships WHERE type= ? and date = ?`,
+                            ['BUY', date],
+                            (err, row) => {
+                                const { totalBuy } = row;
+
+                                const data = {
+                                    totalNewFee,
+                                    totalNewGallon,
+                                    totalRenewFee,
+                                    totalRenewGallon,
+                                    totalBuy,
+                                    date,
+                                    time,
+                                };
+                                callback(data);
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    },
     getAllUsers: function (db, args, callback) {
         const sql = `SELECT * FROM users`;
         db.all(sql, [], (err, rows) => {

@@ -1,13 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Segment, Header } from 'semantic-ui-react';
+import { useState } from 'react';
 import Login from './Screen/LoginScreen';
 import DashBoard from './Screen/DashBoardScreen';
 import Account from './Screen/AccountScreen';
 import Add from './Screen/AddScreen';
 import Buy from './Screen/BuyScreen';
-import Admin from './Screen/AdminScreen';
-import History from './History/CustomerHistory';
-import { login, backup, renew, buy, add, edit, closeApp } from './Api';
+import {
+    login,
+    backup,
+    renew,
+    buy,
+    add,
+    edit,
+    closeApp,
+    findPhone,
+} from './Api';
 import { channels } from '../../shared/constants';
 const { ipcRenderer } = window;
 
@@ -18,27 +24,13 @@ const MckeePureWater = (props) => {
     const [openAdd, setOpenAdd] = useState(false);
     const [openBuy, setOpenBuy] = useState(false);
     const [openAdmin, setOpenAdmin] = useState(false);
-    const [openHistory, setOpenHistory] = useState(false);
     const [record, setRecord] = useState(false);
     const [records, setRecords] = useState([]);
-    // const [error, setError] = useState('');
     const [error, setError] = useState(false);
     const [history, setHistory] = useState(null);
     const [fileSave, setFileSave] = useState(null);
-    // const [backup, setBackup] = useState(null)
-
-    // const showBuyScreen = ({ history, record }) => {
-    //     setError(false);
-    //     setHistory(history);
-    //     setRecord(record);
-    //     setOpenBuy(true);
-    //     setOpenDashBoard(false);
-    //     // document.getElementById('buy').focus();
-    // };
 
     const handleFindMembership = async (values) => {
-        console.log(values);
-
         if (values.phone) {
             ipcRenderer.send(channels.SENTER_FIND_PHONE, values.phone);
             ipcRenderer.on(channels.SENTER_FIND_PHONE, (_, data) => {
@@ -111,10 +103,6 @@ const MckeePureWater = (props) => {
                                 setOpenDashBoard(false);
                             }
                         );
-
-                        // setRecord(lastAccountRecord);
-                        // setOpenDashBoard(false);
-                        // setOpenBuy(true);
                     }
                 }
             );
@@ -309,6 +297,10 @@ const MckeePureWater = (props) => {
         }
     };
 
+    const handlePrint = async (values) => {
+        console.log('PRINT RECEIPT:', values);
+    };
+
     const handleEdit = async (values) => {
         try {
             const data = await edit(values);
@@ -379,16 +371,6 @@ const MckeePureWater = (props) => {
                     find={handleFindMembership}
                 />
             )}
-
-            {/* {openBuy && (
-                <Buy setOpenBuyScreen={setOpenBuy} setRecord={setRecord} />
-            )} */}
-
-            {/* {openAccount && <Account setOpenAccountScreen={setOpenAccount} />}
-            {openAdd && <Add setOpenAddScreen={setOpenAdd} />}
-            {openBuy && <Buy setOpenBuyScreen={setOpenBuy} />}
-            {openAdmin && <Admin setOpenAdmin={setOpenAdmin} />}
-            {openHistory && <History setOpenHistory={setOpenHistory} />} */}
         </>
         // </Segment>
     );

@@ -1,6 +1,7 @@
 import { Form as FinalForm } from 'react-final-form';
 import { Form, Divider } from 'semantic-ui-react';
 import { Phone, Account, FirstName, LastName } from '../Field/FindField';
+import { getDailyReport } from '../Api';
 
 const FindForm = (props) => (
     <FinalForm
@@ -47,7 +48,7 @@ const FindForm = (props) => (
                     }}
                 />
                 <Form.Button
-                    content='Daily Report'
+                    content={`Daily Report ${new Date().toLocaleDateString()}`}
                     type='button'
                     color='yellow'
                     circular
@@ -57,7 +58,15 @@ const FindForm = (props) => (
                     fluid
                     onClick={(e) => {
                         e.preventDefault();
-                        console.log('Daily Report');
+                        const date = new Date();
+                        console.log('Daily Report', date.toLocaleDateString());
+                        getDailyReport(
+                            date.toLocaleDateString(),
+                            date.toLocaleTimeString(),
+                            (data) => {
+                                console.log({ data });
+                            }
+                        );
                     }}
                 />
                 <Form.Button

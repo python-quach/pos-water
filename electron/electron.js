@@ -11,10 +11,12 @@ const senterDbFile = path.resolve(userData, 'senter.sqlite3');
 const usbDetect = require('usb-detection');
 const { addNewAccount, findAccount, lastRecord, add } = require('./sql');
 const {
+    printReceipt,
     printAddReceipt,
     printBuyReceipt,
     printRenewReceipt,
     printDailyReport,
+    printSenterDailyReport,
 } = require('./printer');
 const {
     addMemberShip,
@@ -35,6 +37,7 @@ const {
     addUser,
     deleteUser,
     editUser,
+    report,
 } = require('./db');
 
 // ELECTRON MAIN WINDOW
@@ -711,6 +714,19 @@ ipcMain.on(channels.REPORT, (event, arg) => {
     });
 });
 
+// SENTER DAILY REPORT
+ipcMain.on(channels.SENTER_REPORT, (event, arg) => {
+    console.log('SENTER_REPORT', arg);
+    report(dbSenter, arg, (data) => {
+        console.log('Daily Report', data);
+        if (device) {
+            printSenterDailyReport(device, printer, data);
+        } else {
+            event.sender.send(channels.SENTER_REPORT, data);
+        }
+    });
+});
+
 // Close Application
 ipcMain.on(channels.CLOSE_APP, (event, _) => {
     ipcMain.removeAllListeners(channels.CLOSE_APP);
@@ -779,6 +795,17 @@ ipcMain.on(channels.PRINT_BUY_RECEIPT, (event, arg) => {
         event.sender.send(channels.PRINT_BUY_RECEIPT, { done: true });
     } else {
         event.sender.send(channels.PRINT_BUY_RECEIPT, { done: false });
+    }
+});
+
+// SENTER PRINT RECEIPT
+ipcMain.on(channels.SENTER_PRINT, (event, receipt) => {
+    console.log('SENTER PRINT', receipt);
+    if (device) {
+        printReceipt(device, printer, receipt);
+        event.sender.send(channels.SENTER_PRINT, { done: true });
+    } else {
+        event.sender.send(channels.SENTER_PRINT, { done: false });
     }
 });
 

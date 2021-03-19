@@ -1,4 +1,6 @@
 import { Table, Button } from 'semantic-ui-react';
+import { channels } from '../../../shared/constants';
+const { ipcRenderer } = window;
 
 const RenewReceipt = ({ record }) => (
     <>
@@ -32,7 +34,59 @@ const RenewReceipt = ({ record }) => (
                 <Table.Cell>{record.date}</Table.Cell>
                 <Table.Cell>{record.time}</Table.Cell>
                 <Table.Cell>
-                    <Button size='huge' color='yellow' fluid content='PRINT' />
+                    <Button
+                        size='huge'
+                        color='yellow'
+                        fluid
+                        content='PRINT'
+                        onClick={(e) => {
+                            e.preventDefault();
+                            console.log('PRINT BUY RECEIPT', record);
+
+                            // const fullname = `${record.first} ${record.last} -- ${record.phone}`;
+                            // const prevGallon = `Gallon Prev: ${record.previous}`;
+                            // const gallonBuy = `Gallon Buy : ${record.buy}`;
+                            // const blank = '';
+                            // const gallonLeft = `Gallon Left: ${record.remain}`;
+                            // const message = `Thank You                [Account#: ${record.account}]`;
+
+                            const renewGallon = `Gallon Renew: ${record.gallon}`;
+                            const renewFee = `Renew Fee   : $${record.fee}`;
+                            const fullname = `${record.first} ${record.last} -- ${record.phone}`;
+                            const totalGallon = `Gallon Left : ${record.remain}`;
+                            const message = `Thank You                [Account#: ${record.account}]`;
+                            const blank = '';
+
+                            const store = 'V&J Senter Pure Water';
+                            const phone = '(408) 227-8529';
+
+                            const buyReceipt = {
+                                fullname,
+                                renewFee,
+                                renewGallon,
+                                totalGallon,
+                                blank,
+                                message,
+                                store,
+                                phone,
+                                previous: record.previous,
+                                date: record.date,
+                                time: record.time,
+                                type: record.type,
+                            };
+
+                            ipcRenderer.send(channels.SENTER_PRINT, buyReceipt);
+                            ipcRenderer.on(
+                                channels.SENTER_PRINT,
+                                (event, response) => {
+                                    console.log('PRINT RESPONSE', response);
+                                    ipcRenderer.removeAllListeners(
+                                        channels.SENTER_PRINT
+                                    );
+                                }
+                            );
+                        }}
+                    />
                 </Table.Cell>
             </Table.Row>
         </Table.Body>

@@ -1,4 +1,6 @@
 import { Table, Button } from 'semantic-ui-react';
+import { channels } from '../../../shared/constants';
+const { ipcRenderer } = window;
 
 const NewReceipt = ({ record }) => (
     <>
@@ -28,7 +30,49 @@ const NewReceipt = ({ record }) => (
                 <Table.Cell>{record.date}</Table.Cell>
                 <Table.Cell>{record.time}</Table.Cell>
                 <Table.Cell>
-                    <Button size='huge' color='yellow' fluid content='PRINT' />
+                    <Button
+                        size='huge'
+                        color='yellow'
+                        fluid
+                        content='PRINT'
+                        onClick={(e) => {
+                            e.preventDefault();
+                            console.log('PRINT BUY RECEIPT', record);
+
+                            const store = 'V&J Senter Pure Water';
+                            const phone = '(408) 227-8529';
+
+                            const renewFee = `Membership Fee: $${record.fee}`;
+                            const fullname = `${record.first} ${record.last} -- ${record.phone}`;
+                            const gallonLeft = `Gallon Total  : ${record.gallon}`;
+                            const blank = '';
+                            const time = `${record.date}  ${record.time}`;
+                            const message = `Thank You                [Account#: ${record.account}]`;
+
+                            const newReceipt = {
+                                fullname,
+                                renewFee,
+                                blank,
+                                gallonLeft,
+                                message,
+                                store,
+                                phone,
+                                time,
+                                type: record.type,
+                            };
+
+                            ipcRenderer.send(channels.SENTER_PRINT, newReceipt);
+                            ipcRenderer.on(
+                                channels.SENTER_PRINT,
+                                (event, response) => {
+                                    console.log('PRINT RESPONSE', response);
+                                    ipcRenderer.removeAllListeners(
+                                        channels.SENTER_PRINT
+                                    );
+                                }
+                            );
+                        }}
+                    />
                 </Table.Cell>
             </Table.Row>
         </Table.Body>

@@ -11,6 +11,8 @@ const AddScreen = (props) => {
         props.setError(false);
     };
 
+    const date = new Date();
+
     return (
         <TransitionablePortal open={props.open}>
             <Segment
@@ -27,6 +29,7 @@ const AddScreen = (props) => {
                             onSubmit={handleAddMembership}
                             error={error}
                             close={close}
+                            date={date}
                             // setError={props.setError}
                         />
                     </Grid.Column>

@@ -241,11 +241,12 @@ export const Buy = ({ edit }) => (
     />
 );
 
-export const Remain = ({ edit }) => (
+export const Remain = ({ edit, remain }) => (
     <Field
         name='remain'
         render={({ input }) => (
             <Form.Input
+                error={remain <= 0 ? true : false}
                 disabled={edit}
                 className='TodayDate'
                 inverted

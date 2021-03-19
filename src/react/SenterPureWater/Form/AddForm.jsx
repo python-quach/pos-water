@@ -45,7 +45,7 @@ const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
 );
 
 const AddForm = (props) => {
-    const { onSubmit, close, error } = props;
+    const { onSubmit, close, error, date } = props;
 
     useEffect(() => {
         document.getElementById('account').focus();
@@ -54,7 +54,22 @@ const AddForm = (props) => {
     return (
         <FinalForm
             onSubmit={onSubmit}
-            initialValues={initialValues}
+            // initialValues={initialValues}
+            initialValues={{
+                account: null,
+                phone: null,
+                first: null,
+                last: null,
+                since: date.toLocaleDateString(),
+                fee: 0,
+                gallon: 0,
+                buy: 0,
+                remain: 0,
+                previous: 0,
+                type: 'NEW',
+                date: date.toLocaleDateString(),
+                time: date.toLocaleTimeString(),
+            }}
             render={({ handleSubmit, submitting, values }) => (
                 <Form onSubmit={handleSubmit}>
                     <Form.Group>

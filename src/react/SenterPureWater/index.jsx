@@ -12,11 +12,9 @@ import {
     add,
     edit,
     closeApp,
-    findPhone,
     deleteMembership,
 } from './Api';
 import { channels } from '../../shared/constants';
-import { api } from '../../api/api';
 const { ipcRenderer } = window;
 
 const SenterPureWater = (props) => {
@@ -33,6 +31,8 @@ const SenterPureWater = (props) => {
     const [error, setError] = useState(false);
     const [history, setHistory] = useState(null);
     const [fileSave, setFileSave] = useState(null);
+    const [adminPassword, setAdminPassword] = useState('');
+    const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
     const handleFindMembership = async (values) => {
         if (values.phone) {
@@ -332,6 +332,10 @@ const SenterPureWater = (props) => {
     };
 
     useEffect(() => {
+        console.log('admin', adminPassword);
+    }, [adminPassword]);
+
+    useEffect(() => {
         if (records && records.length === 0) {
             setOpenAccount(false);
             setOpenDashBoard(true);
@@ -402,6 +406,10 @@ const SenterPureWater = (props) => {
                     setRecords={setRecords}
                     setDeleteAccount={setDeleteAccount}
                     handleDeleteMembership={handleDeleteMembership}
+                    setOpenDeleteConfirm={setOpenDeleteConfirm}
+                    openDeleteConfirm={openDeleteConfirm}
+                    setAdminPassword={setAdminPassword}
+                    adminPassword={adminPassword}
                 />
             )}
         </>

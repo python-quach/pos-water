@@ -165,7 +165,7 @@ export const BuyForm = (props) => {
                     <Form.Group>
                         <Form.Input type='hidden' width={14} />
                         <Buy edit={edit} />
-                        <Remain edit={edit} />
+                        <Remain edit={edit} remain={values.remain} />
                         <BuyButton
                             disabled={values.buy <= 0}
                             setOpenReceipt={props.setOpenReceipt}

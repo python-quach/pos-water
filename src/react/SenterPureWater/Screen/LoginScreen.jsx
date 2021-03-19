@@ -31,7 +31,12 @@ const LoginScreen = ({
     setOpenAdmin,
     openAdmin,
 }) => (
-    <TransitionablePortal open={open}>
+    <TransitionablePortal
+        closeOnDocumentClick={false}
+        closeOnEscape={false}
+        closeOnDimmerClick={false}
+        closeOnPortalMouseLeave={false}
+        open={open}>
         <Segment {...segment}>
             <Grid {...grid}>
                 <Grid.Column {...column}>

@@ -1,13 +1,94 @@
 import {
     Segment,
-    Header,
     Table,
     Button,
     Label,
     TransitionablePortal,
     Modal,
-    Image,
+    Card,
+    Icon,
+    Form,
 } from 'semantic-ui-react';
+
+const AdminModal = (props) => {
+    return (
+        <Modal
+            basic
+            size='tiny'
+            dimmer='blurring'
+            closeOnDimmerClick={false}
+            closeOnDocumentClick={false}
+            onClose={() => props.setOpenDelete(false)}
+            onOpen={() => props.setOpenDelete(true)}
+            open={props.openDelete}>
+            <Modal.Content>
+                {/* <Card centered> */}
+                <Card fluid>
+                    {/* <pre>{JSON.stringify(props.deleteAccount, 0, 2)}</pre> */}
+                    <Card.Content>
+                        <Card.Header>
+                            {props.deleteAccount.first +
+                                ' ' +
+                                props.deleteAccount.last}
+                        </Card.Header>
+                        <Card.Meta>
+                            <span className='date'>
+                                MemberSince {props.deleteAccount.since}
+                            </span>
+                        </Card.Meta>
+                        <Card.Description>
+                            Phone # {props.deleteAccount.phone}
+                        </Card.Description>
+                    </Card.Content>
+                    <Card.Content extra>
+                        <Icon name='user' />
+                        Account: {props.deleteAccount.account}
+                    </Card.Content>
+                </Card>
+            </Modal.Content>
+            <Modal.Actions>
+                <Form>
+                    <Form.Group>
+                        <Form.Input
+                            name='password'
+                            type='password'
+                            placeholder='enter password'
+                            onChange={(event, data) => {
+                                event.preventDefault();
+                                props.setAdminPassword(data.value);
+                            }}
+                        />
+                        <Form.Input type='hidden' width={2} />
+                        <Form.Button
+                            icon='remove'
+                            content='Delete'
+                            color='red'
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                console.log(
+                                    'Delete Account',
+                                    props.deleteAccount.account
+                                );
+                                props.handleDeleteMembership({
+                                    account: props.deleteAccount.account,
+                                    password: props.adminPassword,
+                                });
+                                props.setOpenDelete(false);
+                            }}
+                        />
+                        <Form.Button
+                            color='black'
+                            content='Cancel'
+                            onClick={(e) => {
+                                props.setOpenDelete(false);
+                            }}
+                        />
+                    </Form.Group>
+                </Form>
+            </Modal.Actions>
+        </Modal>
+    );
+};
 
 const AccountScreen = ({
     records,
@@ -19,8 +100,11 @@ const AccountScreen = ({
     openDelete,
     deleteAccount,
     setDeleteAccount,
-    setRecords,
     handleDeleteMembership,
+    setOpenDeleteConfirm,
+    openDeleteConfirm,
+    adminPassword,
+    setAdminPassword,
 }) => {
     return (
         <TransitionablePortal open={open}>
@@ -31,19 +115,6 @@ const AccountScreen = ({
                     overflow: 'scroll',
                     backgroundColor: '#002b487d',
                 }}>
-                {/* <Header size='huge' block>
-                    <Button
-                        attached
-                        color='black'
-                        size='huge'
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setOpenAccountScreen(false);
-                            setOpenDashBoard(true);
-                        }}>
-                        Done
-                    </Button>
-                </Header> */}
                 <Table color='blue' celled>
                     <Table.Header>
                         <Table.Row>
@@ -78,7 +149,6 @@ const AccountScreen = ({
                                 <Table.Cell>
                                     <Button.Group>
                                         <Button
-                                            // fluid
                                             size='huge'
                                             primary
                                             onClick={(e) => {
@@ -104,9 +174,7 @@ const AccountScreen = ({
                                             negative
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                setDeleteAccount(
-                                                    record.account
-                                                );
+                                                setDeleteAccount(record);
                                                 setOpenDelete(true);
                                             }}>
                                             Delete
@@ -127,44 +195,55 @@ const AccountScreen = ({
                                             Done
                                         </Button>
                                     </Button.Group>
-                                    <Modal
+                                    {deleteAccount && (
+                                        <AdminModal
+                                            deleteAccount={deleteAccount}
+                                            setOpenDelete={setOpenDelete}
+                                            openDelete={openDelete}
+                                            handleDeleteMembership={
+                                                handleDeleteMembership
+                                            }
+                                            adminPassword={adminPassword}
+                                            setAdminPassword={setAdminPassword}
+                                        />
+                                    )}
+
+                                    {/* <Modal
                                         dimmer='blurring'
-                                        onClose={() => setOpenDelete(false)}
-                                        onOpen={() => setOpenDelete(true)}
-                                        open={openDelete}>
+                                        onClose={() =>
+                                            setOpenDeleteConfirm(false)
+                                        }
+                                        onOpen={() =>
+                                            setOpenDeleteConfirm(true)
+                                        }
+                                        open={openDeleteConfirm}>
                                         <Modal.Header>
-                                            User Admin Screen
+                                            Delete Account: {deleteAccount}
                                         </Modal.Header>
                                         <Modal.Content image>
-                                            <Image
-                                                size='medium'
-                                                src='https://react.semantic-ui.com/images/avatar/large/rachel.png'
-                                                wrapped
+                                            <Form.Input
+                                                type='password'
+                                                name='password'
+                                                label='Enter Password'
+                                                onChange={(event, data) => {
+                                                    event.preventDefault();
+                                                    setAdminPassword(
+                                                        data.value
+                                                    );
+                                                }}
                                             />
-                                            <Modal.Description>
-                                                <Header>
-                                                    Admin Screen:{deleteAccount}
-                                                </Header>
-                                                <p>
-                                                    We've found the following
-                                                    gravatar image associated
-                                                    with your e-mail address.
-                                                </p>
-                                                <p>
-                                                    Is it okay to use this
-                                                    photo?
-                                                </p>
-                                            </Modal.Description>
                                         </Modal.Content>
                                         <Modal.Actions>
                                             <Button
-                                                content='Delete'
+                                                content='Submit'
                                                 color='red'
                                                 onClick={async (e) => {
+                                                    e.preventDefault();
                                                     handleDeleteMembership({
                                                         account: deleteAccount,
-                                                        password: '911',
+                                                        password: adminPassword,
                                                     });
+                                                    setOpenDeleteConfirm(false);
                                                 }}
                                             />
                                             <Button
@@ -172,12 +251,13 @@ const AccountScreen = ({
                                                 content='Cancel'
                                                 labelPosition='right'
                                                 icon='checkmark'
-                                                onClick={() =>
-                                                    setOpenDelete(false)
-                                                }
+                                                onClick={() => {
+                                                    setOpenDeleteConfirm(false);
+                                                    setOpenDelete(false);
+                                                }}
                                             />
                                         </Modal.Actions>
-                                    </Modal>
+                                    </Modal> */}
                                 </Table.Cell>
                             </Table.Row>
                         ))}

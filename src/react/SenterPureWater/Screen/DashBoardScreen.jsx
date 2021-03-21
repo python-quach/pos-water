@@ -10,12 +10,7 @@ import FindForm from '../Form/FindForm';
 
 const DashBoardScreen = (props) => {
     return (
-        <TransitionablePortal
-            open={props.open}
-            closeOnDocumentClick={false}
-            closeOnEscape={false}
-            closeOnDimmerClick={false}
-            closeOnPortalMouseLeave={false}>
+        <TransitionablePortal open={props.open}>
             <Segment
                 raised
                 clearing

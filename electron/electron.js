@@ -9,7 +9,7 @@ const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
 const senterDbFile = path.resolve(userData, 'senter.sqlite3');
 const usbDetect = require('usb-detection');
-const { addNewAccount, findAccount, lastRecord, add } = require('./sql');
+const { addNewAccount, findAccount, lastRecord } = require('./sql');
 const {
     printReceipt,
     printAddReceipt,
@@ -477,7 +477,7 @@ ipcMain.on(channels.SENTER_BACKUP, (event, request) => {
         })
         .then((result) => {
             if (result.filePath) {
-                fs.copyFile(dbFile, result.filePath, function (err) {
+                fs.copyFile(dbSenter, result.filePath, function (err) {
                     if (err) {
                         event.sender.send(channels.SENTER_BACKUP, {
                             open: false,
@@ -618,7 +618,7 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;

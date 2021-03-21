@@ -45,6 +45,17 @@ const BuyScreen = (props) => {
                             setRecord={props.setRecord}
                             setOpenHistory={setOpenHistory}
                             handleEdit={props.handleEdit}
+                            openDelete={props.openDelete}
+                            deleteAccount={props.deleteAccount}
+                            setDeleteAccount={props.setDeleteAccount}
+                            setOpenDelete={props.setOpenDelete}
+                            setOpenDeleteConfirm={props.setOpenDeleteConfirm}
+                            openDeleteConfirm={props.openDeleteConfirm}
+                            setAdminPassword={props.setAdminPassword}
+                            adminPassword={props.adminPassword}
+                            handleDeleteMembership={
+                                props.handleDeleteMembership
+                            }
                         />
                         <CustomerHistory
                             record={props.record}

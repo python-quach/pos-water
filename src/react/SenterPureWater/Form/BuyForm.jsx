@@ -4,7 +4,7 @@ import {
     Field as FinalField,
     FormSpy,
 } from 'react-final-form';
-import { Form, Divider } from 'semantic-ui-react';
+import { Form, Divider, Modal, Card, Icon } from 'semantic-ui-react';
 import {
     TodayDate,
     CurrentTime,
@@ -22,6 +22,88 @@ import { OnChange } from 'react-final-form-listeners';
 import { EditButton } from '../Button/EditButton';
 import { BuyButton } from '../Button/BuyButton';
 import { RenewButton } from '../Button/RenewButton';
+
+const AdminModal = (props) => {
+    console.log(props);
+    return (
+        <Modal
+            basic
+            size='tiny'
+            dimmer='blurring'
+            closeOnDimmerClick={false}
+            closeOnDocumentClick={false}
+            onClose={() => props.setOpenDelete(false)}
+            onOpen={() => props.setOpenDelete(true)}
+            open={props.openDelete}>
+            <Modal.Content>
+                {/* <Card centered> */}
+                <Card fluid>
+                    <Card.Content>
+                        <Card.Header>
+                            {props.deleteAccount.first +
+                                ' ' +
+                                props.deleteAccount.last}
+                        </Card.Header>
+                        <Card.Meta>
+                            <span className='date'>
+                                MemberSince {props.deleteAccount.since}
+                            </span>
+                        </Card.Meta>
+                        <Card.Description>
+                            Phone # {props.deleteAccount.phone}
+                        </Card.Description>
+                    </Card.Content>
+                    <Card.Content extra>
+                        <Icon name='user' />
+                        Account: {props.deleteAccount.account}
+                    </Card.Content>
+                </Card>
+            </Modal.Content>
+            <Modal.Actions>
+                <Form>
+                    <Form.Group>
+                        <Form.Input
+                            name='password'
+                            type='password'
+                            placeholder='enter password'
+                            onChange={(event, data) => {
+                                event.preventDefault();
+                                props.setAdminPassword(data.value);
+                            }}
+                        />
+                        <Form.Input type='hidden' width={2} />
+                        <Form.Button
+                            icon='remove'
+                            content='Delete'
+                            color='red'
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                console.log(
+                                    'Delete Account',
+                                    props.deleteAccount.account
+                                );
+                                props.handleDeleteMembership({
+                                    account: props.deleteAccount.account,
+                                    password: props.adminPassword,
+                                });
+                                // props.setOpenDelete(false);
+                                // props.setOpenBuyScreen(false);
+                                // props.setOpenDashBoard(true);
+                            }}
+                        />
+                        <Form.Button
+                            color='black'
+                            content='Cancel'
+                            onClick={(e) => {
+                                props.setOpenDelete(false);
+                            }}
+                        />
+                    </Form.Group>
+                </Form>
+            </Modal.Actions>
+        </Modal>
+    );
+};
 
 const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
     <FinalField name={set} subscription={{}}>
@@ -183,7 +265,20 @@ export const BuyForm = (props) => {
                     <Divider hidden />
                     <Divider />
                     <Form.Group>
-                        <Form.Input type='hidden' width={14} />
+                        <Form.Input type='hidden' width={13} />
+                        <Form.Button
+                            floated='left'
+                            // attached
+                            size='huge'
+                            negative
+                            onClick={(e) => {
+                                e.preventDefault();
+                                // console.log(values, props.record);
+                                props.setDeleteAccount(props.record);
+                                props.setOpenDelete(true);
+                            }}>
+                            Delete
+                        </Form.Button>
                         <Form.Button
                             type='button'
                             size='huge'
@@ -206,6 +301,21 @@ export const BuyForm = (props) => {
                             }}
                         />
                     </Form.Group>
+                    {props.record && (
+                        <AdminModal
+                            deleteAccount={props.record}
+                            // record={props.record}
+                            setOpenDashBoard={props.setOpenDashBoard}
+                            setOpenDelete={props.setOpenDelete}
+                            openDelete={props.openDelete}
+                            handleDeleteMembership={
+                                props.handleDeleteMembership
+                            }
+                            setOpenBuyScreen={props.setOpenBuyScreen}
+                            adminPassword={props.adminPassword}
+                            setAdminPassword={props.setAdminPassword}
+                        />
+                    )}
                     {/* <FormSpy>
                         {(values) => (
                             <>

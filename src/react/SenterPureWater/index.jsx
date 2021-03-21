@@ -327,8 +327,17 @@ const SenterPureWater = (props) => {
                     prevRecords.filter((record) => record.account !== account)
                 );
                 setOpenDelete(false);
+                setAdminPassword('');
+                if (openBuy) {
+                    setOpenBuy(false);
+                }
+                // setOpenBuy(false);
             }
-        } catch (err) {}
+        } catch (err) {
+            setOpenDelete(true);
+            setAdminPassword('');
+            console.log('Warning unable to delete Account');
+        }
     };
 
     useEffect(() => {
@@ -390,6 +399,15 @@ const SenterPureWater = (props) => {
                     setOpenBuyScreen={setOpenBuy}
                     setRecord={setRecord}
                     record={record}
+                    openDelete={openDelete}
+                    deleteAccount={deleteAccount}
+                    setDeleteAccount={setDeleteAccount}
+                    setOpenDelete={setOpenDelete}
+                    setOpenDeleteConfirm={setOpenDeleteConfirm}
+                    openDeleteConfirm={openDeleteConfirm}
+                    setAdminPassword={setAdminPassword}
+                    adminPassword={adminPassword}
+                    handleDeleteMembership={handleDeleteMembership}
                 />
             )}
             {openAccount && (

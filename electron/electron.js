@@ -618,7 +618,7 @@ function createWindow() {
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -654,7 +654,8 @@ ipcMain.on(channels.ADD, (event, arg) => {
 
 // LOGIN USER
 ipcMain.on(channels.LOGIN, (event, arg) => {
-    login(db, arg, (user) => {
+    // login(db, arg, (user) => {
+    login(dbSenter, arg, (user) => {
         event.sender.send(channels.LOGIN, { login: user });
     });
 });

@@ -8,21 +8,21 @@ import { Form } from 'semantic-ui-react';
 import Field from '../Field/AddField';
 import { OnChange } from 'react-final-form-listeners';
 
-const initialValues = {
-    account: null,
-    phone: null,
-    first: null,
-    last: null,
-    since: new Date().toLocaleDateString(),
-    fee: 0,
-    gallon: 0,
-    buy: 0,
-    remain: 0,
-    previous: 0,
-    type: 'NEW',
-    date: new Date().toLocaleDateString(),
-    time: new Date().toLocaleTimeString(),
-};
+// const initialValues = {
+//     account: null,
+//     phone: null,
+//     first: null,
+//     last: null,
+//     since: new Date().toLocaleDateString(),
+//     fee: 0,
+//     gallon: 0,
+//     buy: 0,
+//     remain: 0,
+//     previous: 0,
+//     type: 'NEW',
+//     date: new Date().toLocaleDateString(),
+//     time: new Date().toLocaleTimeString(),
+// };
 
 const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
     <FinalField name={set} subscription={{}}>

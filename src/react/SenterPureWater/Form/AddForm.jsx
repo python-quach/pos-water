@@ -53,8 +53,8 @@ const AddForm = (props) => {
 
     return (
         <FinalForm
+            initialValuesEqual={() => true}
             onSubmit={onSubmit}
-            // initialValues={initialValues}
             initialValues={{
                 account: null,
                 phone: null,

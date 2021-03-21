@@ -67,7 +67,7 @@ const LoginScreen = ({
                             negative={error}
                             content={error ? 'Invalid Credential' : 'Login'}
                         />
-                        <Form.Button
+                        {/* <Form.Button
                             circular
                             content='Admin'
                             size='huge'
@@ -80,7 +80,7 @@ const LoginScreen = ({
                                 console.log('Admin Button');
                                 setOpenAdmin(true);
                             }}
-                        />
+                        /> */}
                         <Form.Group widths={2}>
                             <Form.Button
                                 circular

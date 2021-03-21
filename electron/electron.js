@@ -618,7 +618,7 @@ function createWindow() {
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;

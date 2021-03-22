@@ -296,12 +296,11 @@ const SenterPureWater = () => {
     const handleDeleteMembership = async (values) => {
         const { account, password } = values;
         try {
-            const { auth, status } = await deleteMembership({
+            const { auth } = await deleteMembership({
                 account,
                 password,
             });
 
-            console.log(auth, status);
             if (auth) {
                 setRecords((prevRecords) =>
                     prevRecords.filter((record) => record.account !== account)
@@ -310,13 +309,12 @@ const SenterPureWater = () => {
                 setAdminPassword('');
                 if (openBuy) {
                     setOpenBuy(false);
+                    setOpenDashBoard(true);
                 }
-                // setOpenBuy(false);
             }
         } catch (err) {
             setOpenDelete(true);
             setAdminPassword('');
-            console.log('Warning unable to delete Account');
         }
     };
 

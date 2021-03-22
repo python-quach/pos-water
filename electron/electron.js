@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+// const electron = require('electron');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
@@ -607,11 +608,16 @@ usbDetect.on('remove', function () {
 
 // ELECTRON SETUP
 function createWindow() {
+    // const screenElectron = electron.screen;
+
+    // var mainScreen = screenElectron.getPrimaryDisplay();
+    // var dimension = mainScreen.size;
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         center: true,
         backgroundColor: '#0a2e4c',
+
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
@@ -619,6 +625,7 @@ function createWindow() {
     });
 
     mainWindow.removeMenu();
+    mainWindow.maximize();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;

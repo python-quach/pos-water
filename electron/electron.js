@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-// const electron = require('electron');
+const electron = require('electron');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
@@ -128,9 +128,18 @@ ipcMain.on(channels.SENTER_FIND_FIRST_NAME, (event, firstName) => {
                         row.account,
                         (err, lastAccountRecord) => {
                             test.push(lastAccountRecord);
-                            event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
-                                accounts: test,
-                            });
+                            // Look here
+                            if (test.length === rows.length) {
+                                event.sender.send(
+                                    channels.SENTER_FIND_FIRST_NAME,
+                                    {
+                                        accounts: test,
+                                    }
+                                );
+                            }
+                            // event.sender.send(channels.SENTER_FIND_FIRST_NAME, {
+                            //     accounts: test,
+                            // });
                         }
                     );
                 });
@@ -182,9 +191,14 @@ ipcMain.on(channels.SENTER_FIND_LAST_NAME, (event, lastName) => {
                         row.account,
                         (err, lastAccountRecord) => {
                             test.push(lastAccountRecord);
-                            event.sender.send(channels.SENTER_FIND_LAST_NAME, {
-                                accounts: test,
-                            });
+                            if (test.length === rows.length) {
+                                event.sender.send(
+                                    channels.SENTER_FIND_LAST_NAME,
+                                    {
+                                        accounts: test,
+                                    }
+                                );
+                            }
                         }
                     );
                 });
@@ -239,9 +253,15 @@ ipcMain.on(channels.SENTER_FIND_PHONE, (event, phone) => {
                         row.account,
                         (err, lastAccountRecord) => {
                             test.push(lastAccountRecord);
-                            event.sender.send(channels.SENTER_FIND_PHONE, {
-                                accounts: test,
-                            });
+                            // Look Here
+                            if (test.length === rows.length) {
+                                event.sender.send(channels.SENTER_FIND_PHONE, {
+                                    accounts: test,
+                                });
+                            }
+                            // event.sender.send(channels.SENTER_FIND_PHONE, {
+                            //     accounts: test,
+                            // });
                         }
                     );
                 });
@@ -297,9 +317,14 @@ ipcMain.on(channels.SENTER_FIND_BOTH_NAME, (event, { first, last }) => {
                         row.account,
                         (err, lastAccountRecord) => {
                             test.push(lastAccountRecord);
-                            event.sender.send(channels.SENTER_FIND_BOTH_NAME, {
-                                accounts: test,
-                            });
+                            if (test.length === row.length) {
+                                event.sender.send(
+                                    channels.SENTER_FIND_BOTH_NAME,
+                                    {
+                                        accounts: test,
+                                    }
+                                );
+                            }
                         }
                     );
                 });
@@ -608,13 +633,14 @@ usbDetect.on('remove', function () {
 
 // ELECTRON SETUP
 function createWindow() {
-    // const screenElectron = electron.screen;
+    const screenElectron = electron.screen;
 
-    // var mainScreen = screenElectron.getPrimaryDisplay();
-    // var dimension = mainScreen.size;
+    var mainScreen = screenElectron.getPrimaryDisplay();
+    var dimension = mainScreen.size;
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        // width: 800,
+        width: dimension.width,
+        height: dimension.height,
         center: true,
         backgroundColor: '#0a2e4c',
 

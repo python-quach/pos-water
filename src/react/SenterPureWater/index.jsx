@@ -56,6 +56,10 @@ const SenterPureWater = (props) => {
                             setRecord(data.account);
                             setOpenBuy(true);
                             setOpenDashBoard(false);
+                            // Remove Find Listener
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_FIND_PHONE
+                            );
                         }
                     );
                 } else if (data.accounts) {
@@ -63,11 +67,14 @@ const SenterPureWater = (props) => {
                     setRecords(data.accounts);
                     setOpenAccount(true);
                     setOpenDashBoard(false);
+                    // Remove Find Listener
+                    ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
                 } else {
                     console.log(
                         'There are not account with the phone number',
                         values.phone
                     );
+                    ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
                 }
             });
         } else if (values.account) {
@@ -130,6 +137,9 @@ const SenterPureWater = (props) => {
                             setRecord(data.account);
                             setOpenBuy(true);
                             setOpenDashBoard(false);
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_FIND_FIRST_NAME
+                            );
                         }
                     );
                 } else if (data.accounts) {
@@ -137,10 +147,16 @@ const SenterPureWater = (props) => {
                     setRecords(data.accounts);
                     setOpenAccount(true);
                     setOpenDashBoard(false);
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_FIRST_NAME
+                    );
                 } else {
                     console.log(
                         'There are not account with the name',
                         values.first
+                    );
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_FIRST_NAME
                     );
                 }
             });
@@ -165,6 +181,9 @@ const SenterPureWater = (props) => {
                             setRecord(data.account);
                             setOpenBuy(true);
                             setOpenDashBoard(false);
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_FIND_LAST_NAME
+                            );
                         }
                     );
                 } else if (data.accounts) {
@@ -172,10 +191,16 @@ const SenterPureWater = (props) => {
                     setRecords(data.accounts);
                     setOpenAccount(true);
                     setOpenDashBoard(false);
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_LAST_NAME
+                    );
                 } else {
                     console.log(
                         'There are not account with the name',
                         values.first
+                    );
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_LAST_NAME
                     );
                 }
             });
@@ -203,6 +228,9 @@ const SenterPureWater = (props) => {
                             setRecord(data.account);
                             setOpenBuy(true);
                             setOpenDashBoard(false);
+                            ipcRenderer.removeAllListeners(
+                                channels.SENTER_FIND_BOTH_NAME
+                            );
                         }
                     );
                 } else if (data.accounts) {
@@ -210,10 +238,16 @@ const SenterPureWater = (props) => {
                     setRecords(data.accounts);
                     setOpenAccount(true);
                     setOpenDashBoard(false);
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_BOTH_NAME
+                    );
                 } else {
                     console.log(
                         'There are not account with the name',
                         values.first
+                    );
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_BOTH_NAME
                     );
                 }
             });

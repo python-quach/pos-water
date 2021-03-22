@@ -60,6 +60,7 @@ export const renew = (values) => {
         ipcRenderer.send(channels.SENTER_BUY, renew);
         ipcRenderer.on(channels.SENTER_BUY, (_, args) => {
             ipcRenderer.removeAllListeners(channels.SENTER_BUY);
+
             ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, values.account);
             ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (event, data) => {
                 ipcRenderer.removeAllListeners(channels.SENTER_ACCOUNT_HISTORY);

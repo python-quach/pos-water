@@ -258,10 +258,8 @@ export const BuyForm = (props) => {
                     <Divider hidden />
                     <Divider />
                     <Form.Group>
-                        <Form.Input type='hidden' width={13} />
                         <Form.Button
                             floated='left'
-                            // attached
                             size='huge'
                             negative
                             onClick={(e) => {
@@ -271,6 +269,7 @@ export const BuyForm = (props) => {
                             }}>
                             Delete
                         </Form.Button>
+                        <Form.Input type='hidden' width={13} />
                         <Form.Button
                             type='button'
                             size='huge'

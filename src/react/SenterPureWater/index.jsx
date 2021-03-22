@@ -17,7 +17,7 @@ import {
 import { channels } from '../../shared/constants';
 const { ipcRenderer } = window;
 
-const SenterPureWater = (props) => {
+const SenterPureWater = () => {
     const [openLogin, setOpenLogin] = useState(true);
     const [openDashBoard, setOpenDashBoard] = useState(false);
     const [openAccount, setOpenAccount] = useState(false);
@@ -35,222 +35,164 @@ const SenterPureWater = (props) => {
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const findPhone = (phone, callback) => {
+        ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
+        ipcRenderer.on(channels.SENTER_FIND_PHONE, (_, data) => {
+            if (data.account) {
+                ipcRenderer.send(
+                    channels.SENTER_ACCOUNT_HISTORY,
+                    data.account.account
+                );
+                ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_ACCOUNT_HISTORY
+                    );
+                    ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
+                    callback({ history: args, record: data.account });
+                });
+            } else if (data.accounts) {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
+                callback({ history: null, records: data.accounts });
+            } else {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
+            }
+        });
+    };
+
+    const findAccount = (account, callback) => {
+        ipcRenderer.send(channels.SENTER_FIND_ACCOUNT, account);
+        ipcRenderer.on(channels.SENTER_FIND_ACCOUNT, (_, lastAccountRecord) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_FIND_ACCOUNT);
+
+            if (!lastAccountRecord) {
+                callback({ history: null, record: null });
+            } else {
+                ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, account);
+                ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_ACCOUNT_HISTORY
+                    );
+                    callback({ history: args, record: lastAccountRecord });
+                });
+            }
+        });
+    };
+
+    const findFirstName = (firstName, callback) => {
+        ipcRenderer.send(channels.SENTER_FIND_FIRST_NAME, firstName);
+        ipcRenderer.on(channels.SENTER_FIND_FIRST_NAME, (_, data) => {
+            if (data.account && data.account.account) {
+                ipcRenderer.send(
+                    channels.SENTER_ACCOUNT_HISTORY,
+                    data.account.account
+                );
+                ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_ACCOUNT_HISTORY
+                    );
+
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_FIRST_NAME
+                    );
+                    callback({ history: args, record: data.account });
+                });
+            } else if (data.accounts) {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_FIRST_NAME);
+                callback({ history: null, records: data.accounts });
+            } else {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_FIRST_NAME);
+            }
+        });
+    };
+
+    const findLastName = (lastName, callback) => {
+        ipcRenderer.send(channels.SENTER_FIND_LAST_NAME, lastName);
+        ipcRenderer.on(channels.SENTER_FIND_LAST_NAME, (_, data) => {
+            if (data.account && data.account.account) {
+                ipcRenderer.send(
+                    channels.SENTER_ACCOUNT_HISTORY,
+                    data.account.account
+                );
+                ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_ACCOUNT_HISTORY
+                    );
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_LAST_NAME
+                    );
+                    callback({ history: args, record: data.account });
+                });
+            } else if (data.accounts) {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_LAST_NAME);
+                callback({ history: null, records: data.accounts });
+            } else {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_LAST_NAME);
+            }
+        });
+    };
+
+    const findBothNames = (firstName, lastName, callback) => {
+        ipcRenderer.send(channels.SENTER_FIND_BOTH_NAME, {
+            first: firstName,
+            last: lastName,
+        });
+        ipcRenderer.on(channels.SENTER_FIND_BOTH_NAME, (_, data) => {
+            if (data.account && data.account.account) {
+                ipcRenderer.send(
+                    channels.SENTER_ACCOUNT_HISTORY,
+                    data.account.account
+                );
+                ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_ACCOUNT_HISTORY
+                    );
+                    ipcRenderer.removeAllListeners(
+                        channels.SENTER_FIND_BOTH_NAME
+                    );
+                    callback({ history: args, record: data.account });
+                });
+            } else if (data.accounts) {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_BOTH_NAME);
+                callback({ history: null, records: data.accounts });
+            } else {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_BOTH_NAME);
+            }
+        });
+    };
+
+    const showBuyScreen = ({ history, record }) => {
+        setHistory(history);
+        setRecord(record);
+        setOpenBuy(true);
+        setOpenDashBoard(false);
+    };
+
+    const showAccountScreen = ({ records }) => {
+        setRecords(records);
+        setOpenAccount(true);
+        setOpenDashBoard(false);
+    };
+
     const handleFindMembership = async (values) => {
-        if (values.phone) {
-            ipcRenderer.send(channels.SENTER_FIND_PHONE, values.phone);
-            ipcRenderer.on(channels.SENTER_FIND_PHONE, (_, data) => {
-                console.log('RESPONSE FROM FIND PHONE', data);
-                if (data.account) {
-                    ipcRenderer.send(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        data.account.account
-                    );
-                    ipcRenderer.on(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        (event, args) => {
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_ACCOUNT_HISTORY
-                            );
-                            console.log('History', args);
-                            setHistory(args);
-                            setRecord(data.account);
-                            setOpenBuy(true);
-                            setOpenDashBoard(false);
-                            // Remove Find Listener
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_FIND_PHONE
-                            );
-                        }
-                    );
-                } else if (data.accounts) {
-                    console.log('found many account ', data.accounts);
-                    setRecords(data.accounts);
-                    setOpenAccount(true);
-                    setOpenDashBoard(false);
-                    // Remove Find Listener
-                    ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
-                } else {
-                    console.log(
-                        'There are not account with the phone number',
-                        values.phone
-                    );
-                    ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
-                }
-            });
-        } else if (values.account) {
-            ipcRenderer.send(channels.SENTER_FIND_ACCOUNT, values.account);
-            ipcRenderer.on(
-                channels.SENTER_FIND_ACCOUNT,
-                (_, lastAccountRecord) => {
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_ACCOUNT
-                    );
-                    console.log(
-                        'RESPONSE FROM FIND ACCOUNT',
-                        lastAccountRecord
-                    );
-
-                    if (!lastAccountRecord) {
-                        console.log(
-                            'Unable to find Account',
-                            lastAccountRecord
-                        );
-                    } else {
-                        ipcRenderer.send(
-                            channels.SENTER_ACCOUNT_HISTORY,
-                            values.account
-                        );
-                        ipcRenderer.on(
-                            channels.SENTER_ACCOUNT_HISTORY,
-                            (event, args) => {
-                                ipcRenderer.removeAllListeners(
-                                    channels.SENTER_ACCOUNT_HISTORY
-                                );
-                                console.log('History', args);
-                                setHistory(args);
-                                setRecord(lastAccountRecord);
-                                setOpenBuy(true);
-                                setOpenDashBoard(false);
-                            }
-                        );
-                    }
-                }
+        const { phone, account, first, last } = values;
+        if (phone) {
+            findPhone(phone, (data) =>
+                data.history ? showBuyScreen(data) : showAccountScreen(data)
             );
-        } else if (values.first) {
-            ipcRenderer.send(channels.SENTER_FIND_FIRST_NAME, values.first);
-            ipcRenderer.on(channels.SENTER_FIND_FIRST_NAME, (_, data) => {
-                console.log('RESPONSE FROM FIND FIRST NAME', data);
-
-                if (data.account && data.account.account) {
-                    ipcRenderer.send(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        data.account.account
-                    );
-                    ipcRenderer.on(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        (event, args) => {
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_ACCOUNT_HISTORY
-                            );
-                            console.log('History', args);
-                            setHistory(args);
-                            setRecord(data.account);
-                            setOpenBuy(true);
-                            setOpenDashBoard(false);
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_FIND_FIRST_NAME
-                            );
-                        }
-                    );
-                } else if (data.accounts) {
-                    console.log('found many account ', data.accounts);
-                    setRecords(data.accounts);
-                    setOpenAccount(true);
-                    setOpenDashBoard(false);
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_FIRST_NAME
-                    );
-                } else {
-                    console.log(
-                        'There are not account with the name',
-                        values.first
-                    );
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_FIRST_NAME
-                    );
-                }
-            });
-        } else if (values.last) {
-            ipcRenderer.send(channels.SENTER_FIND_LAST_NAME, values.last);
-            ipcRenderer.on(channels.SENTER_FIND_LAST_NAME, (_, data) => {
-                console.log('RESPONSE FROM FIND LAST NAME', data);
-
-                if (data.account && data.account.account) {
-                    ipcRenderer.send(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        data.account.account
-                    );
-                    ipcRenderer.on(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        (event, args) => {
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_ACCOUNT_HISTORY
-                            );
-                            console.log('History', args);
-                            setHistory(args);
-                            setRecord(data.account);
-                            setOpenBuy(true);
-                            setOpenDashBoard(false);
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_FIND_LAST_NAME
-                            );
-                        }
-                    );
-                } else if (data.accounts) {
-                    console.log('found many account ', data.accounts);
-                    setRecords(data.accounts);
-                    setOpenAccount(true);
-                    setOpenDashBoard(false);
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_LAST_NAME
-                    );
-                } else {
-                    console.log(
-                        'There are not account with the name',
-                        values.first
-                    );
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_LAST_NAME
-                    );
-                }
-            });
-        } else if (values.first && values.last) {
-            ipcRenderer.send(channels.SENTER_FIND_BOTH_NAME, {
-                first: values.first,
-                last: values.last,
-            });
-            ipcRenderer.on(channels.SENTER_FIND_BOTH_NAME, (_, data) => {
-                console.log('RESPONSE FROM FIND BOTH NAME', data);
-
-                if (data.account && data.account.account) {
-                    ipcRenderer.send(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        data.account.account
-                    );
-                    ipcRenderer.on(
-                        channels.SENTER_ACCOUNT_HISTORY,
-                        (event, args) => {
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_ACCOUNT_HISTORY
-                            );
-                            console.log('History', args);
-                            setHistory(args);
-                            setRecord(data.account);
-                            setOpenBuy(true);
-                            setOpenDashBoard(false);
-                            ipcRenderer.removeAllListeners(
-                                channels.SENTER_FIND_BOTH_NAME
-                            );
-                        }
-                    );
-                } else if (data.accounts) {
-                    console.log('found many account ', data.accounts);
-                    setRecords(data.accounts);
-                    setOpenAccount(true);
-                    setOpenDashBoard(false);
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_BOTH_NAME
-                    );
-                } else {
-                    console.log(
-                        'There are not account with the name',
-                        values.first
-                    );
-                    ipcRenderer.removeAllListeners(
-                        channels.SENTER_FIND_BOTH_NAME
-                    );
-                }
-            });
+        } else if (account) {
+            findAccount(account, (data) => data.history && showBuyScreen(data));
+        } else if (first) {
+            findFirstName(first, (data) =>
+                data.history ? showBuyScreen(data) : showAccountScreen(data)
+            );
+        } else if (last) {
+            findLastName(last, (data) =>
+                data.history ? showBuyScreen(data) : showAccountScreen(data)
+            );
+        } else if (first && last) {
+            findBothNames(first, last, (data) =>
+                data.history ? showBuyScreen(data) : showAccountScreen(data)
+            );
         }
     };
 
@@ -379,10 +321,6 @@ const SenterPureWater = (props) => {
     };
 
     useEffect(() => {
-        console.log('admin', adminPassword);
-    }, [adminPassword]);
-
-    useEffect(() => {
         if (records && records.length === 0) {
             setOpenAccount(false);
             setOpenDashBoard(true);
@@ -390,7 +328,6 @@ const SenterPureWater = (props) => {
     }, [records]);
 
     return (
-        // <Segment raised style={{ height: '100vh', overflow: 'scroll' }}>
         <>
             {openLogin && (
                 <Login
@@ -470,7 +407,6 @@ const SenterPureWater = (props) => {
                 />
             )}
         </>
-        // </Segment>
     );
 };
 

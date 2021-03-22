@@ -43,13 +43,6 @@ const RenewReceipt = ({ record }) => (
                             e.preventDefault();
                             console.log('PRINT BUY RECEIPT', record);
 
-                            // const fullname = `${record.first} ${record.last} -- ${record.phone}`;
-                            // const prevGallon = `Gallon Prev: ${record.previous}`;
-                            // const gallonBuy = `Gallon Buy : ${record.buy}`;
-                            // const blank = '';
-                            // const gallonLeft = `Gallon Left: ${record.remain}`;
-                            // const message = `Thank You                [Account#: ${record.account}]`;
-
                             const renewGallon = `Gallon Renew: ${record.gallon}`;
                             const renewFee = `Renew Fee   : $${record.fee}`;
                             const fullname = `${record.first} ${record.last} -- ${record.phone}`;

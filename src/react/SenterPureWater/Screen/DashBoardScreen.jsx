@@ -36,11 +36,9 @@ const DashBoardScreen = (props) => {
                         <Divider />
                         <Divider hidden />
                         <FindForm
-                            // find={props.handleFindMembership}
                             setOpenAdd={props.setOpenAdd}
                             setOpenDashBoard={props.setOpenDashBoard}
                             setOpenLogin={props.setOpenLogin}
-                            // onSubmit={handleFindMembership}
                             onSubmit={props.handleFindMembership}
                         />
                     </Grid.Column>

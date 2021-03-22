@@ -17,6 +17,7 @@ import {
     Renew,
     FirstName,
     LastName,
+    AreaCode,
 } from '../Field/BuyField';
 import { OnChange } from 'react-final-form-listeners';
 import { EditButton } from '../Button/EditButton';
@@ -36,7 +37,6 @@ const AdminModal = (props) => {
             onOpen={() => props.setOpenDelete(true)}
             open={props.openDelete}>
             <Modal.Content>
-                {/* <Card centered> */}
                 <Card fluid>
                     <Card.Content>
                         <Card.Header>
@@ -78,17 +78,10 @@ const AdminModal = (props) => {
                             color='red'
                             onClick={async (e) => {
                                 e.preventDefault();
-                                console.log(
-                                    'Delete Account',
-                                    props.deleteAccount.account
-                                );
                                 props.handleDeleteMembership({
                                     account: props.deleteAccount.account,
                                     password: props.adminPassword,
                                 });
-                                // props.setOpenDelete(false);
-                                // props.setOpenBuyScreen(false);
-                                // props.setOpenDashBoard(true);
                             }}
                         />
                         <Form.Button
@@ -146,6 +139,8 @@ export const BuyForm = (props) => {
                 fee: 0,
                 type: 'BUY',
                 gallon: 0,
+                // area: props.record.phone.slice(1, 4),
+                // areaCode: props.record.phone.slice(1, 3),
                 previous: props.record.remain,
             }}
             render={({ handleSubmit, form, values }) => (
@@ -211,7 +206,7 @@ export const BuyForm = (props) => {
                     <Form.Group>
                         <Account edit={edit} />
                         <MemberSince edit={edit} />
-                        <PhoneNumber edit={edit} />
+                        <PhoneNumber edit={edit} form={form} />
                         <FirstName edit={edit} />
                         <LastName edit={edit} />
                         <EditButton
@@ -240,7 +235,6 @@ export const BuyForm = (props) => {
                                 Cancel
                             </Form.Button>
                         )}
-                        {/* <Form.Input type='hidden' width={1} /> */}
                         <TodayDate edit={edit} />
                         <CurrentTime edit={edit} />
                     </Form.Group>
@@ -273,7 +267,6 @@ export const BuyForm = (props) => {
                             negative
                             onClick={(e) => {
                                 e.preventDefault();
-                                // console.log(values, props.record);
                                 props.setDeleteAccount(props.record);
                                 props.setOpenDelete(true);
                             }}>
@@ -286,7 +279,6 @@ export const BuyForm = (props) => {
                             content='History'
                             onClick={(e) => {
                                 e.preventDefault();
-                                // props.setOpenBuyScreen(false);
                                 props.setOpenHistory(true);
                             }}
                         />
@@ -304,7 +296,6 @@ export const BuyForm = (props) => {
                     {props.record && (
                         <AdminModal
                             deleteAccount={props.record}
-                            // record={props.record}
                             setOpenDashBoard={props.setOpenDashBoard}
                             setOpenDelete={props.setOpenDelete}
                             openDelete={props.openDelete}
@@ -316,14 +307,6 @@ export const BuyForm = (props) => {
                             setAdminPassword={props.setAdminPassword}
                         />
                     )}
-                    {/* <FormSpy>
-                        {(values) => (
-                            <>
-                                <pre>{JSON.stringify(values.values, 0, 2)}</pre>
-                                <pre>{JSON.stringify(props.record, 0, 2)}</pre>
-                            </>
-                        )}
-                    </FormSpy> */}
                 </Form>
             )}
         />

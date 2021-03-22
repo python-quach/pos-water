@@ -84,10 +84,6 @@ const FindForm = (props) => (
                         props.setOpenLogin(true);
                     }}
                 />
-                {/* </Form.Group> */}
-                {/* <FormSpy>
-                        {(values) => <pre>{JSON.stringify(values, 0, 2)}</pre>}
-                    </FormSpy> */}
             </Form>
         )}
     />

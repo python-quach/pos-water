@@ -30,7 +30,6 @@ const AddScreen = (props) => {
                             error={error}
                             close={close}
                             date={date}
-                            // setError={props.setError}
                         />
                     </Grid.Column>
                 </Grid>
@@ -40,16 +39,3 @@ const AddScreen = (props) => {
 };
 
 export default AddScreen;
-
-// return new Promise((resolve, reject) => {
-//     ipcRenderer.send(channels.SENTER_ADD, data);
-//     ipcRenderer.on(channels.SENTER_ADD, (_, args) => {
-//         ipcRenderer.removeAllListeners(channels.SENTER_ADD);
-//         if (args.error) {
-//             setError(args.error);
-//             reject(args.data);
-//         } else {
-//             resolve(args);
-//         }
-//     });
-// });

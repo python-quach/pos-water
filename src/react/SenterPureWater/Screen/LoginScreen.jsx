@@ -5,10 +5,7 @@ import {
     Header,
     Icon,
     Form,
-    Modal,
     Divider,
-    Button,
-    Image,
 } from 'semantic-ui-react';
 import LoginForm from '../Form/LoginForm';
 
@@ -28,8 +25,6 @@ const LoginScreen = ({
     fileSave,
     closeApp,
     setFileSave,
-    setOpenAdmin,
-    openAdmin,
     loading,
 }) => (
     <TransitionablePortal
@@ -68,20 +63,6 @@ const LoginScreen = ({
                             negative={error}
                             content={error ? 'Invalid Credential' : 'Login'}
                         />
-                        {/* <Form.Button
-                            circular
-                            content='Admin'
-                            size='huge'
-                            color='yellow'
-                            icon='user circle'
-                            labelPosition='right'
-                            fluid
-                            onClick={(e) => {
-                                e.preventDefault();
-                                console.log('Admin Button');
-                                setOpenAdmin(true);
-                            }}
-                        /> */}
                         <Form.Group widths={2}>
                             <Form.Button
                                 circular
@@ -113,42 +94,6 @@ const LoginScreen = ({
                             />
                         </Form.Group>
                     </LoginForm>
-                    <Modal
-                        dimmer='blurring'
-                        onClose={() => setOpenAdmin(false)}
-                        onOpen={() => setOpenAdmin(true)}
-                        open={openAdmin}>
-                        <Modal.Header>User Admin Screen</Modal.Header>
-                        <Modal.Content image>
-                            <Image
-                                size='medium'
-                                src='https://react.semantic-ui.com/images/avatar/large/rachel.png'
-                                wrapped
-                            />
-                            <Modal.Description>
-                                <Header>Admin Screen</Header>
-                                <p>
-                                    We've found the following gravatar image
-                                    associated with your e-mail address.
-                                </p>
-                                <p>Is it okay to use this photo?</p>
-                            </Modal.Description>
-                        </Modal.Content>
-                        <Modal.Actions>
-                            <Button
-                                color='black'
-                                onClick={() => setOpenAdmin(false)}>
-                                Nope
-                            </Button>
-                            <Button
-                                content="Yep, that's me"
-                                labelPosition='right'
-                                icon='checkmark'
-                                onClick={() => setOpenAdmin(false)}
-                                positive
-                            />
-                        </Modal.Actions>
-                    </Modal>
                 </Grid.Column>
             </Grid>
         </Segment>

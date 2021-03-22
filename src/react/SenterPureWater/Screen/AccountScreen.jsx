@@ -101,8 +101,6 @@ const AccountScreen = ({
     deleteAccount,
     setDeleteAccount,
     handleDeleteMembership,
-    setOpenDeleteConfirm,
-    openDeleteConfirm,
     adminPassword,
     setAdminPassword,
 }) => {
@@ -207,57 +205,6 @@ const AccountScreen = ({
                                             setAdminPassword={setAdminPassword}
                                         />
                                     )}
-
-                                    {/* <Modal
-                                        dimmer='blurring'
-                                        onClose={() =>
-                                            setOpenDeleteConfirm(false)
-                                        }
-                                        onOpen={() =>
-                                            setOpenDeleteConfirm(true)
-                                        }
-                                        open={openDeleteConfirm}>
-                                        <Modal.Header>
-                                            Delete Account: {deleteAccount}
-                                        </Modal.Header>
-                                        <Modal.Content image>
-                                            <Form.Input
-                                                type='password'
-                                                name='password'
-                                                label='Enter Password'
-                                                onChange={(event, data) => {
-                                                    event.preventDefault();
-                                                    setAdminPassword(
-                                                        data.value
-                                                    );
-                                                }}
-                                            />
-                                        </Modal.Content>
-                                        <Modal.Actions>
-                                            <Button
-                                                content='Submit'
-                                                color='red'
-                                                onClick={async (e) => {
-                                                    e.preventDefault();
-                                                    handleDeleteMembership({
-                                                        account: deleteAccount,
-                                                        password: adminPassword,
-                                                    });
-                                                    setOpenDeleteConfirm(false);
-                                                }}
-                                            />
-                                            <Button
-                                                color='black'
-                                                content='Cancel'
-                                                labelPosition='right'
-                                                icon='checkmark'
-                                                onClick={() => {
-                                                    setOpenDeleteConfirm(false);
-                                                    setOpenDelete(false);
-                                                }}
-                                            />
-                                        </Modal.Actions>
-                                    </Modal> */}
                                 </Table.Cell>
                             </Table.Row>
                         ))}

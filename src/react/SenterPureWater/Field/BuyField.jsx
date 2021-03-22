@@ -14,6 +14,13 @@ const normalizePhone = (value) => {
     )}`;
 };
 
+const normalizeArea = (value) => {
+    if (!value) return value;
+    const onlyNums = value.replace(/[^\d]/g, '');
+    if (onlyNums.length <= 2) return onlyNums;
+    return `(${onlyNums.slice(0, 3)}) `;
+};
+
 const normalizeAccount = (value) => {
     if (!value) return value;
     const onlyNums = value.replace(/[^\d]/g, '');
@@ -126,6 +133,29 @@ export const Account = ({ edit }) => (
     />
 );
 
+export const AreaCode = (props) => (
+    <Field
+        name='area'
+        parse={normalizeArea}
+        // format={normalizePhone}
+        render={({ input }) => (
+            <Form.Input
+                id='area'
+                className='TodayDate'
+                label='Area'
+                size='huge'
+                width={2}
+                icon='phone'
+                iconPosition='left'
+                inverted
+                error={props.edit}
+                readOnly={props.edit ? false : true}
+                {...input}
+            />
+        )}
+    />
+);
+
 export const PhoneNumber = (props) => (
     <Field
         name='phone'
@@ -173,7 +203,6 @@ export const FullName = (props) => (
 export const FirstName = (props) => (
     <Field
         name='first'
-        // parse={normalizeName}
         parse={normalize.name}
         render={({ input }) => (
             <Form.Input
@@ -197,7 +226,6 @@ export const LastName = (props) => (
     <Field
         name='last'
         parse={normalize.name}
-        // parse={normalizeName}
         render={({ input }) => (
             <Form.Input
                 id='last'
@@ -297,13 +325,13 @@ const BuyField = {
     TodayDate,
     CurrentTime,
     MemberSince,
-    // AreaCode,
     PhoneNumber,
     FullName,
     Buy,
     Remain,
     Fee,
     Renew,
+    AreaCode,
 };
 
 export default BuyField;

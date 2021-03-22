@@ -38,7 +38,6 @@ const Receipt = ({ record, open }) => {
                 }}>
                 <Grid
                     style={{
-                        // zIndex: 1000,
                         backgroundColor: '#002b487d',
                     }}>
                     <Grid.Column style={{ backgroundColor: '#002b487d' }}>

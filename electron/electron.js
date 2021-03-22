@@ -477,7 +477,7 @@ ipcMain.on(channels.SENTER_BACKUP, (event, request) => {
         })
         .then((result) => {
             if (result.filePath) {
-                fs.copyFile(dbSenter, result.filePath, function (err) {
+                fs.copyFile(senterDbFile, result.filePath, function (err) {
                     if (err) {
                         event.sender.send(channels.SENTER_BACKUP, {
                             open: false,

@@ -33,6 +33,7 @@ const SenterPureWater = (props) => {
     const [fileSave, setFileSave] = useState(null);
     const [adminPassword, setAdminPassword] = useState('');
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleFindMembership = async (values) => {
         if (values.phone) {
@@ -270,14 +271,17 @@ const SenterPureWater = (props) => {
 
     // FORM:  BACKUP database
     const handleBackup = async () => {
+        setLoading(true);
         try {
             const result = await backup();
             console.log('Backup result', result);
             if (result.open) {
                 setFileSave(result.open);
+                setLoading(false);
             }
-            throw new Error('Unable to back file');
+            // throw new Error('Unable to back file');
         } catch (err) {
+            setLoading(false);
             return err;
         }
     };
@@ -366,6 +370,7 @@ const SenterPureWater = (props) => {
                     setError={setError}
                     closeApp={closeApp}
                     setFileSave={setFileSave}
+                    loading={loading}
                 />
             )}
             {openDashBoard && (

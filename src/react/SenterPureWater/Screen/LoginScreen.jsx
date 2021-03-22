@@ -30,6 +30,7 @@ const LoginScreen = ({
     setFileSave,
     setOpenAdmin,
     openAdmin,
+    loading,
 }) => (
     <TransitionablePortal
         closeOnDocumentClick={false}
@@ -97,6 +98,7 @@ const LoginScreen = ({
                                 }}
                             />
                             <Form.Button
+                                loading={loading}
                                 circular
                                 size='huge'
                                 content={fileSave ? fileSave : 'Backup'}

@@ -1,22 +1,18 @@
-/* eslint-disable no-unused-expressions */
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const fs = require('fs');
-const path = require('path');
 const url = require('url');
+const path = require('path');
 const { channels } = require('../src/shared/constants');
 const sqlite3 = require('sqlite3');
 const userData = app.getPath('userData');
 const dbFile = path.resolve(userData, 'membership.sqlite3');
-// const senterDbFile = path.resolve(userData, 'senter.sqlite3');
 const usbDetect = require('usb-detection');
-const { addNewAccount, findAccount, lastRecord, add } = require('./sql');
 const {
     printReceipt,
     printAddReceipt,
     printBuyReceipt,
     printRenewReceipt,
     printDailyReport,
-    printSenterDailyReport,
 } = require('./printer');
 const {
     addMemberShip,
@@ -37,7 +33,6 @@ const {
     addUser,
     deleteUser,
     editUser,
-    report,
 } = require('./db');
 
 // ELECTRON MAIN WINDOW
@@ -45,7 +40,7 @@ let mainWindow;
 
 // SQLITE DATABASE
 let db;
-let dbSenter;
+// let dbSenter;
 
 // POS PRINTER SETUP
 const options = { encoding: 'GB18030' /* default */ };
@@ -70,7 +65,6 @@ usbDetect
     .then(function (devices) {
         devices.forEach(function (item) {
             if (item.deviceName === 'USB Printing Support') {
-                // console.log('Found USB: ', { ...item });
                 escpos = require('escpos');
                 escpos.USB = require('escpos-usb');
                 device = new escpos.USB();
@@ -90,7 +84,6 @@ usbDetect.on('add', function (usbDevice) {
         .then(function (devices) {
             devices.forEach(function (item) {
                 if (item.deviceName === 'USB Printing Support') {
-                    // console.log('Found USB: ', { ...item });
                     escpos = require('escpos');
                     escpos.USB = require('escpos-usb');
                     setTimeout(function () {
@@ -126,7 +119,7 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -244,19 +237,6 @@ ipcMain.on(channels.REPORT, (event, arg) => {
             printDailyReport(device, printer, data);
         } else {
             event.sender.send(channels.REPORT, data);
-        }
-    });
-});
-
-// SENTER DAILY REPORT
-ipcMain.on(channels.SENTER_REPORT, (event, arg) => {
-    console.log('SENTER_REPORT', arg);
-    report(dbSenter, arg, (data) => {
-        console.log('Daily Report', data);
-        if (device) {
-            printSenterDailyReport(device, printer, data);
-        } else {
-            event.sender.send(channels.SENTER_REPORT, data);
         }
     });
 });

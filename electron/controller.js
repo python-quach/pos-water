@@ -227,6 +227,26 @@ module.exports = (db) => {
     }
 
     /**
+     * Get totalRenewFee for a membership
+     *
+     * @param {*} event
+     * @param {*} data
+     * @returns
+     */
+    async function getTotalFee(event, data) {
+        const { account, memberSince } = data;
+        try {
+            const totalFee = await db.totalFee([account, memberSince]);
+            console.log('totalFee:', totalFee);
+            event.sender.send(channels.TOTAL_FEE, {
+                totalRenewalFee: totalFee,
+            });
+        } catch (err) {
+            return console.log('getTotalFee', err.message);
+        }
+    }
+
+    /**
      * Controller Object
      */
     return {
@@ -240,5 +260,6 @@ module.exports = (db) => {
         getMembershipHistory,
         getTotalAccountInvoices,
         getLastRecord,
+        getTotalFee,
     };
 };

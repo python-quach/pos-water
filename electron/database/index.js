@@ -360,6 +360,19 @@ module.exports = (db, dbFile) => {
         });
     }
 
+    /**
+     *
+     * @param {*} queries
+     * @returns
+     */
+    async function totalFee(queries) {
+        return new Promise((resolve, reject) => {
+            db.get(sql.totalFee, queries, (err, { totalRenewalFee }) =>
+                err ? reject(err) : resolve(totalRenewalFee)
+            );
+        });
+    }
+
     return {
         verifyLogin,
         backupFile,
@@ -377,5 +390,6 @@ module.exports = (db, dbFile) => {
         history,
         totalInvoices,
         newRecord,
+        totalFee,
     };
 };

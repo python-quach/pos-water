@@ -160,20 +160,14 @@ ipcMain.on(channels.EDIT, controller.editMembershipInfo);
 ipcMain.on(channels.HISTORY, controller.getMembershipHistory);
 ipcMain.on(channels.TOTAL, controller.getTotalAccountInvoices);
 ipcMain.on(channels.LAST_RECORD, controller.getLastRecord);
-
-// Get last Record
-// ipcMain.on(channels.LAST_RECORD, (event) => {
-//     last_record(db, (record) => {
-//         event.sender.send(channels.LAST_RECORD, record);
-//     });
-// });
+ipcMain.on(channels.TOTAL_FEE, controller.getTotalFee);
 
 // GET TOTAL RENEW FEE
-ipcMain.on(channels.TOTAL_FEE, (event, arg) => {
-    totalFee(db, arg, (total) => {
-        event.sender.send(channels.TOTAL_FEE, { totalRenewalFee: total });
-    });
-});
+// ipcMain.on(channels.TOTAL_FEE, (event, arg) => {
+//     totalFee(db, arg, (total) => {
+//         event.sender.send(channels.TOTAL_FEE, { totalRenewalFee: total });
+//     });
+// });
 
 // GET TOTAL RENEW GALLON
 ipcMain.on(channels.TOTAL_RENEW, (event, arg) => {

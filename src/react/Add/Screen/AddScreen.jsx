@@ -4,6 +4,7 @@ import { AddPortalConfig as config } from '../../../config/portal';
 import AddForm from '../Form/AddForm';
 
 const AddScreen = (props) => {
+    console.log('CHECK ME OUT ADDSCREEN:', props);
     const { history, api } = props;
     const record = history.location.state;
 

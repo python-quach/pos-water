@@ -4,19 +4,18 @@ import { Form } from 'semantic-ui-react';
 
 const InvoiceTime = ({ width }) => (
     <Field
-        name='invoiceDate'
+        name='invoiceTime'
         render={({ input }) => (
             <Form.Input
                 {...input}
-                id='todayDate'
-                label='Today Date'
+                label='Current Time'
                 className='TodayDate'
-                placeholder='mm/dd/yyyy'
-                icon='calendar'
+                inverted={true}
+                placeholder='00:00:00 PM'
+                icon='time'
                 iconPosition='left'
-                inverted
                 readOnly
-                width={width}
+                width={2}
             />
         )}
     />

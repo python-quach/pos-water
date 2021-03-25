@@ -1,6 +1,5 @@
 module.exports = {
     printAddReceipt: function (device, printer, data) {
-        // printAddReceipt: function (device, printer, data, callback) {
         const renewFee = `Membership Fee: $${data.field9}`;
         const fullname = `${data.field4} -- ${data.field7}`;
         const gallonLeft = `Gallon Total  : ${data.field31}`;
@@ -25,7 +24,6 @@ module.exports = {
                 .text(blank)
                 .cut()
                 .close();
-            // callback({ done: true });
         });
     },
     printBuyReceipt: function (device, printer, data) {
@@ -116,7 +114,6 @@ module.exports = {
                             .text(data.blank)
                             .cut()
                             .close();
-                        // callback({ done: true });
                     });
                 }
             }

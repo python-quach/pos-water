@@ -1,5 +1,5 @@
 {
-    "productName": "MPW-POS",
+    "productName": "SENTER-PURE-WATER-POS",
     "main": "electron/electron.js",
     "name": "electron-react-sqlite",
     "version": "2.0.2",

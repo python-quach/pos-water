@@ -40,8 +40,7 @@ const NewReceipt = ({ record }) => (
                             console.log('PRINT BUY RECEIPT', record);
 
                             const store = 'V&J Senter Pure Water';
-                            const phone = '(408) 227-8529';
-
+                            const phone = '(408) 427-6146';
                             const renewFee = `Membership Fee: $${record.fee}`;
                             const fullname = `${record.first} ${record.last} -- ${record.phone}`;
                             const gallonLeft = `Gallon Total  : ${record.gallon}`;

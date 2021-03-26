@@ -18,7 +18,7 @@ const AreaCode = ({ width }) => {
                     {...input}
                     id='areaCode'
                     className='AreaCode'
-                    label='Area Code'
+                    label='Code'
                     inverted
                     placeholder='xxx'
                     width={width}

@@ -1,6 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-const _ = require('lodash');
-const fs = require('fs');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path');
 const { channels } = require('../src/shared/constants');
@@ -16,16 +14,6 @@ const {
     printDailyReport,
 } = require('./printer');
 const {
-    addMemberShip,
-    login,
-    find,
-    buy,
-    renew,
-    edit,
-    history,
-    total_account_invoices,
-    last_record,
-    totalFee,
     totalRenew,
     totalBuy,
     dailyReport,
@@ -79,7 +67,7 @@ usbDetect
         printer = null;
     });
 
-usbDetect.on('add', function (usbDevice) {
+usbDetect.on('add', function () {
     usbDetect
         .find()
         .then(function (devices) {
@@ -120,7 +108,7 @@ function createWindow() {
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;

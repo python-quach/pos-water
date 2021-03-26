@@ -4,7 +4,17 @@ import {
     Field as FinalField,
     FormSpy,
 } from 'react-final-form';
-import { Form, Divider, Modal, Card, Icon } from 'semantic-ui-react';
+import {
+    Form,
+    Divider,
+    Modal,
+    Card,
+    Icon,
+    Image,
+    Header,
+    Button,
+    Table,
+} from 'semantic-ui-react';
 import {
     TodayDate,
     CurrentTime,
@@ -22,6 +32,49 @@ import { OnChange } from 'react-final-form-listeners';
 import { EditButton } from '../Button/EditButton';
 import { BuyButton } from '../Button/BuyButton';
 import { RenewButton } from '../Button/RenewButton';
+import BuyReceipt from '../Receipt/BuyReceipt';
+import NewReceipt from '../Receipt/NewReceipt';
+import RenewReceipt from '../Receipt/RenewReceipt';
+
+const ConfirmModal = ({ open, setOpen, openReceipt, record }) => {
+    console.log(record);
+    return (
+        <Modal
+            basic
+            dimmer='blurring'
+            size='fullscreen'
+            onClose={() => setOpen(false)}
+            onOpen={() => setOpen(true)}
+            open={open}>
+            <Modal.Header>Purchase Record</Modal.Header>
+            <Modal.Content>
+                <Table size='small' celled inverted selectable color='blue'>
+                    {record.type === 'NEW' && (
+                        <NewReceipt
+                            record={record}
+                            open={open}
+                            setOpen={setOpen}
+                        />
+                    )}
+                    {record.type === 'BUY' && (
+                        <BuyReceipt
+                            record={record}
+                            open={open}
+                            setOpen={setOpen}
+                        />
+                    )}
+                    {record.type === 'RENEW' && (
+                        <RenewReceipt
+                            record={record}
+                            open={open}
+                            setOpen={setOpen}
+                        />
+                    )}
+                </Table>
+            </Modal.Content>
+        </Modal>
+    );
+};
 
 const AdminModal = (props) => {
     console.log(props);
@@ -119,6 +172,7 @@ const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
 
 export const BuyForm = (props) => {
     const [edit, setEdit] = useState(false);
+    const [open, setOpen] = useState(false);
 
     function onKeyDown(keyEvent) {
         if ((keyEvent.charCode || keyEvent.keyCode) === 13) {
@@ -158,6 +212,7 @@ export const BuyForm = (props) => {
                                 time: new Date().toLocaleTimeString(),
                             });
                             props.setOpenReceipt(true);
+                            setOpen(true);
                         });
                     }}>
                     <WhenBuyFieldChanges
@@ -242,6 +297,8 @@ export const BuyForm = (props) => {
                         <Buy edit={edit} />
                         <Remain edit={edit} remain={values.remain} />
                         <BuyButton
+                            open={open}
+                            setOpen={setOpen}
                             disabled={values.buy <= 0}
                             setOpenReceipt={props.setOpenReceipt}
                         />
@@ -305,6 +362,11 @@ export const BuyForm = (props) => {
                             setAdminPassword={props.setAdminPassword}
                         />
                     )}
+                    <ConfirmModal
+                        open={open}
+                        record={props.record}
+                        setOpen={setOpen}
+                    />
                 </Form>
             )}
         />

@@ -37,6 +37,7 @@ const BuyScreen = (props) => {
                         <Receipt open={openReceipt} record={props.record} />
                         <Divider />
                         <BuyForm
+                            openReceipt={openReceipt}
                             setOpenReceipt={setOpenReceipt}
                             setOpenDashBoard={props.setOpenDashBoard}
                             setOpenBuyScreen={props.setOpenBuyScreen}

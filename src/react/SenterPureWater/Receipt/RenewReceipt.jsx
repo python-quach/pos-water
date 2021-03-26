@@ -2,7 +2,7 @@ import { Table, Button } from 'semantic-ui-react';
 import { channels } from '../../../shared/constants';
 const { ipcRenderer } = window;
 
-const RenewReceipt = ({ record }) => (
+const RenewReceipt = ({ record, open, setOpen }) => (
     <>
         <Table.Header>
             <Table.Row style={{ fontSize: '20px' }}>
@@ -18,6 +18,7 @@ const RenewReceipt = ({ record }) => (
                 <Table.HeaderCell>Date</Table.HeaderCell>
                 <Table.HeaderCell>Time</Table.HeaderCell>
                 <Table.HeaderCell>Action</Table.HeaderCell>
+                {open && <Table.HeaderCell>Done</Table.HeaderCell>}
             </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -76,11 +77,26 @@ const RenewReceipt = ({ record }) => (
                                     ipcRenderer.removeAllListeners(
                                         channels.SENTER_PRINT
                                     );
+                                    setOpen(false);
                                 }
                             );
                         }}
                     />
                 </Table.Cell>
+                {open && (
+                    <Table.Cell>
+                        <Button
+                            size='huge'
+                            color='black'
+                            fluid
+                            content='DONE'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setOpen(false);
+                            }}
+                        />
+                    </Table.Cell>
+                )}
             </Table.Row>
         </Table.Body>
     </>

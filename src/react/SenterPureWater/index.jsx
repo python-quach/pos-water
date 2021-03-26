@@ -181,11 +181,11 @@ const SenterPureWater = () => {
             );
         } else if (account) {
             findAccount(account, (data) => data.history && showBuyScreen(data));
-        } else if (first) {
+        } else if (first && !last) {
             findFirstName(first, (data) =>
                 data.history ? showBuyScreen(data) : showAccountScreen(data)
             );
-        } else if (last) {
+        } else if (last && !first) {
             findLastName(last, (data) =>
                 data.history ? showBuyScreen(data) : showAccountScreen(data)
             );

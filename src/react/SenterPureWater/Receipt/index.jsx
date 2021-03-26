@@ -5,6 +5,7 @@ import {
     Table,
     Header,
     Icon,
+    Divider,
 } from 'semantic-ui-react';
 import BuyReceipt from '../Receipt/BuyReceipt';
 import NewReceipt from '../Receipt/NewReceipt';
@@ -48,6 +49,8 @@ const Receipt = ({ record, open }) => {
                                 <Header.Subheader content='Last Purchase Receipt' />
                             </Header.Content>
                         </Header>
+                        <Divider hidden />
+                        <Divider hidden />
                         <Table celled inverted selectable color='blue'>
                             {record.type === 'NEW' && (
                                 <NewReceipt record={record} />

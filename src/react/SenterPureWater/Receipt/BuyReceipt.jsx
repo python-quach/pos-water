@@ -48,7 +48,7 @@ const BuyReceipt = ({ record }) => (
                             const gallonLeft = `Gallon Left: ${record.remain}`;
                             const message = `Thank You                [Account#: ${record.account}]`;
                             const store = 'V&J Senter Pure Water';
-                            const phone = '(408) 227-8529';
+                            const phone = '(408) 427-6146';
 
                             const buyReceipt = {
                                 fullname,

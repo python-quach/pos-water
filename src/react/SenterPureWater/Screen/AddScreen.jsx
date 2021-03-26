@@ -1,4 +1,11 @@
-import { Segment, TransitionablePortal, Grid } from 'semantic-ui-react';
+import {
+    Segment,
+    TransitionablePortal,
+    Grid,
+    Header,
+    Icon,
+    Divider,
+} from 'semantic-ui-react';
 import AddForm from '../Form/AddForm';
 
 const AddScreen = (props) => {
@@ -25,6 +32,15 @@ const AddScreen = (props) => {
                 }}>
                 <Grid verticalAlign='top' style={{ height: '100vh' }}>
                     <Grid.Column>
+                        <Header as='h1' inverted size='huge' textAlign='left'>
+                            <Icon name='braille' color='blue' />
+                            <Header.Content>
+                                Senter Pure Water
+                                <Header.Subheader content='Last Purchase Receipt' />
+                            </Header.Content>
+                        </Header>
+                        <Divider hidden />
+                        <Divider hidden />
                         <AddForm
                             onSubmit={handleAddMembership}
                             error={error}

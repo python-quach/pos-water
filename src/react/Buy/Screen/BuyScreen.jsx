@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Divider } from 'semantic-ui-react';
+import { Divider, Header, Icon } from 'semantic-ui-react';
 import { BuyPortalConfig as config } from '../../../config/portal';
 
 import BuyForm from '../Form/BuyForm';
@@ -162,6 +162,13 @@ const BuyScreen = ({ history }) => {
 
     return (
         <Portal {...config}>
+            <Header as='h1' inverted size='huge' textAlign='left'>
+                <Icon name='braille' color='blue' />
+                <Header.Content>
+                    Mckee Pure Water
+                    <Header.Subheader content='Buy and Renew' />
+                </Header.Content>
+            </Header>
             {openReceipt ? (
                 <ReceiptPortal openReceipt={openReceipt}>
                     <Receipt

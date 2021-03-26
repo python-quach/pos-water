@@ -244,13 +244,8 @@ const BuyForm = ({
                         reset={values.prev}
                     />
                     <Form.Group>
-                        <Date name='invoiceDate' edit={edit} />
-                        <Time name='invoiceTime' edit={edit} />
-                        <Form.Input type='hidden' width={8} />
-                        <MemberSince name='memberSince' edit={edit} />
                         <Account name='account' edit={edit} />
-                    </Form.Group>
-                    <Form.Group>
+                        <MemberSince name='memberSince' edit={edit} />
                         <AreaCode edit={edit} name='areaCode' />
                         <Phone edit={edit} name='phone' />
                         <Name edit={edit} name='fullname' />
@@ -285,8 +280,11 @@ const BuyForm = ({
                                 />
                             </>
                         )}
-                        <Form.Input type='hidden' width={!edit ? 4 : 1} />
-                        <PreviousGallon edited={edit} name='prev' />
+                        <Date name='invoiceDate' edit={edit} />
+                        <Time name='invoiceTime' edit={edit} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Input type='hidden' width={13} />
                         <BuyGallon
                             name='buy'
                             edit={edit}
@@ -307,7 +305,7 @@ const BuyForm = ({
                         <BuyButton values={values} disable={disable} />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Input type='hidden' width={14} />
+                        <Form.Input type='hidden' width={13} />
                         <Fee
                             name='fee'
                             edit={edit}

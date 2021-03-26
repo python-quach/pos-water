@@ -32,7 +32,7 @@ const AreaCode = ({ edit, name }) => {
                     {...input}
                     id='areaCode'
                     className='AreaCode'
-                    label='Area Code'
+                    label='Code'
                     inverted
                     placeholder='xxx'
                     width={1}

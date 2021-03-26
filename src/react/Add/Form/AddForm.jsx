@@ -78,16 +78,15 @@ const AddForm = ({ history, record }) => {
                     size='huge'
                     onSubmit={(event) => {
                         handleSubmit(event);
-                        // handleSubmit(event).then(() => {
-                        // console.log('form submit', error, values);
-                        // });
                     }}>
-                    <Form.Group>
+                    {/* <Form.Group>
                         <Form.Input type='hidden' width={12} />
                         <InvoiceDate width={2} />
                         <InvoiceTime width={2} />
-                    </Form.Group>
+                    </Form.Group> */}
                     <Form.Group>
+                        <InvoiceDate width={2} />
+                        <InvoiceTime width={2} />
                         <Account
                             setError={setError}
                             setErrorMessage={setErrorMessage}
@@ -99,7 +98,7 @@ const AddForm = ({ history, record }) => {
                         <Phone width={2} />
                         <FirstName width={2} />
                         <LastName width={2} />
-                        <Form.Input type='hidden' width={3} />
+                        {/* <Form.Input type='hidden' width={3} /> */}
                         <Fee width={1} />
                         <Renew width={1} />
                         <DoneButton values={values} />

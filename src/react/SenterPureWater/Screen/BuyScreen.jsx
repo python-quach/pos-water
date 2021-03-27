@@ -34,7 +34,11 @@ const BuyScreen = (props) => {
                         style={{
                             backgroundColor: '#002b487d',
                         }}>
-                        <Receipt open={openReceipt} record={props.record} />
+                        <Receipt
+                            open={openReceipt}
+                            record={props.record}
+                            setOpen={() => {}}
+                        />
                         <Divider />
                         <BuyForm
                             openReceipt={openReceipt}

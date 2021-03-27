@@ -1,7 +1,16 @@
-const { sql, buyData, renewData, editData } = require('../query');
-const { dialog } = require('electron');
+// module.exports = (db, dbFile) => {
+module.exports = (app) => {
+    const { sql } = require('../query');
+    const { dialog } = require('electron');
+    const path = require('path');
 
-module.exports = (db, dbFile) => {
+    // Database Setting
+    const sqlite3 = require('sqlite3');
+    const userData = app.getPath('userData');
+    const senterDbFile = path.resolve(userData, 'senter.sqlite3');
+
+    const db = new sqlite3.Database(senterDbFile);
+
     /**
      * Validate User Login credential with username and password
      *
@@ -162,6 +171,11 @@ module.exports = (db, dbFile) => {
         });
     }
 
+    /**
+     *
+     * @param {*} param0
+     * @returns
+     */
     function getBothName({ first, last }) {
         console.log('getBothName', first, last);
         return new Promise((resolve, reject) => {
@@ -202,6 +216,11 @@ module.exports = (db, dbFile) => {
         });
     }
 
+    /**
+     *
+     * @param {*} param0
+     * @returns
+     */
     function getDailyReport({ date, time }) {
         console.log(date, time);
         return new Promise((resolve, reject) => {
@@ -239,6 +258,176 @@ module.exports = (db, dbFile) => {
         });
     }
 
+    /**
+     * Insert New Membership
+     */
+    function insertMembership(data) {
+        const account = data[0];
+        const columns = [
+            'account',
+            'phone',
+            'first',
+            'last',
+            'since',
+            'fee',
+            'gallon',
+            'buy',
+            'remain',
+            'type',
+            'date',
+            'time',
+            'previous',
+        ];
+        const findDuplicateAccount = `SELECT * FROM memberships WHERE account = ?`;
+        const insert = `INSERT INTO memberships ( ${[...columns]} ) VALUES(${[
+            ...columns.map(() => '?'),
+        ]})`;
+        const lastRecord = `SELECT * FROM memberships WHERE rowid = ?`;
+
+        return new Promise((resolve, reject) => {
+            db.get(findDuplicateAccount, account, (err, row) => {
+                if (err) reject(err);
+                if (!row) {
+                    db.run(insert, data, function (err) {
+                        if (err) reject(err);
+                        db.get(lastRecord, this.lastID, (err, row) =>
+                            err ? reject(err) : resolve(row)
+                        );
+                    });
+                } else {
+                    resolve({
+                        error: `Account ${row.account} already existed`,
+                        data,
+                    });
+                }
+            });
+        });
+    }
+
+    /**
+     *
+     */
+    function insertBuy(data) {
+        const insertBuy = `
+        INSERT INTO memberships ( 
+            account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time, 
+            previous
+        ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        const lastBuyRecord = `
+        SELECT
+            account,
+            phone,
+            first,
+            last,
+            since,
+            fee,
+            gallon,
+            buy,
+            remain,
+            type,
+            date,
+            time, previous  FROM memberships WHERE rowid = ?`;
+
+        return new Promise((resolve, reject) => {
+            db.run(insertBuy, data, function (err) {
+                if (err) reject(err);
+                db.get(lastBuyRecord, this.lastID, (err, row) =>
+                    err ? reject(err) : resolve(row)
+                );
+            });
+        });
+    }
+
+    function getHistory(account) {
+        return new Promise((resolve, reject) => {
+            db.all(
+                `SELECT * FROM memberships WHERE account = ?`,
+                account,
+                (err, rows) => (err ? reject(err) : resolve(rows))
+            );
+        });
+    }
+
+    function getDbFile() {
+        const currentdate = new Date().toLocaleDateString();
+
+        return new Promise((resolve, reject) => {
+            dialog
+                .showSaveDialog({
+                    properties: ['openFile', 'multiSelections'],
+                    defaultPath: `senter.sqlite3`,
+                    filters: [{ name: 'Sqlite3', extensions: ['sqlite3'] }],
+                })
+                .then((result) => {
+                    if (result.filePath) {
+                        resolve({
+                            dbFile: senterDbFile,
+                            filePath: result.filePath,
+                            open: `${currentdate.trim()}`,
+                        });
+                    } else {
+                        resolve({ open: false });
+                    }
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
+
+    function edit(data) {
+        const account = data[3];
+        return new Promise((resolve, reject) => {
+            db.run(
+                `UPDATE memberships SET first = ?, last = ?, phone = ? WHERE account = ?`,
+                data,
+                function (err) {
+                    if (err) reject(err);
+                    db.all(
+                        `SELECT * FROM memberships WHERE account = ?`,
+                        account,
+                        (err, rows) => (err ? reject(err) : resolve(rows))
+                    );
+                }
+            );
+        });
+    }
+
+    function remove(account, password) {
+        return new Promise((resolve, reject) => {
+            if (password === '911') {
+                db.run(
+                    `DELETE FROM memberships WHERE account = ?`,
+                    account,
+                    function (err) {
+                        if (err) reject(err);
+                        resolve({
+                            auth: true,
+                            status: this.changes,
+                        });
+                    }
+                );
+            } else {
+                resolve({
+                    auth: false,
+                    status: null,
+                });
+            }
+        });
+    }
+
     return {
         verifyLogin,
         getAccount,
@@ -247,5 +436,11 @@ module.exports = (db, dbFile) => {
         getPhone,
         getBothName,
         getDailyReport,
+        insertMembership,
+        insertBuy,
+        getHistory,
+        getDbFile,
+        edit,
+        remove,
     };
 };

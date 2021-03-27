@@ -53,13 +53,22 @@ const Receipt = ({ record, open }) => {
                         <Divider hidden />
                         <Table celled inverted selectable color='blue'>
                             {record.type === 'NEW' && (
-                                <NewReceipt record={record} />
+                                <NewReceipt
+                                    record={record}
+                                    setOpen={() => {}}
+                                />
                             )}
                             {record.type === 'BUY' && (
-                                <BuyReceipt record={record} />
+                                <BuyReceipt
+                                    record={record}
+                                    setOpen={() => {}}
+                                />
                             )}
                             {record.type === 'RENEW' && (
-                                <RenewReceipt record={record} />
+                                <RenewReceipt
+                                    record={record}
+                                    setOpen={() => {}}
+                                />
                             )}
                         </Table>
                     </Grid.Column>

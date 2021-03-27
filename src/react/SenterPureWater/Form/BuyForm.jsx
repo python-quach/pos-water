@@ -4,17 +4,7 @@ import {
     Field as FinalField,
     FormSpy,
 } from 'react-final-form';
-import {
-    Form,
-    Divider,
-    Modal,
-    Card,
-    Icon,
-    Image,
-    Header,
-    Button,
-    Table,
-} from 'semantic-ui-react';
+import { Form, Divider, Modal, Card, Icon, Table } from 'semantic-ui-react';
 import {
     TodayDate,
     CurrentTime,

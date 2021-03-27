@@ -2,103 +2,190 @@ import {
     Segment,
     TransitionablePortal,
     Grid,
-    Header,
-    Icon,
     Form,
     Divider,
 } from 'semantic-ui-react';
 import LoginForm from '../Form/LoginForm';
+import LoginHeader from './LoginHeader';
 
-const LoginScreen = ({
-    onSubmit,
-    error,
-    setError,
-    segment,
-    grid,
-    column,
-    header,
-    icon,
-    content,
-    version,
-    open,
-    backup,
-    fileSave,
-    closeApp,
-    setFileSave,
-    loading,
-}) => (
-    <TransitionablePortal
-        closeOnDocumentClick={false}
-        closeOnEscape={false}
-        closeOnDimmerClick={false}
-        closeOnPortalMouseLeave={false}
-        open={open}>
-        <Segment {...segment}>
-            <Grid {...grid}>
-                <Grid.Column {...column}>
-                    <Header {...header}>
-                        <Icon {...icon} />
-                        <Header.Content>
-                            {content}
-                            <Header.Subheader content={version} />
-                        </Header.Content>
-                    </Header>
-                    <Divider />
-                    <LoginForm
-                        onSubmit={onSubmit}
-                        error={error}
-                        backup={backup}
-                        file={fileSave}
-                        setFileSave={setFileSave}
-                        setError={setError}
-                        closeApp={closeApp}>
-                        <Divider hidden />
-                        <Form.Button
-                            circular
-                            fluid
-                            icon={error ? 'warning' : 'lock'}
-                            labelPosition='right'
-                            primary
-                            size='huge'
-                            negative={error}
-                            content={error ? 'Invalid Credential' : 'Login'}
-                        />
-                        <Form.Group widths={2}>
+function LoginScreen(props) {
+    const {
+        onSubmit,
+        error,
+        setError,
+        segment,
+        grid,
+        column,
+        open,
+        backup,
+        fileSave,
+        closeApp,
+        setFileSave,
+        loading,
+    } = props;
+
+    return open ? (
+        <TransitionablePortal
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
+            closeOnDimmerClick={false}
+            closeOnPortalMouseLeave={false}
+            open={open}>
+            <Segment {...segment}>
+                <Grid {...grid}>
+                    <Grid.Column {...column}>
+                        <LoginHeader version='Version: 2.0.4' />
+                        <Divider />
+                        <LoginForm
+                            onSubmit={onSubmit}
+                            error={error}
+                            backup={backup}
+                            loading={loading}
+                            fileSave={fileSave}
+                            file={fileSave}
+                            setFileSave={setFileSave}
+                            setError={setError}
+                            closeApp={closeApp}>
+                            <Divider hidden />
                             <Form.Button
                                 circular
                                 fluid
-                                size='huge'
-                                content='Close'
-                                icon='close'
+                                icon={error ? 'warning' : 'lock'}
                                 labelPosition='right'
-                                color='black'
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    console.log('Close');
-                                    closeApp();
-                                }}
-                            />
-                            <Form.Button
-                                loading={loading}
-                                circular
+                                primary
                                 size='huge'
-                                content={fileSave ? fileSave : 'Backup'}
-                                icon='database'
-                                color='pink'
-                                fluid
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    console.log('Backup');
-                                    backup();
-                                }}
+                                negative={error}
+                                content={error ? 'Invalid Credential' : 'Login'}
                             />
-                        </Form.Group>
-                    </LoginForm>
-                </Grid.Column>
-            </Grid>
-        </Segment>
-    </TransitionablePortal>
-);
+                            <Form.Group widths={2}>
+                                <Form.Button
+                                    circular
+                                    fluid
+                                    size='huge'
+                                    content='Close'
+                                    icon='close'
+                                    labelPosition='right'
+                                    color='black'
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        console.log('Close');
+                                        closeApp();
+                                    }}
+                                />
+                                <Form.Button
+                                    loading={loading}
+                                    circular
+                                    size='huge'
+                                    content={fileSave ? fileSave : 'Backup'}
+                                    icon='database'
+                                    color='pink'
+                                    fluid
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        console.log('Backup');
+                                        backup();
+                                    }}
+                                />
+                            </Form.Group>
+                        </LoginForm>
+                    </Grid.Column>
+                </Grid>
+            </Segment>
+        </TransitionablePortal>
+    ) : null;
+}
+
+// const LoginScreen = ({
+//     onSubmit,
+//     error,
+//     setError,
+//     segment,
+//     grid,
+//     column,
+//     header,
+//     icon,
+//     content,
+//     version,
+//     open,
+//     backup,
+//     fileSave,
+//     closeApp,
+//     setFileSave,
+//     loading,
+// }) =>
+//     open ? (
+//         <TransitionablePortal
+//             closeOnDocumentClick={false}
+//             closeOnEscape={false}
+//             closeOnDimmerClick={false}
+//             closeOnPortalMouseLeave={false}
+//             open={open}>
+//             <Segment {...segment}>
+//                 <Grid {...grid}>
+//                     <Grid.Column {...column}>
+//                         <Header {...header}>
+//                             <Icon {...icon} />
+//                             <Header.Content>
+//                                 {content}
+//                                 <Header.Subheader content={version} />
+//                             </Header.Content>
+//                         </Header>
+//                         <Divider />
+//                         <LoginForm
+//                             onSubmit={onSubmit}
+//                             error={error}
+//                             backup={backup}
+//                             file={fileSave}
+//                             setFileSave={setFileSave}
+//                             setError={setError}
+//                             closeApp={closeApp}>
+//                             <Divider hidden />
+//                             <Form.Button
+//                                 circular
+//                                 fluid
+//                                 icon={error ? 'warning' : 'lock'}
+//                                 labelPosition='right'
+//                                 primary
+//                                 size='huge'
+//                                 negative={error}
+//                                 content={error ? 'Invalid Credential' : 'Login'}
+//                             />
+//                             <Form.Group widths={2}>
+//                                 <Form.Button
+//                                     circular
+//                                     fluid
+//                                     size='huge'
+//                                     content='Close'
+//                                     icon='close'
+//                                     labelPosition='right'
+//                                     color='black'
+//                                     onClick={(e) => {
+//                                         e.preventDefault();
+//                                         console.log('Close');
+//                                         closeApp();
+//                                     }}
+//                                 />
+//                                 <Form.Button
+//                                     loading={loading}
+//                                     circular
+//                                     size='huge'
+//                                     content={fileSave ? fileSave : 'Backup'}
+//                                     icon='database'
+//                                     color='pink'
+//                                     fluid
+//                                     onClick={(e) => {
+//                                         e.preventDefault();
+//                                         console.log('Backup');
+//                                         backup();
+//                                     }}
+//                                 />
+//                             </Form.Group>
+//                         </LoginForm>
+//                     </Grid.Column>
+//                 </Grid>
+//             </Segment>
+//         </TransitionablePortal>
+//     ) : null;
 
 LoginScreen.defaultProps = {
     segment: {

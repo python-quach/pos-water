@@ -12,9 +12,6 @@ function createWindow() {
         protocol: 'file:',
         slashes: true,
     });
-    // console.log(productionHTMLFile);
-
-    // console.log(path.join(__dirname, '../index.html'));
 
     const devHTMLFile = process.env.ELECTRON_START_URL;
     const startUrl = devHTMLFile || productionHTMLFile;
@@ -50,6 +47,9 @@ app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit();
 });
 
+/**
+ * Listen for incoming api request, and response back with the appropriate data
+ */
 ipcMain.on(channels.LOGIN, controller.authenticate);
 ipcMain.on(channels.SENTER_FIND_PHONE, controller.findPhone);
 ipcMain.on(channels.SENTER_FIND_ACCOUNT, controller.findAccount);
@@ -64,9 +64,4 @@ ipcMain.on(channels.SENTER_ACCOUNT_HISTORY, controller.history);
 ipcMain.on(channels.SENTER_BACKUP, controller.backup);
 ipcMain.on(channels.SENTER_EDIT, controller.editMembership);
 ipcMain.on(channels.SENTER_DELETE, controller.deleteMembership);
-
-// SENTER CLOSE APP
-ipcMain.on(channels.SENTER_CLOSE, () => {
-    ipcMain.removeAllListeners(channels.SENTER_CLOSE);
-    app.quit();
-});
+ipcMain.on(channels.SENTER_CLOSE, () => app.quit());

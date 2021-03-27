@@ -327,21 +327,20 @@ const SenterPureWater = () => {
 
     return (
         <>
-            {openLogin && (
-                <Login
-                    open={openLogin}
-                    error={error}
-                    fileSave={fileSave}
-                    openAdmin={openAdmin}
-                    setOpenAdmin={setOpenAdmin}
-                    onSubmit={handleUserLogin}
-                    backup={handleBackup}
-                    setError={setError}
-                    closeApp={closeApp}
-                    setFileSave={setFileSave}
-                    loading={loading}
-                />
-            )}
+            <Login
+                open={openLogin}
+                launchDashBoardScreen={launchBuyScreen}
+                onSubmit={handleUserLogin}
+                error={error}
+                fileSave={fileSave}
+                openAdmin={openAdmin}
+                setOpenAdmin={setOpenAdmin}
+                backup={handleBackup}
+                setError={setError}
+                closeApp={closeApp}
+                setFileSave={setFileSave}
+                loading={loading}
+            />
             {openDashBoard && (
                 <DashBoard
                     open={openDashBoard}

@@ -276,10 +276,14 @@ module.exports = (db) => {
     async function backup(event) {
         try {
             const { dbFile, filePath, open } = await db.getDbFile();
-            fs.copyFile(dbFile, filePath, (err) => {
-                if (err) throw err;
+            if (dbFile && filePath) {
+                fs.copyFile(dbFile, filePath, (err) => {
+                    if (err) throw err;
+                    event.sender.send(channels.SENTER_BACKUP, { open });
+                });
+            } else {
                 event.sender.send(channels.SENTER_BACKUP, { open });
-            });
+            }
         } catch (err) {
             return console.log(err.message);
         }

@@ -1,7 +1,146 @@
 import { channels } from '../../../shared/constants';
 const { ipcRenderer } = window;
 
-export const edit = ({ account, first, last, phone }) => {
+/**
+ * API - Get history for a given membership account
+ *
+ * @param {*} account
+ * @returns
+ */
+export const accountHistory = (account) => {
+    return new Promise((resolve) => {
+        ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, account);
+        ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_ACCOUNT_HISTORY);
+            resolve(args);
+        });
+    });
+};
+
+/**
+ * API - Locate a membership using phone number
+ *
+ * @param {string} phone
+ * @returns {Promise}
+ */
+export function findPhone(phone) {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
+        ipcRenderer.on(channels.SENTER_FIND_PHONE, async (_, data) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_FIND_PHONE);
+            if (data.account) {
+                const { account } = data.account;
+                const history = await accountHistory(account);
+                resolve({ history: history, record: data.account });
+            } else if (data.accounts) {
+                resolve({ history: null, records: data.accounts });
+            } else {
+                reject({ message: 'phone' });
+            }
+        });
+    });
+}
+
+/**
+ * API - Locate a membership using account number
+ *
+ * @param {string} account
+ * @returns {Promise}
+ */
+export function findAccount(account) {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SENTER_FIND_ACCOUNT, account);
+        ipcRenderer.on(
+            channels.SENTER_FIND_ACCOUNT,
+            async (_, lastAccountRecord) => {
+                ipcRenderer.removeAllListeners(channels.SENTER_FIND_ACCOUNT);
+                if (!lastAccountRecord) reject({ message: 'account' });
+                const history = await accountHistory(account);
+                resolve({ history: history, record: lastAccountRecord });
+            }
+        );
+    });
+}
+
+/**
+ * API - Locate a membership by first name
+ *
+ * @param {*} firstName
+ * @param {*} callback
+ */
+export function findFirstName(firstName) {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SENTER_FIND_FIRST_NAME, firstName);
+        ipcRenderer.on(channels.SENTER_FIND_FIRST_NAME, async (_, data) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_FIND_FIRST_NAME);
+            if (data.account && data.account.account) {
+                const { account } = data.account;
+                const history = await accountHistory(account);
+                resolve({ history: history, record: data.account });
+            } else if (data.accounts) {
+                resolve({ history: null, records: data.accounts });
+            } else {
+                reject({ message: 'firstName' });
+            }
+        });
+    });
+}
+
+/**
+ * API - Locate a membership by last name
+ *
+ * @param {*} lastName
+ * @param {*} callback
+ */
+export function findLastName(lastName) {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SENTER_FIND_LAST_NAME, lastName);
+        ipcRenderer.on(channels.SENTER_FIND_LAST_NAME, async (_, data) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_FIND_LAST_NAME);
+            if (data.account && data.account.account) {
+                const { account } = data.account;
+                const history = await accountHistory(account);
+                resolve({ history: history, record: data.account });
+            } else if (data.accounts) {
+                resolve({ history: null, records: data.accounts });
+            } else {
+                reject({ message: 'lastName' });
+            }
+        });
+    });
+}
+
+/**
+ * API - Locate a membership by both first and last name
+ *
+ * @param {*} firstName
+ * @param {*} lastName
+ * @param {*} callback
+ */
+export function findBothNames(firstName, lastName) {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SENTER_FIND_BOTH_NAME, {
+            first: firstName,
+            last: lastName,
+        });
+        ipcRenderer.on(channels.SENTER_FIND_BOTH_NAME, async (_, data) => {
+            ipcRenderer.removeAllListeners(channels.SENTER_FIND_BOTH_NAME);
+            if (data.account && data.account.account) {
+                const { account } = data.account;
+                const history = await accountHistory(account);
+                resolve({ history: history, record: data.account });
+            } else if (data.accounts) {
+                resolve({ history: null, records: data.accounts });
+            } else {
+                // reject('Unable to locate account by first and last name');
+                reject({ message: 'firstName' });
+            }
+        });
+    });
+}
+
+// export const edit = ({ account, first, last, phone }) => {
+export const editMembership = ({ account, first, last, phone }) => {
     console.log('edit:', { account, first, last, phone });
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_EDIT, { account, first, last, phone });
@@ -28,7 +167,9 @@ export const login = ({ username, password }) => {
             if (login) {
                 resolve(login);
             } else {
-                reject(login);
+                // reject(login);
+                // reject('Invalid Login');
+                reject({ message: 'Invalid Login' });
             }
         });
     });
@@ -126,25 +267,25 @@ export const getHistory = async (account) => {
     });
 };
 
-export const findPhone = async ({ phone }) => {
-    return new Promise((resolve, reject) => {
-        ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
-        ipcRenderer.on(channels.SENTER_FIND_PHONE, async (_, data) => {
-            console.log(data);
-            if (data.account) {
-                const history = await getHistory(data.account.account);
-                resolve({ history, record: data.account });
-            } else if (data.accounts) {
-                resolve({
-                    history: null,
-                    record: data.accounts,
-                });
-            } else {
-                reject('There are not account with the phone number', phone);
-            }
-        });
-    });
-};
+// export const findPhone = async ({ phone }) => {
+//     return new Promise((resolve, reject) => {
+//         ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
+//         ipcRenderer.on(channels.SENTER_FIND_PHONE, async (_, data) => {
+//             console.log(data);
+//             if (data.account) {
+//                 const history = await getHistory(data.account.account);
+//                 resolve({ history, record: data.account });
+//             } else if (data.accounts) {
+//                 resolve({
+//                     history: null,
+//                     record: data.accounts,
+//                 });
+//             } else {
+//                 reject('There are not account with the phone number', phone);
+//             }
+//         });
+//     });
+// };
 
 export const getDailyReport = (date, time, callback) => {
     ipcRenderer.send(channels.SENTER_REPORT, { date, time });
@@ -154,7 +295,8 @@ export const getDailyReport = (date, time, callback) => {
     });
 };
 
-export const closeApp = () => {
+export const closeApp = (e) => {
+    e.preventDefault();
     ipcRenderer.send(channels.SENTER_CLOSE);
 };
 
@@ -173,3 +315,25 @@ export const deleteMembership = async ({ account, password }) => {
         });
     });
 };
+
+/**
+ * API - Find Membership using phone, account, first, and last name
+ *
+ * @param {*} queries
+ * @param {*} callback
+ */
+export async function findMembership(queries) {
+    return new Promise(async (resolve, reject) => {
+        const { phone, account, first, last } = queries;
+        try {
+            if (phone) resolve(await findPhone(phone));
+            else if (account) resolve(await findAccount(account));
+            else if (first && !last) resolve(await findFirstName(first));
+            else if (last && !first) resolve(await findLastName(last));
+            else if (first && last) resolve(await findBothNames(first, last));
+            else throw new Error('Please enter a search value');
+        } catch (err) {
+            reject(err);
+        }
+    });
+}

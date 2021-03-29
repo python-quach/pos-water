@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     Segment,
     TransitionablePortal,
@@ -7,21 +8,30 @@ import {
     Divider,
 } from 'semantic-ui-react';
 import AddForm from '../Form/AddForm';
+import { add } from '../Api';
 
 const AddScreen = (props) => {
-    const { setOpenAdd, setOpenDashBoard, error, handleAddMembership } = props;
+    const [error, setError] = useState(false);
 
     const close = (e) => {
         e.preventDefault();
-        setOpenAdd(false);
-        setOpenDashBoard(true);
-        props.setError(false);
+        props.history.push('/dashboard');
     };
 
     const date = new Date();
 
+    const handleAddMembership = async (values) => {
+        try {
+            const data = await add(values);
+            props.history.push({ pathname: '/buy', state: data });
+        } catch (err) {
+            setError(err);
+            document.getElementById('account').focus();
+        }
+    };
+
     return (
-        <TransitionablePortal open={props.open}>
+        <TransitionablePortal open={props.location.state.open}>
             <Segment
                 style={{
                     margin: 0,

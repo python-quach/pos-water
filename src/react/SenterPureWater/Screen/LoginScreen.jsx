@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     Segment,
     TransitionablePortal,
@@ -5,187 +6,157 @@ import {
     Form,
     Divider,
 } from 'semantic-ui-react';
-import LoginForm from '../Form/LoginForm';
 import LoginHeader from './LoginHeader';
+import { backup, closeApp, login } from '../Api';
+import { Field, Form as FinalForm } from 'react-final-form';
 
 function LoginScreen(props) {
-    const {
-        onSubmit,
-        error,
-        setError,
-        segment,
-        grid,
-        column,
-        open,
-        backup,
-        fileSave,
-        closeApp,
-        setFileSave,
-        loading,
-    } = props;
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [fileSave, setFileSave] = useState(null);
+    const { segment, grid, column, portalSetting } = props;
 
-    return open ? (
-        <TransitionablePortal
-            closeOnDocumentClick={false}
-            closeOnEscape={false}
-            closeOnDimmerClick={false}
-            closeOnPortalMouseLeave={false}
-            open={open}>
+    const goToDashBoardScreen = (user) => {
+        props.history.push({
+            pathname: '/dashboard',
+            state: { user },
+        });
+    };
+
+    const handleUserLogin = async (values) => {
+        try {
+            const user = await login(values);
+            goToDashBoardScreen(user);
+        } catch (err) {
+            setError(err.message);
+            document.getElementById('username').focus();
+        }
+    };
+
+    const handleBackup = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const result = await backup();
+            setFileSave(result.open);
+            setLoading(false);
+        } catch (err) {
+            return console.log(err.message);
+        }
+    };
+
+    const clearError = (e, input) => {
+        e.preventDefault();
+        setError(false);
+        return input.onChange(e.target.value);
+    };
+
+    return (
+        <TransitionablePortal {...portalSetting} open={true}>
             <Segment {...segment}>
                 <Grid {...grid}>
                     <Grid.Column {...column}>
                         <LoginHeader version='Version: 2.0.4' />
                         <Divider />
-                        <LoginForm
-                            onSubmit={onSubmit}
-                            error={error}
-                            backup={backup}
-                            loading={loading}
-                            fileSave={fileSave}
-                            file={fileSave}
-                            setFileSave={setFileSave}
-                            setError={setError}
-                            closeApp={closeApp}>
-                            <Divider hidden />
-                            <Form.Button
-                                circular
-                                fluid
-                                icon={error ? 'warning' : 'lock'}
-                                labelPosition='right'
-                                primary
-                                size='huge'
-                                negative={error}
-                                content={error ? 'Invalid Credential' : 'Login'}
-                            />
-                            <Form.Group widths={2}>
-                                <Form.Button
-                                    circular
-                                    fluid
-                                    size='huge'
-                                    content='Close'
-                                    icon='close'
-                                    labelPosition='right'
-                                    color='black'
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        console.log('Close');
-                                        closeApp();
-                                    }}
-                                />
-                                <Form.Button
-                                    loading={loading}
-                                    circular
-                                    size='huge'
-                                    content={fileSave ? fileSave : 'Backup'}
-                                    icon='database'
-                                    color='pink'
-                                    fluid
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        console.log('Backup');
-                                        backup();
-                                    }}
-                                />
-                            </Form.Group>
-                        </LoginForm>
+                        <FinalForm
+                            onSubmit={handleUserLogin}
+                            render={({ handleSubmit, form }) => (
+                                <Form
+                                    size='large'
+                                    onSubmit={(event) => {
+                                        handleSubmit(event).then(form.reset);
+                                    }}>
+                                    <Field
+                                        name='username'
+                                        render={({ input }) => (
+                                            <Form.Input
+                                                id='username'
+                                                className='blueIcon'
+                                                size='massive'
+                                                icon='user'
+                                                transparent
+                                                iconPosition='left'
+                                                fluid
+                                                focus
+                                                placeholder='username'
+                                                name={input.name}
+                                                value={input.value}
+                                                onChange={(e) =>
+                                                    clearError(e, input)
+                                                }
+                                            />
+                                        )}
+                                    />
+                                    <Field
+                                        name='password'
+                                        render={({ input }) => (
+                                            <Form.Input
+                                                type='password'
+                                                id='password'
+                                                className='blueIcon'
+                                                icon='user'
+                                                transparent
+                                                iconPosition='left'
+                                                fluid
+                                                focus
+                                                size='massive'
+                                                name={input.name}
+                                                value={input.value}
+                                                placeholder='password'
+                                                onChange={(e) =>
+                                                    clearError(e, input)
+                                                }
+                                            />
+                                        )}
+                                    />
+                                    <Divider hidden />
+                                    <Form.Button
+                                        content={
+                                            error
+                                                ? 'Invalid Credential'
+                                                : 'Login'
+                                        }
+                                        icon={error ? 'warning' : 'lock'}
+                                        negative={error ? true : false}
+                                        labelPosition='right'
+                                        size='huge'
+                                        circular
+                                        fluid
+                                        primary
+                                    />
+                                    <Form.Group widths={2}>
+                                        <Form.Button
+                                            circular
+                                            fluid
+                                            size='huge'
+                                            content='Close'
+                                            icon='close'
+                                            labelPosition='right'
+                                            color='black'
+                                            onClick={closeApp}
+                                        />
+                                        <Form.Button
+                                            loading={loading}
+                                            circular
+                                            size='huge'
+                                            content={
+                                                fileSave ? fileSave : 'Backup'
+                                            }
+                                            icon='database'
+                                            color='pink'
+                                            fluid
+                                            onClick={handleBackup}
+                                        />
+                                    </Form.Group>
+                                </Form>
+                            )}
+                        />
                     </Grid.Column>
                 </Grid>
             </Segment>
         </TransitionablePortal>
-    ) : null;
+    );
 }
-
-// const LoginScreen = ({
-//     onSubmit,
-//     error,
-//     setError,
-//     segment,
-//     grid,
-//     column,
-//     header,
-//     icon,
-//     content,
-//     version,
-//     open,
-//     backup,
-//     fileSave,
-//     closeApp,
-//     setFileSave,
-//     loading,
-// }) =>
-//     open ? (
-//         <TransitionablePortal
-//             closeOnDocumentClick={false}
-//             closeOnEscape={false}
-//             closeOnDimmerClick={false}
-//             closeOnPortalMouseLeave={false}
-//             open={open}>
-//             <Segment {...segment}>
-//                 <Grid {...grid}>
-//                     <Grid.Column {...column}>
-//                         <Header {...header}>
-//                             <Icon {...icon} />
-//                             <Header.Content>
-//                                 {content}
-//                                 <Header.Subheader content={version} />
-//                             </Header.Content>
-//                         </Header>
-//                         <Divider />
-//                         <LoginForm
-//                             onSubmit={onSubmit}
-//                             error={error}
-//                             backup={backup}
-//                             file={fileSave}
-//                             setFileSave={setFileSave}
-//                             setError={setError}
-//                             closeApp={closeApp}>
-//                             <Divider hidden />
-//                             <Form.Button
-//                                 circular
-//                                 fluid
-//                                 icon={error ? 'warning' : 'lock'}
-//                                 labelPosition='right'
-//                                 primary
-//                                 size='huge'
-//                                 negative={error}
-//                                 content={error ? 'Invalid Credential' : 'Login'}
-//                             />
-//                             <Form.Group widths={2}>
-//                                 <Form.Button
-//                                     circular
-//                                     fluid
-//                                     size='huge'
-//                                     content='Close'
-//                                     icon='close'
-//                                     labelPosition='right'
-//                                     color='black'
-//                                     onClick={(e) => {
-//                                         e.preventDefault();
-//                                         console.log('Close');
-//                                         closeApp();
-//                                     }}
-//                                 />
-//                                 <Form.Button
-//                                     loading={loading}
-//                                     circular
-//                                     size='huge'
-//                                     content={fileSave ? fileSave : 'Backup'}
-//                                     icon='database'
-//                                     color='pink'
-//                                     fluid
-//                                     onClick={(e) => {
-//                                         e.preventDefault();
-//                                         console.log('Backup');
-//                                         backup();
-//                                     }}
-//                                 />
-//                             </Form.Group>
-//                         </LoginForm>
-//                     </Grid.Column>
-//                 </Grid>
-//             </Segment>
-//         </TransitionablePortal>
-//     ) : null;
 
 LoginScreen.defaultProps = {
     segment: {
@@ -217,6 +188,12 @@ LoginScreen.defaultProps = {
     icon: {
         name: 'braille',
         color: 'blue',
+    },
+    portalSetting: {
+        closeOnDocumentClick: false,
+        closeOnEscape: false,
+        closeOnDimmerClick: false,
+        closeOnPortalMouseLeave: false,
     },
     content: 'Senter Pure Water',
     version: 'Dashboard Version 1.0',

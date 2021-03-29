@@ -2,7 +2,7 @@ import { Table, Button } from 'semantic-ui-react';
 import { channels } from '../../../shared/constants';
 const { ipcRenderer } = window;
 
-const RenewReceipt = ({ record, open, setOpen }) => (
+const RenewReceipt = ({ record, open, setOpen, setOpenReceipt }) => (
     <>
         <Table.Header>
             <Table.Row style={{ fontSize: '20px' }}>
@@ -93,6 +93,7 @@ const RenewReceipt = ({ record, open, setOpen }) => (
                             onClick={(e) => {
                                 e.preventDefault();
                                 setOpen(false);
+                                setOpenReceipt(true);
                             }}
                         />
                     </Table.Cell>

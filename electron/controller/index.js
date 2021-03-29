@@ -222,33 +222,49 @@ module.exports = (db) => {
     }
 
     /**
-     * Print Buy Receipt
+     * Find USB PRINTING PRINTER
+     * @returns
      */
-    async function print(event, args) {
-        console.log('printBuy', args);
-        try {
+    async function findPrinter() {
+        return new Promise((resolve, reject) => {
             usbDetect.find().then((devices) => {
-                devices.forEach((item) => {
+                const data = devices.filter((item) => {
                     if (item.deviceName === 'USB Printing Support') {
                         const escpos = require('escpos');
                         escpos.USB = require('escpos-usb');
                         const device = new escpos.USB();
                         const printer = new escpos.Printer(device, options);
-                        if (device) {
-                            printReceipt(device, printer, args);
-                            event.sender.send(channels.SENTER_PRINT, {
-                                done: true,
-                            });
-                        } else {
-                            event.sender.send(channels.SENTER_PRINT, {
-                                done: false,
-                            });
-                        }
+                        resolve({ device, printer });
+                        return { device, printer };
+                    } else {
+                        return null;
                     }
                 });
+                if (data.length === 1) {
+                    resolve(data[0]);
+                } else {
+                    reject('No Device found');
+                }
+            });
+        });
+    }
+
+    /**
+     * Print Buy Receipt
+     */
+    async function print(event, args) {
+        console.log('print data: ', args);
+        try {
+            const { device, printer } = await findPrinter();
+            printReceipt(device, printer, args);
+            event.sender.send(channels.SENTER_PRINT, {
+                done: true,
             });
         } catch (err) {
-            return console.log(err.message);
+            console.log(err);
+            event.sender.send(channels.SENTER_PRINT, {
+                done: false,
+            });
         }
     }
 

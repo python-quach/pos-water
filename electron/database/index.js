@@ -135,7 +135,7 @@ module.exports = (app) => {
     function getPhone(phone) {
         return new Promise((resolve, reject) => {
             db.all(
-                `SELECT DISTINCT account, since, first, last  FROM memberships WHERE phone = ?`,
+                `SELECT DISTINCT account, since, first, last  FROM memberships WHERE phone = ? ORDER BY rowid`,
                 phone,
                 async (err, rows) => {
                     if (err) reject(err);
@@ -378,7 +378,8 @@ module.exports = (app) => {
                             open: `${currentdate.trim()}`,
                         });
                     } else {
-                        resolve({ open: false });
+                        // resolve({ open: false });
+                        resolve({ open: 'Backup' });
                     }
                 })
                 .catch((err) => {

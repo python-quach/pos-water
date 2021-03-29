@@ -2,7 +2,7 @@ import { Table, Button } from 'semantic-ui-react';
 import { channels } from '../../../shared/constants';
 const { ipcRenderer } = window;
 
-const BuyReceipt = ({ record, open, setOpen }) => (
+const BuyReceipt = ({ record, open, setOpen, setOpenReceipt }) => (
     <>
         <Table.Header>
             <Table.Row style={{ fontSize: '20px' }}>
@@ -76,6 +76,7 @@ const BuyReceipt = ({ record, open, setOpen }) => (
                                     setOpen(false);
                                 }
                             );
+                            // setOpen(false);
                         }}
                     />
                 </Table.Cell>
@@ -88,6 +89,7 @@ const BuyReceipt = ({ record, open, setOpen }) => (
                             content='DONE'
                             onClick={(e) => {
                                 e.preventDefault();
+                                // setOpenReceipt(true);
                                 setOpen(false);
                             }}
                         />

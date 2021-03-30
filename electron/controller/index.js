@@ -22,7 +22,8 @@ module.exports = (db) => {
             console.log('authenticate:', { username, password });
             const auth = await db.verifyLogin({ username, password });
             console.log('authenticate result:', auth);
-            event.sender.send(channels.LOGIN, { login: auth });
+            // event.sender.send(channels.LOGIN, { login: auth });
+            event.sender.send(channels.LOGIN, auth);
         } catch (err) {
             return console.log(err.message);
         }

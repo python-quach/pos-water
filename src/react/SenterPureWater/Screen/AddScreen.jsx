@@ -1,16 +1,13 @@
-import { useState } from 'react';
-import {
-    Segment,
-    TransitionablePortal,
-    Grid,
-    Header,
-    Icon,
-    Divider,
-} from 'semantic-ui-react';
-import AddForm from '../Form/AddForm';
-import { add } from '../Api';
+import { useState, useEffect } from 'react';
+import api from '../Api';
+import Portal from './Portal';
+import Header from './Header';
+import Form from './Form';
+import Field from './Field';
+import Button from './Button';
 
 const AddScreen = (props) => {
+    const [open, setOpen] = useState(false);
     const [error, setError] = useState(false);
 
     const close = (e) => {
@@ -18,11 +15,9 @@ const AddScreen = (props) => {
         props.history.push('/dashboard');
     };
 
-    const date = new Date();
-
     const handleAddMembership = async (values) => {
         try {
-            const data = await add(values);
+            const data = await api.add(values);
             props.history.push({ pathname: '/buy', state: data });
         } catch (err) {
             setError(err);
@@ -30,37 +25,40 @@ const AddScreen = (props) => {
         }
     };
 
+    const field = {
+        date: <Field.Date />,
+        time: <Field.Time />,
+        account: <Field.AddAccount error={error} />,
+        phone: <Field.AddPhone />,
+        firstName: <Field.AddFirstName />,
+        lastName: <Field.AddLastName />,
+        fee: <Field.Fee />,
+        gallon: <Field.Gallon />,
+    };
+
+    const button = {
+        add: (values, submitting) => (
+            <Button.New values={values} submitting={submitting} />
+        ),
+        cancel: <Button.Cancel close={close} />,
+    };
+
+    useEffect(() => {
+        setOpen(true);
+    }, [open]);
+
     return (
-        <TransitionablePortal open={props.location.state.open}>
-            <Segment
-                style={{
-                    margin: 0,
-                    height: '100%',
-                    overflow: 'hidden',
-                    zIndex: 1000,
-                    backgroundColor: '#002b487d',
-                }}>
-                <Grid verticalAlign='top' style={{ height: '100vh' }}>
-                    <Grid.Column>
-                        <Header as='h1' inverted size='huge' textAlign='left'>
-                            <Icon name='braille' color='blue' />
-                            <Header.Content>
-                                Senter Pure Water
-                                <Header.Subheader content='Last Purchase Receipt' />
-                            </Header.Content>
-                        </Header>
-                        <Divider hidden />
-                        <Divider hidden />
-                        <AddForm
-                            onSubmit={handleAddMembership}
-                            error={error}
-                            close={close}
-                            date={date}
-                        />
-                    </Grid.Column>
-                </Grid>
-            </Segment>
-        </TransitionablePortal>
+        <Portal.Add
+            open={open}
+            header={<Header.Senter />}
+            form={
+                <Form.Add
+                    onSubmit={handleAddMembership}
+                    field={field}
+                    button={button}
+                />
+            }
+        />
     );
 };
 

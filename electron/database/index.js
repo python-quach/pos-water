@@ -23,8 +23,8 @@ module.exports = (app) => {
      */
     const verifyLogin = ({ username, password }) =>
         new Promise((resolve, reject) =>
-            db.get(sql.login, [username, password], (err, user) =>
-                err ? reject(err) : resolve(user)
+            db.get(sql.login, [username, password], (err, rowid) =>
+                err ? reject(err) : resolve(rowid)
             )
         );
 

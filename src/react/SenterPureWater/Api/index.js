@@ -2,6 +2,29 @@ import { channels } from '../../../shared/constants';
 const { ipcRenderer } = window;
 
 /**
+ * API: Verify user login credential, if response is undefined the login was unsuccessful
+ *
+ * @param {Object} credential - Object containing username and password for authentication
+ * @param {string} credential.username
+ * @param {string} credential.password
+ * @returns {Promise} - A Promise object, that container the user_id if login was successful
+ */
+export const login = ({ username, password }) => {
+    console.log('API login: ', { username, password });
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.LOGIN, { username, password });
+        ipcRenderer.on(channels.LOGIN, (_, auth) => {
+            ipcRenderer.removeAllListeners(channels.LOGIN);
+            console.log('Response from Server', auth);
+
+            // console.log('Response from Server', !auth ? 'Invalid Login' : auth);
+            if (auth) resolve(auth);
+            reject({ message: 'Invalid Login' });
+        });
+    });
+};
+
+/**
  * API - Get history for a given membership account
  *
  * @param {*} account
@@ -157,24 +180,6 @@ export const editMembership = ({ account, first, last, phone }) => {
     });
 };
 
-export const login = ({ username, password }) => {
-    console.log('login: ', { username, password });
-    return new Promise((resolve, reject) => {
-        ipcRenderer.send(channels.LOGIN, { username, password });
-        ipcRenderer.on(channels.LOGIN, (_, { login }) => {
-            console.log('Response from API', login);
-            ipcRenderer.removeAllListeners(channels.LOGIN);
-            if (login) {
-                resolve(login);
-            } else {
-                // reject(login);
-                // reject('Invalid Login');
-                reject({ message: 'Invalid Login' });
-            }
-        });
-    });
-};
-
 export const backup = () => {
     return new Promise((resolve, reject) => {
         console.log('Backup Database');
@@ -267,26 +272,6 @@ export const getHistory = async (account) => {
     });
 };
 
-// export const findPhone = async ({ phone }) => {
-//     return new Promise((resolve, reject) => {
-//         ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
-//         ipcRenderer.on(channels.SENTER_FIND_PHONE, async (_, data) => {
-//             console.log(data);
-//             if (data.account) {
-//                 const history = await getHistory(data.account.account);
-//                 resolve({ history, record: data.account });
-//             } else if (data.accounts) {
-//                 resolve({
-//                     history: null,
-//                     record: data.accounts,
-//                 });
-//             } else {
-//                 reject('There are not account with the phone number', phone);
-//             }
-//         });
-//     });
-// };
-
 export const getDailyReport = (date, time, callback) => {
     ipcRenderer.send(channels.SENTER_REPORT, { date, time });
     ipcRenderer.on(channels.REPORT, (event, response) => {
@@ -337,3 +322,14 @@ export async function findMembership(queries) {
         }
     });
 }
+
+const api = {
+    add,
+    login,
+    backup,
+    closeApp,
+    findMembership,
+    getDailyReport,
+};
+
+export default api;

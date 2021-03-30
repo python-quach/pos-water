@@ -1,5 +1,5 @@
+const login = 'SELECT rowid FROM users WHERE username = ? AND password = ? ';
 const duplicate = `SELECT * FROM test WHERE field22 = ?`;
-
 const add = `INSERT INTO test (
     field20,
     field22,
@@ -21,8 +21,6 @@ const add = `INSERT INTO test (
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
 
 const last_record = `SELECT * FROM test WHERE rowid = ?`;
-
-const login = 'SELECT * FROM users WHERE username = ? AND password = ? ';
 
 const find_phone = `SELECT DISTINCT field8 phone, field22 account, field4 fullname FROM test WHERE field8 = ? `;
 

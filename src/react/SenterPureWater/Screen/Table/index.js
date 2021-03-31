@@ -17,33 +17,33 @@ const AccountTable = ({ records, deleteAccount, button, modal }) => (
         <Table.Body>
             {records.map((record, key) => (
                 <Table.Row key={key} style={{ fontSize: '20px' }}>
-                    <Table.Cell>{record.account}</Table.Cell>
-                    <Table.Cell>{record.since}</Table.Cell>
-                    <Table.Cell>{record.phone}</Table.Cell>
-                    <Table.Cell>
-                        {record.first} {record.last}
-                    </Table.Cell>
-                    <Table.Cell>{record.remain}</Table.Cell>
-                    <Table.Cell>
-                        {record.date} {record.time}
-                    </Table.Cell>
-                    <Table.Cell>{record.type}</Table.Cell>
-                    <Table.Cell>
-                        <Button.Group>
-                            {button.select(record.account)}
-                            <Button.Or
-                                size='huge'
-                                style={{ marginTop: '8px' }}
-                            />
-                            {button.delete(record)}
-                            <Button.Or
-                                size='huge'
-                                style={{ marginTop: '8px' }}
-                            />
-                            {button.done}
-                        </Button.Group>
-                        {deleteAccount && modal}
-                    </Table.Cell>
+                    <Table.Cell content={record.account} />
+                    <Table.Cell content={record.since} />
+                    <Table.Cell content={record.phone} />
+                    <Table.Cell content={record.first + ' ' + record.last} />
+                    <Table.Cell content={record.remain} />
+                    <Table.Cell content={record.date + ' ' + record.time} />
+                    <Table.Cell content={record.type} />
+                    <Table.Cell
+                        content={
+                            <>
+                                <Button.Group>
+                                    {button.select(record.account)}
+                                    <Button.Or
+                                        size='huge'
+                                        style={{ marginTop: '8px' }}
+                                    />
+                                    {button.delete(record)}
+                                    <Button.Or
+                                        size='huge'
+                                        style={{ marginTop: '8px' }}
+                                    />
+                                    {button.done}
+                                </Button.Group>
+                                {deleteAccount && modal}
+                            </>
+                        }
+                    />
                 </Table.Row>
             ))}
         </Table.Body>

@@ -165,24 +165,8 @@ const DoneButton = ({ closeAccountScreen }) => (
     />
 );
 
-export const AdminDeleteButton = ({
-    handleDeleteMembership,
-    deleteAccount,
-    adminPassword,
-}) => (
-    <Form.Button
-        size='massive'
-        content='Delete'
-        color='red'
-        type='submit'
-        // onClick={async (e) => {
-        //     e.preventDefault();
-        //     handleDeleteMembership({
-        //         account: deleteAccount.account,
-        //         password: adminPassword,
-        //     });
-        // }}
-    />
+export const AdminDeleteButton = () => (
+    <Form.Button size='massive' content='Delete' color='red' type='submit' />
 );
 
 const AdminCancelButton = ({ setOpenDelete }) => (

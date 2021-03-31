@@ -18,28 +18,7 @@ function AccountScreen({ location, history }) {
     const [deleteAccount, setDeleteAccount] = useState(null);
     const [adminPassword, setAdminPassword] = useState('');
 
-    const handleDeleteMembership = async (values) => {
-        const { account, password } = values;
-        try {
-            const { auth } = await deleteMembership({
-                account,
-                password,
-            });
-
-            if (auth) {
-                setRecords((prevRecords) =>
-                    prevRecords.filter((record) => record.account !== account)
-                );
-                setOpenDelete(false);
-                setAdminPassword('');
-            }
-        } catch (err) {
-            setOpenDelete(true);
-            setAdminPassword('');
-        }
-    };
-
-    const handleDelete = async () => {
+    async function handleDelete() {
         const { account } = deleteAccount;
         try {
             const { auth } = await deleteMembership({
@@ -57,25 +36,7 @@ function AccountScreen({ location, history }) {
             setOpenDelete(true);
             setAdminPassword('');
         }
-    };
-
-    useEffect(() => {
-        if (!location.state) {
-            history.push('/dashboard');
-        }
-    }, [location, history]);
-
-    useEffect(() => {
-        if (!Array.isArray(records) || !records.length) {
-            history.push('/dashboard');
-        }
-    }, [setOpen, records, history]);
-
-    useEffect(() => {
-        return () => {
-            console.log('cleaned up');
-        };
-    }, []);
+    }
 
     async function goToBuyScreen(e, account) {
         e.preventDefault();
@@ -101,6 +62,24 @@ function AccountScreen({ location, history }) {
         setOpenDelete(true);
     }
 
+    useEffect(() => {
+        if (!location.state) {
+            history.push('/dashboard');
+        }
+    }, [location, history]);
+
+    useEffect(() => {
+        if (!Array.isArray(records) || !records.length) {
+            history.push('/dashboard');
+        }
+    }, [setOpen, records, history]);
+
+    useEffect(() => {
+        return () => {
+            console.log('cleaned up');
+        };
+    }, []);
+
     const button = {
         select: (account) => (
             <Button.Select goToBuyScreen={goToBuyScreen} account={account} />
@@ -112,26 +91,15 @@ function AccountScreen({ location, history }) {
     };
 
     const adminButton = {
-        admin: (
-            <Button.AdminDelete
-                handleDeleteMembership={handleDeleteMembership}
-                deleteAccount={deleteAccount}
-                adminPassword={adminPassword}
-                setOpenDelete={setOpenDelete}
-            />
-        ),
+        admin: <Button.AdminDelete />,
         cancel: <Button.AdminCancel setOpenDelete={setOpenDelete} />,
     };
 
     const form = (
         <Form.Delete
+            onSubmit={handleDelete}
             field={<Field.AdminPassword setAdminPassword={setAdminPassword} />}
             button={adminButton}
-            deleteAccount={deleteAccount}
-            onSubmit={handleDelete}
-            handleDeleteMembership={handleDeleteMembership}
-            adminPassword={adminPassword}
-            setOpenDelete={setOpenDelete}
         />
     );
 
@@ -153,18 +121,9 @@ function AccountScreen({ location, history }) {
         />
     );
 
-    return (
-        <Portal.Account open={open} header={<Header.Senter />} table={table} />
-    );
-}
+    const header = <Header.Senter />;
 
-AccountScreen.defaultProps = {
-    raised: true,
-    style: {
-        height: '100vh',
-        overflow: 'scroll',
-        backgroundColor: '#002b487d',
-    },
-};
+    return <Portal.Account open={open} header={header} table={table} />;
+}
 
 export default AccountScreen;

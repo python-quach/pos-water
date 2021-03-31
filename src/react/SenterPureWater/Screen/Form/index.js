@@ -122,7 +122,7 @@ export const AddForm = ({ onSubmit, field, button }) => {
     );
 };
 
-export const DeleteForm = ({ field, button, onSubmit }) => (
+export const DeleteForm = ({ onSubmit, field, button }) => (
     <Form onSubmit={onSubmit}>
         <Form.Group>
             {field}

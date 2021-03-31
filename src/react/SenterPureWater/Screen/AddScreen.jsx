@@ -47,6 +47,12 @@ const AddScreen = (props) => {
         setOpen(true);
     }, [open]);
 
+    useEffect(() => {
+        return () => {
+            console.log('cleaned up');
+        };
+    }, []);
+
     return (
         <Portal.Add
             open={open}

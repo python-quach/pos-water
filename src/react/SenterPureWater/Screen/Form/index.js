@@ -49,7 +49,7 @@ export const FindForm = ({ onSubmit, field, button }) => (
     />
 );
 
-const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
+export const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
     <FinalField name={set} subscription={{}}>
         {({ input: { onChange } }) => (
             <FormSpy subscription={{}}>
@@ -69,7 +69,7 @@ const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
     </FinalField>
 );
 
-const AddForm = ({ onSubmit, field, button }) => {
+export const AddForm = ({ onSubmit, field, button }) => {
     const date = new Date();
 
     useEffect(() => {
@@ -122,10 +122,22 @@ const AddForm = ({ onSubmit, field, button }) => {
     );
 };
 
+export const DeleteForm = ({ field, button, onSubmit }) => (
+    <Form onSubmit={onSubmit}>
+        <Form.Group>
+            {field}
+            <Form.Input type='hidden' width={7} />
+            {button.admin}
+            {button.cancel}
+        </Form.Group>
+    </Form>
+);
+
 const SenterForm = {
     Login: LoginForm,
     Find: FindForm,
     Add: AddForm,
+    Delete: DeleteForm,
 };
 
 export default SenterForm;

@@ -114,10 +114,31 @@ export const AddPortal = ({ open, header, form }) => (
     </TransitionablePortal>
 );
 
+export const AccountPortal = ({ open, header, table }) => (
+    <TransitionablePortal
+        open={open}
+        closeOnDocumentClick={false}
+        closeOnEscape={false}
+        closeOnDimmerClick={false}
+        closeOnPortalMouseLeave={false}>
+        <Segment
+            raised
+            style={{
+                height: '100vh',
+                overflow: 'scroll',
+                backgroundColor: '#002b487d',
+            }}>
+            {header}
+            {table}
+        </Segment>
+    </TransitionablePortal>
+);
+
 const DefaultPortal = {
     Login: LoginPortal,
     DashBoard: DashBoardPortal,
     Add: AddPortal,
+    Account: AccountPortal,
 };
 
 export default DefaultPortal;

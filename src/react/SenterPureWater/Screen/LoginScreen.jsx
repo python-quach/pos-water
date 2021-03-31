@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Portal from './Portal';
 import Form from './Form';
 import Field from './Field';
@@ -58,6 +58,12 @@ function LoginScreen({ history }) {
             />
         ),
     };
+
+    useEffect(() => {
+        return () => {
+            console.log('cleaned up');
+        };
+    }, []);
 
     return (
         <Portal.Login

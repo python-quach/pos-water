@@ -329,6 +329,7 @@ const api = {
     backup,
     closeApp,
     findMembership,
+    deleteMembership,
     getDailyReport,
 };
 

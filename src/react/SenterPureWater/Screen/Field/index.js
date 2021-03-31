@@ -24,6 +24,19 @@ export const Username = ({ clearError }) => (
     />
 );
 
+export const AdminPassword = ({ setAdminPassword }) => (
+    <Form.Input
+        size='massive'
+        name='password'
+        type='password'
+        placeholder='enter password'
+        onChange={(event, data) => {
+            event.preventDefault();
+            setAdminPassword(data.value);
+        }}
+    />
+);
+
 export const Password = ({ clearError }) => (
     <Field
         name='password'
@@ -317,6 +330,7 @@ const SenterField = {
     AddLastName,
     Fee,
     Gallon,
+    AdminPassword,
 };
 
 export default SenterField;

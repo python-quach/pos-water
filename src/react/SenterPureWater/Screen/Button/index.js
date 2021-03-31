@@ -1,4 +1,4 @@
-import { Form } from 'semantic-ui-react';
+import { Form, Button } from 'semantic-ui-react';
 
 export const LoginButton = ({ error }) => (
     <Form.Button
@@ -131,7 +131,74 @@ export const CancelButton = ({ close }) => (
     />
 );
 
-const Button = {
+// ACCOUNT SCREEN BUTTON
+const SelectButton = ({ account, goToBuyScreen }) => (
+    <Button
+        size='huge'
+        primary
+        onClick={async (e) => goToBuyScreen(e, account)}
+        content='Select'
+    />
+);
+
+const DeleteButton = ({ showDeleteModal, record }) => (
+    <Button
+        type='button'
+        content='Delete'
+        attached
+        size='huge'
+        negative
+        onClick={(e) => {
+            console.log('Delete', record);
+            showDeleteModal(e, record);
+        }}
+    />
+);
+
+const DoneButton = ({ closeAccountScreen }) => (
+    <Button
+        content='Done'
+        attached
+        color='black'
+        size='huge'
+        onClick={closeAccountScreen}
+    />
+);
+
+export const AdminDeleteButton = ({
+    handleDeleteMembership,
+    deleteAccount,
+    adminPassword,
+}) => (
+    <Form.Button
+        size='massive'
+        content='Delete'
+        color='red'
+        type='submit'
+        // onClick={async (e) => {
+        //     e.preventDefault();
+        //     handleDeleteMembership({
+        //         account: deleteAccount.account,
+        //         password: adminPassword,
+        //     });
+        // }}
+    />
+);
+
+const AdminCancelButton = ({ setOpenDelete }) => (
+    <Form.Button
+        size='massive'
+        type='button'
+        color='black'
+        content='Cancel'
+        onClick={(e) => {
+            e.preventDefault();
+            setOpenDelete(false);
+        }}
+    />
+);
+
+const DefaultButton = {
     Login: LoginButton,
     Close: CloseButton,
     Backup: BackupButton,
@@ -141,6 +208,11 @@ const Button = {
     Logout: LogoutButton,
     New: AddButton,
     Cancel: CancelButton,
+    Select: SelectButton,
+    Delete: DeleteButton,
+    Done: DoneButton,
+    AdminDelete: AdminDeleteButton,
+    AdminCancel: AdminCancelButton,
 };
 
-export default Button;
+export default DefaultButton;

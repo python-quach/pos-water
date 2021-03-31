@@ -64,6 +64,12 @@ const DashBoardScreen = (props) => {
         setOpen(true);
     }, [open]);
 
+    useEffect(() => {
+        return () => {
+            console.log('cleaned up');
+        };
+    }, []);
+
     return (
         <Portal.DashBoard
             open={open}

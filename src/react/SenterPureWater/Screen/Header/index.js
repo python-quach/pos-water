@@ -5,7 +5,7 @@ export const DashBoardHeader = () => (
         <Icon name='braille' color='blue' />
         <Header.Content>
             Senter Pure Water
-            <Header.Subheader content='DashBoard' />
+            <Header.Subheader content='DashBoard 2.0.5' />
         </Header.Content>
     </Header>
 );
@@ -44,7 +44,7 @@ SenterHeader.defaultProps = {
         color: 'blue',
     },
     content: 'Senter Pure Water',
-    version: 'Version 2.0.4',
+    version: 'Version 2.0.5',
 };
 
 LoginHeader.defaultProps = {
@@ -59,7 +59,7 @@ LoginHeader.defaultProps = {
         color: 'blue',
     },
     content: 'Senter Pure Water',
-    version: 'Version 2.0.4',
+    version: 'Version 2.0.5',
 };
 
 const DefaultHeader = {

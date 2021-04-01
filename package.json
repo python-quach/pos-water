@@ -2,7 +2,7 @@
     "productName": "SENTER-PURE-WATER-POS",
     "main": "electron/electron.js",
     "name": "electron-react-sqlite",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "private": true,
     "dependencies": {
         "@reduxjs/toolkit": "^1.5.0",

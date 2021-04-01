@@ -64,7 +64,7 @@ LoginPortal.defaultProps = {
         closeOnPortalMouseLeave: false,
     },
     content: 'Senter Pure Water',
-    version: 'Dashboard Version 1.0',
+    version: 'Dashboard Version 2.0.5',
 };
 
 export const DashBoardPortal = ({ open, header, form }) => (

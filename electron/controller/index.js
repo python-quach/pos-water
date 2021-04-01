@@ -5,36 +5,16 @@ const fs = require('fs');
 
 module.exports = (db) => {
     const options = { encoding: 'GB18030' /* default */ };
-    // POS PRINTER SETUP
-    // let escpos;
-    // let device;
-    // let printer;
 
-    /**
-     * Verify username and password from Sqlite Database to login into DashBoard
-     * @param {Object} event - an object that will send a response back to the ipcRenderer
-     * @param {string } username
-     * @param {string } password
-     * @returns { function} Console log an error message
-     */
     async function authenticate(event, { username, password }) {
         try {
-            console.log('authenticate:', { username, password });
             const auth = await db.verifyLogin({ username, password });
-            console.log('authenticate result:', auth);
-            // event.sender.send(channels.LOGIN, { login: auth });
             event.sender.send(channels.LOGIN, auth);
         } catch (err) {
             return console.log(err.message);
         }
     }
 
-    /**
-     * Find a membership last record using their account number
-     * @param {*} event
-     * @param {*} account
-     * @returns
-     */
     async function findAccount(event, account) {
         try {
             const record = await db.getAccount(account);
@@ -44,12 +24,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Find membership by First Name
-     * @param {*} event
-     * @param {*} name
-     * @returns
-     */
     async function findFirstName(event, name) {
         try {
             const record = await db.getFirstName(name);
@@ -59,13 +33,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Find Membership by Last Name
-     *
-     * @param {*} event
-     * @param {*} name
-     * @returns
-     */
     async function findLastName(event, name) {
         try {
             const record = await db.getLastName(name);
@@ -75,13 +42,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Find Membership by Phone
-     *
-     * @param {*} event
-     * @param {*} phone
-     * @returns
-     */
     async function findPhone(event, phone) {
         try {
             const record = await db.getPhone(phone);
@@ -91,12 +51,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Find Membership using both First Name and Last Name
-     * @param {*} event
-     * @param {*} data
-     * @returns
-     */
     async function findBothName(event, data) {
         try {
             const record = await db.getBothName(data);
@@ -106,12 +60,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     *
-     * @param {*} event
-     * @param {*} data
-     * @returns
-     */
     async function dailyReport(event, data) {
         try {
             const report = await db.getDailyReport(data);
@@ -132,11 +80,7 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * ADD NEw MEMBERSHIP TO SQLITE DATABASE
-     */
     async function addNewMembership(event, args) {
-        console.log('addNewMember incoming data: ', args);
         const {
             account,
             phone,
@@ -176,12 +120,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * ADD NEW WATER PURCHASE TO SQLIte DATABASE
-     *
-     * @param {*} event
-     * @param {*} args
-     */
     async function buyWater(event, args) {
         const {
             account,
@@ -222,10 +160,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Find USB PRINTING PRINTER
-     * @returns
-     */
     async function findPrinter() {
         return new Promise((resolve, reject) => {
             usbDetect.find().then((devices) => {
@@ -250,11 +184,7 @@ module.exports = (db) => {
         });
     }
 
-    /**
-     * Print Buy Receipt
-     */
     async function print(event, args) {
-        console.log('print data: ', args);
         try {
             const { device, printer } = await findPrinter();
             printReceipt(device, printer, args);
@@ -262,20 +192,12 @@ module.exports = (db) => {
                 done: true,
             });
         } catch (err) {
-            console.log(err);
             event.sender.send(channels.SENTER_PRINT, {
                 done: false,
             });
         }
     }
 
-    /**
-     * Get Account History
-     *
-     * @param {*} event
-     * @param {*} account
-     * @returns
-     */
     async function history(event, account) {
         try {
             const records = await db.getHistory(account);
@@ -285,11 +207,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Back up Database
-     * @param {*} event
-     * @returns
-     */
     async function backup(event) {
         try {
             const { dbFile, filePath, open } = await db.getDbFile();
@@ -306,12 +223,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * EDIT MEMBERSHIP NAME AND PHONE
-     *
-     * @param {*} event
-     * @param {*} data
-     */
     async function editMembership(event, args) {
         const { account, phone, first, last } = args;
 
@@ -323,9 +234,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * DELETE A MEMBERSHIP FROM DATABASE
-     */
     async function deleteMembership(event, { account, password }) {
         try {
             const result = await db.remove(account, password);
@@ -335,9 +243,6 @@ module.exports = (db) => {
         }
     }
 
-    /**
-     * Controller Object
-     */
     return {
         authenticate,
         findPhone,

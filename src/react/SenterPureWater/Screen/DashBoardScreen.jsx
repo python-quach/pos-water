@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import api from '../Api';
-import Field from './Field';
-import Button from './Button';
+import { DashBoardScreenField as Field } from './Field';
+import { DashBoardScreenButton as Button } from './Button';
 import Form from './Form';
 import Portal from './Portal';
 import Header from './Header';
+import api from '../Api';
 
 const DashBoardScreen = (props) => {
     const [open, setOpen] = useState(false);
@@ -12,14 +12,13 @@ const DashBoardScreen = (props) => {
     const onSubmit = async (values) => {
         try {
             const data = await api.findMembership(values);
-            console.log('RESPONSE FROM SERVER', data);
             data.history
                 ? props.history.push({ pathname: '/buy', state: data })
                 : props.history.push({ pathname: '/account', state: data });
         } catch (err) {
-            console.log('ERROR CATCH: ', { err });
             const field_id = err.message;
             document.getElementById(field_id).focus();
+            return field_id;
         }
     };
 
@@ -36,7 +35,6 @@ const DashBoardScreen = (props) => {
     const report = (event) => {
         event.preventDefault();
         const date = new Date();
-        console.log('Daily Report', date.toLocaleDateString());
         api.getDailyReport(
             date.toLocaleDateString(),
             date.toLocaleTimeString(),
@@ -47,10 +45,14 @@ const DashBoardScreen = (props) => {
     };
 
     const field = {
-        phone: <Field.Phone />,
-        account: <Field.Account />,
-        firstName: <Field.FirstName />,
-        lastName: <Field.LastName />,
+        phone: (form) => <Field.Phone form={form} />,
+        account: (form) => <Field.Account form={form} />,
+        firstName: (form, values) => (
+            <Field.FirstName form={form} values={values} />
+        ),
+        lastName: (form, values) => (
+            <Field.LastName form={form} values={values} />
+        ),
     };
 
     const button = {
@@ -60,24 +62,21 @@ const DashBoardScreen = (props) => {
         logout: <Button.Logout logout={logout} />,
     };
 
+    const form = (
+        <Form.Find onSubmit={onSubmit} field={field} button={button} />
+    );
+
     useEffect(() => {
         setOpen(true);
     }, [open]);
 
     useEffect(() => {
-        return () => {
-            console.log('cleaned up');
-        };
-    }, []);
+        if (open) document.getElementById('phone').focus();
+        return () => {};
+    }, [open]);
 
     return (
-        <Portal.DashBoard
-            open={open}
-            header={<Header.Senter />}
-            form={
-                <Form.Find onSubmit={onSubmit} field={field} button={button} />
-            }
-        />
+        <Portal.DashBoard open={open} header={<Header.Senter />} form={form} />
     );
 };
 

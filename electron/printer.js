@@ -1,6 +1,5 @@
 module.exports = {
     printAddReceipt: function (device, printer, data) {
-        // printAddReceipt: function (device, printer, data, callback) {
         const renewFee = `Membership Fee: $${data.field9}`;
         const fullname = `${data.field4} -- ${data.field7}`;
         const gallonLeft = `Gallon Total  : ${data.field31}`;
@@ -25,7 +24,6 @@ module.exports = {
                 .text(blank)
                 .cut()
                 .close();
-            // callback({ done: true });
         });
     },
     printBuyReceipt: function (device, printer, data) {
@@ -123,7 +121,6 @@ module.exports = {
         }
     },
     printDailyReport: function (device, printer, data) {
-        console.log('printDailyReport', data);
         const totalRenewFee = `Total Fee  : $${data.totalFee}`;
         const totalNew = `Total New  : ${data.totalNew}`;
         const totalRenew = `Total Renew: ${data.totalRenew}`;
@@ -150,7 +147,6 @@ module.exports = {
         }
     },
     printSenterDailyReport: function (device, printer, data) {
-        console.log('printSenterDailyReport: ', data);
         const {
             totalNewFee,
             totalNewGallon,

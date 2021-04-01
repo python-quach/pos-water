@@ -20,6 +20,7 @@ function createWindow() {
         width: 800,
         height: 600,
         center: true,
+        darkTheme: true,
         backgroundColor: '#0a2e4c',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -27,7 +28,7 @@ function createWindow() {
         },
     });
 
-    // mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();

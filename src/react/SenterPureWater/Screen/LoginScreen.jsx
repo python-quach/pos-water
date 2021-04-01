@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import Portal from './Portal';
-import Form from './Form';
-import Field from './Field';
-import api from '../Api';
-import Button from './Button';
 import Header from './Header';
+import Form from './Form';
+import api from '../Api';
+import { LoginScreenField as Field } from './Field';
+import { LoginScreenButton as Button } from './Button';
 
 function LoginScreen({ history }) {
     const [error, setError] = useState(false);
@@ -42,11 +42,11 @@ function LoginScreen({ history }) {
         return input.onChange(e.target.value);
     };
 
+    const header = <Header.Senter />;
     const field = {
         username: <Field.Username clearError={clearError} />,
         password: <Field.Password clearError={clearError} />,
     };
-
     const button = {
         login: <Button.Login error={error} />,
         close: <Button.Close closeApp={api.closeApp} />,
@@ -58,25 +58,16 @@ function LoginScreen({ history }) {
             />
         ),
     };
+    const form = (
+        <Form.Login onSubmit={handleUserLogin} field={field} button={button} />
+    );
 
     useEffect(() => {
-        return () => {
-            console.log('cleaned up');
-        };
+        document.getElementById('username').focus();
+        return () => {};
     }, []);
 
-    return (
-        <Portal.Login
-            header={<Header.Senter />}
-            form={
-                <Form.Login
-                    onSubmit={handleUserLogin}
-                    field={field}
-                    button={button}
-                />
-            }
-        />
-    );
+    return <Portal.Login header={header} form={form} />;
 }
 
 export default LoginScreen;

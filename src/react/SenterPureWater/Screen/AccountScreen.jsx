@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { findMembership, deleteMembership } from '../Api';
 import Portal from './Portal';
 import Header from './Header';
-import Button from './Button';
+import { AccountScreenButton as Button } from './Button';
+import { AccountScreenField as Field } from './Field';
 import Table from './Table';
 import Modal from './Modal';
 import Form from './Form';
 import Card from './Card';
-import Field from './Field';
 
 function AccountScreen({ location, history }) {
     const [open, setOpen] = useState(location.state ? true : false);
@@ -76,7 +76,7 @@ function AccountScreen({ location, history }) {
 
     useEffect(() => {
         return () => {
-            console.log('cleaned up');
+            // console.log('cleaned up');
         };
     }, []);
 
@@ -91,14 +91,14 @@ function AccountScreen({ location, history }) {
     };
 
     const adminButton = {
-        admin: <Button.AdminDelete />,
-        cancel: <Button.AdminCancel setOpenDelete={setOpenDelete} />,
+        admin: <Button.ConfirmDelete />,
+        cancel: <Button.Cancel setOpenDelete={setOpenDelete} />,
     };
 
     const form = (
         <Form.Delete
             onSubmit={handleDelete}
-            field={<Field.AdminPassword setAdminPassword={setAdminPassword} />}
+            field={<Field.Password setAdminPassword={setAdminPassword} />}
             button={adminButton}
         />
     );

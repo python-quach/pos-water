@@ -7,13 +7,11 @@ import {
     Icon,
     Divider,
 } from 'semantic-ui-react';
-import BuyReceipt from '../Receipt/BuyReceipt';
-import NewReceipt from '../Receipt/NewReceipt';
-import RenewReceipt from '../Receipt/RenewReceipt';
+import BuyReceipt from './BuyReceipt';
+import NewReceipt from './NewReceipt';
+import RenewReceipt from './RenewReceipt';
 
 const Receipt = ({ record, open }) => {
-    console.log('RECEIPT: ', record);
-
     return (
         <TransitionablePortal
             style={{

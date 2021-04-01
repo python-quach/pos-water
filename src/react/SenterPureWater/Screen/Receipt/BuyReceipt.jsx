@@ -1,5 +1,5 @@
 import { Table, Button } from 'semantic-ui-react';
-import { channels } from '../../../shared/constants';
+import { channels } from '../../../../shared/constants';
 const { ipcRenderer } = window;
 
 const BuyReceipt = ({ record, open, setOpen, setOpenReceipt }) => (
@@ -40,7 +40,6 @@ const BuyReceipt = ({ record, open, setOpen, setOpenReceipt }) => (
                         content='PRINT'
                         onClick={(e) => {
                             e.preventDefault();
-                            console.log('PRINT BUY RECEIPT', record);
 
                             const fullname = `${record.first} ${record.last} -- ${record.phone}`;
                             const prevGallon = `Gallon Prev: ${record.previous}`;
@@ -68,8 +67,7 @@ const BuyReceipt = ({ record, open, setOpen, setOpenReceipt }) => (
                             ipcRenderer.send(channels.SENTER_PRINT, buyReceipt);
                             ipcRenderer.on(
                                 channels.SENTER_PRINT,
-                                (event, response) => {
-                                    console.log('PRINT RESPONSE', response);
+                                (_, response) => {
                                     ipcRenderer.removeAllListeners(
                                         channels.SENTER_PRINT
                                     );

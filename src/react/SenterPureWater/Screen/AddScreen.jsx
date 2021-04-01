@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import api from '../Api';
 import Portal from './Portal';
 import Header from './Header';
 import Form from './Form';
-import Field from './Field';
-import Button from './Button';
+import { AddScreenField as Field } from './Field';
+import { AddScreenButton as Button } from './Button';
+import api from '../Api';
 
 const AddScreen = (props) => {
     const [open, setOpen] = useState(false);
@@ -28,17 +28,18 @@ const AddScreen = (props) => {
     const field = {
         date: <Field.Date />,
         time: <Field.Time />,
-        account: <Field.AddAccount error={error} />,
-        phone: <Field.AddPhone />,
-        firstName: <Field.AddFirstName />,
-        lastName: <Field.AddLastName />,
+        account: <Field.Add error={error} />,
+        phone: <Field.Phone />,
+        firstName: <Field.FirstName />,
+        lastName: <Field.LastName />,
         fee: <Field.Fee />,
         gallon: <Field.Gallon />,
+        changeField: (values) => <Field.ChangeField values={values} />,
     };
 
     const button = {
         add: (values, submitting) => (
-            <Button.New values={values} submitting={submitting} />
+            <Button.Add values={values} submitting={submitting} />
         ),
         cancel: <Button.Cancel close={close} />,
     };
@@ -49,7 +50,7 @@ const AddScreen = (props) => {
 
     useEffect(() => {
         return () => {
-            console.log('cleaned up');
+            // console.log('cleaned up');
         };
     }, []);
 

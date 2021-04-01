@@ -1,35 +1,17 @@
 import { channels } from '../../../shared/constants';
 const { ipcRenderer } = window;
 
-/**
- * API: Verify user login credential, if response is undefined the login was unsuccessful
- *
- * @param {Object} credential - Object containing username and password for authentication
- * @param {string} credential.username
- * @param {string} credential.password
- * @returns {Promise} - A Promise object, that container the user_id if login was successful
- */
 export const login = ({ username, password }) => {
-    console.log('API login: ', { username, password });
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.LOGIN, { username, password });
         ipcRenderer.on(channels.LOGIN, (_, auth) => {
             ipcRenderer.removeAllListeners(channels.LOGIN);
-            console.log('Response from Server', auth);
-
-            // console.log('Response from Server', !auth ? 'Invalid Login' : auth);
             if (auth) resolve(auth);
             reject({ message: 'Invalid Login' });
         });
     });
 };
 
-/**
- * API - Get history for a given membership account
- *
- * @param {*} account
- * @returns
- */
 export const accountHistory = (account) => {
     return new Promise((resolve) => {
         ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, account);
@@ -40,12 +22,6 @@ export const accountHistory = (account) => {
     });
 };
 
-/**
- * API - Locate a membership using phone number
- *
- * @param {string} phone
- * @returns {Promise}
- */
 export function findPhone(phone) {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_FIND_PHONE, phone);
@@ -64,12 +40,6 @@ export function findPhone(phone) {
     });
 }
 
-/**
- * API - Locate a membership using account number
- *
- * @param {string} account
- * @returns {Promise}
- */
 export function findAccount(account) {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_FIND_ACCOUNT, account);
@@ -85,12 +55,6 @@ export function findAccount(account) {
     });
 }
 
-/**
- * API - Locate a membership by first name
- *
- * @param {*} firstName
- * @param {*} callback
- */
 export function findFirstName(firstName) {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_FIND_FIRST_NAME, firstName);
@@ -109,12 +73,6 @@ export function findFirstName(firstName) {
     });
 }
 
-/**
- * API - Locate a membership by last name
- *
- * @param {*} lastName
- * @param {*} callback
- */
 export function findLastName(lastName) {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_FIND_LAST_NAME, lastName);
@@ -133,13 +91,6 @@ export function findLastName(lastName) {
     });
 }
 
-/**
- * API - Locate a membership by both first and last name
- *
- * @param {*} firstName
- * @param {*} lastName
- * @param {*} callback
- */
 export function findBothNames(firstName, lastName) {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_FIND_BOTH_NAME, {
@@ -155,23 +106,18 @@ export function findBothNames(firstName, lastName) {
             } else if (data.accounts) {
                 resolve({ history: null, records: data.accounts });
             } else {
-                // reject('Unable to locate account by first and last name');
                 reject({ message: 'firstName' });
             }
         });
     });
 }
 
-// export const edit = ({ account, first, last, phone }) => {
 export const editMembership = ({ account, first, last, phone }) => {
-    console.log('edit:', { account, first, last, phone });
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_EDIT, { account, first, last, phone });
-        ipcRenderer.on(channels.SENTER_EDIT, (event, args) => {
+        ipcRenderer.on(channels.SENTER_EDIT, (_, args) => {
             ipcRenderer.removeAllListeners(channels.SENTER_EDIT);
-            console.log(args);
             if (args) {
-                console.log('Edit User Last Record', args);
                 resolve(args);
             } else {
                 reject('unable to edit user');
@@ -182,11 +128,9 @@ export const editMembership = ({ account, first, last, phone }) => {
 
 export const backup = () => {
     return new Promise((resolve, reject) => {
-        console.log('Backup Database');
         ipcRenderer.send(channels.SENTER_BACKUP);
-        ipcRenderer.on(channels.SENTER_BACKUP, (event, response) => {
+        ipcRenderer.on(channels.SENTER_BACKUP, (_, response) => {
             ipcRenderer.removeAllListeners(channels.SENTER_BACKUP);
-            console.log('Backup Response:', response);
             if (!response.open) {
                 reject(response.open);
             } else {
@@ -208,8 +152,9 @@ export const renew = (values) => {
             ipcRenderer.removeAllListeners(channels.SENTER_BUY);
 
             ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, values.account);
-            ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (event, data) => {
+            ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, data) => {
                 ipcRenderer.removeAllListeners(channels.SENTER_ACCOUNT_HISTORY);
+                if (!data) reject('Unable to renew ');
                 resolve({ history: data, record: args });
             });
         });
@@ -227,8 +172,9 @@ export const buy = (values) => {
             ipcRenderer.removeAllListeners(channels.SENTER_BUY);
 
             ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, values.account);
-            ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (event, data) => {
+            ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, data) => {
                 ipcRenderer.removeAllListeners(channels.SENTER_ACCOUNT_HISTORY);
+                if (!data) reject('Unable to buy');
                 resolve({ history: data, record: args });
             });
         });
@@ -236,7 +182,6 @@ export const buy = (values) => {
 };
 
 export const add = (values) => {
-    console.log('values', values);
     const { account } = values;
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_ADD, values);
@@ -265,8 +210,9 @@ export const add = (values) => {
 export const getHistory = async (account) => {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_ACCOUNT_HISTORY, account);
-        ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (event, args) => {
+        ipcRenderer.on(channels.SENTER_ACCOUNT_HISTORY, (_, args) => {
             ipcRenderer.removeAllListeners(channels.SENTER_ACCOUNT_HISTORY);
+            if (!args) reject('Unable to get History');
             resolve(args);
         });
     });
@@ -274,7 +220,7 @@ export const getHistory = async (account) => {
 
 export const getDailyReport = (date, time, callback) => {
     ipcRenderer.send(channels.SENTER_REPORT, { date, time });
-    ipcRenderer.on(channels.REPORT, (event, response) => {
+    ipcRenderer.on(channels.REPORT, (_, response) => {
         ipcRenderer.removeAllListeners(channels.SENTER_REPORT);
         callback(response);
     });
@@ -286,10 +232,9 @@ export const closeApp = (e) => {
 };
 
 export const deleteMembership = async ({ account, password }) => {
-    console.log(account, password);
     return new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SENTER_DELETE, { account, password });
-        ipcRenderer.on(channels.SENTER_DELETE, (event, args) => {
+        ipcRenderer.on(channels.SENTER_DELETE, (_, args) => {
             ipcRenderer.removeAllListeners(channels.SENTER_DELETE);
             const { auth, status } = args;
             if (auth && status) {
@@ -301,12 +246,6 @@ export const deleteMembership = async ({ account, password }) => {
     });
 };
 
-/**
- * API - Find Membership using phone, account, first, and last name
- *
- * @param {*} queries
- * @param {*} callback
- */
 export async function findMembership(queries) {
     return new Promise(async (resolve, reject) => {
         const { phone, account, first, last } = queries;

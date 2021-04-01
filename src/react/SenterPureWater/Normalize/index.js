@@ -17,14 +17,6 @@ export const normalizeAccount = (value) => {
     return onlyNums.slice(0, -1);
 };
 
-export const normalizeName = (value) => {
-    if (!value) return value;
-    const onlyLetters = value.replace(/[^A-Za-z]/g, '');
-    return (
-        onlyLetters.charAt(0).toUpperCase() + onlyLetters.slice(1).toLowerCase()
-    );
-};
-
 export const normalizeFee = (value) => {
     if (isNaN(parseInt(value))) return 0;
     const onlyNums = value.replace(/[^\d]/g, '');
@@ -43,6 +35,14 @@ export const normalizeGallon = (value) => {
     } else {
         return parseInt(onlyNums.substring(0, onlyNums.length - 1));
     }
+};
+
+export const normalizeName = (value) => {
+    if (!value) return value;
+    const onlyLetters = value.replace(/[^A-Za-z]/g, '');
+    return (
+        onlyLetters.charAt(0).toUpperCase() + onlyLetters.slice(1).toLowerCase()
+    );
 };
 
 export const normalize = {

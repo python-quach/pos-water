@@ -1,5 +1,5 @@
 import { Table, Button } from 'semantic-ui-react';
-import { channels } from '../../../shared/constants';
+import { channels } from '../../../../shared/constants';
 const { ipcRenderer } = window;
 
 const NewReceipt = ({ record }) => (
@@ -37,7 +37,6 @@ const NewReceipt = ({ record }) => (
                         content='PRINT'
                         onClick={(e) => {
                             e.preventDefault();
-                            console.log('PRINT BUY RECEIPT', record);
 
                             const store = 'V&J Senter Pure Water';
                             const phone = '(408) 427-6146';
@@ -63,8 +62,7 @@ const NewReceipt = ({ record }) => (
                             ipcRenderer.send(channels.SENTER_PRINT, newReceipt);
                             ipcRenderer.on(
                                 channels.SENTER_PRINT,
-                                (event, response) => {
-                                    console.log('PRINT RESPONSE', response);
+                                (_, response) => {
                                     ipcRenderer.removeAllListeners(
                                         channels.SENTER_PRINT
                                     );

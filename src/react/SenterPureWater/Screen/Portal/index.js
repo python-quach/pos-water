@@ -68,7 +68,12 @@ LoginPortal.defaultProps = {
 };
 
 export const DashBoardPortal = ({ open, header, form }) => (
-    <TransitionablePortal open={open}>
+    <TransitionablePortal
+        closeOnDocumentClick={false}
+        closeOnEscape={false}
+        closeOnDimmerClick={false}
+        closeOnPortalMouseLeave={false}
+        open={open}>
         <Segment
             style={{
                 margin: 0,
@@ -134,11 +139,44 @@ export const AccountPortal = ({ open, header, table }) => (
     </TransitionablePortal>
 );
 
+export const BuyPortal = ({ open, receipt, form, history }) => (
+    <TransitionablePortal
+        open={open}
+        closeOnDocumentClick={false}
+        closeOnEscape={false}
+        closeOnDimmerClick={false}
+        closeOnPortalMouseLeave={false}>
+        <Segment
+            style={{
+                margin: 0,
+                height: '100%',
+                overflow: 'hidden',
+                zIndex: 1000,
+                backgroundColor: '#002b487d',
+            }}>
+            <Grid
+                verticalAlign='top'
+                style={{ height: '100vh', backgroundColor: '#002b487d' }}>
+                <Grid.Column
+                    style={{
+                        backgroundColor: '#002b487d',
+                    }}>
+                    {receipt}
+                    <Divider />
+                    {form}
+                    {history}
+                </Grid.Column>
+            </Grid>
+        </Segment>
+    </TransitionablePortal>
+);
+
 const DefaultPortal = {
     Login: LoginPortal,
     DashBoard: DashBoardPortal,
     Add: AddPortal,
     Account: AccountPortal,
+    Buy: BuyPortal,
 };
 
 export default DefaultPortal;

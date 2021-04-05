@@ -1,4 +1,5 @@
 const { sql, addData, buyData, renewData, editData } = require('./query');
+const { dialog } = require('electron');
 
 module.exports = {
     api: {

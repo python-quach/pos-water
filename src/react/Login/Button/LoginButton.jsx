@@ -1,38 +1,21 @@
-import { useState, useEffect, useContext } from 'react';
-import { LoginContext } from '../Screen/LoginScreen';
 import { Form, Transition } from 'semantic-ui-react';
 import React from 'react';
 
-const LoginButton = ({ username, password }) => {
-    const [visible, setVisible] = useState(false);
-    const { state, handle } = useContext(LoginContext);
-
-    useEffect(() => {
-        if (state.errorMessage) {
-            setVisible(true);
-        } else {
-            setVisible(false);
-        }
-    }, [state.errorMessage]);
-
-    return !state.errorMessage || username || password ? (
+export const LoginButton = ({ errorMessage, disabled, visible }) =>
+    !errorMessage ? (
         <Form.Button
+            type='submit'
+            id='LoginButton'
             content='Login'
             className='LoginButton'
-            primary
-            circular
-            fluid
             size='huge'
-            id='LoginButton'
             color='blue'
             icon='sign in'
             labelPosition='right'
-            type='submit'
-            disabled={!username || !password}
-            onClick={() => {
-                document.getElementById('username').focus();
-                handle.errorMessage(false);
-            }}
+            primary
+            circular
+            fluid
+            disabled={disabled}
         />
     ) : (
         <Transition
@@ -52,6 +35,5 @@ const LoginButton = ({ username, password }) => {
             />
         </Transition>
     );
-};
 
 export default LoginButton;

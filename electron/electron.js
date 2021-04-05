@@ -108,7 +108,7 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -142,6 +142,7 @@ ipcMain.on(channels.LOGIN, controller.verifyCredential);
 ipcMain.on(channels.ADD, controller.addNewMember);
 ipcMain.on(channels.FIND, controller.findMembership);
 ipcMain.on(channels.SHOW_BACKUP_DIALOG, controller.backupDatabase);
+// ipcMain.on(channels.SHOW_BACKUP_DIALOG, controller.backup);
 ipcMain.on(channels.BUY, controller.buyWater);
 ipcMain.on(channels.RENEW, controller.renewMembership);
 ipcMain.on(channels.EDIT, controller.editMembershipInfo);

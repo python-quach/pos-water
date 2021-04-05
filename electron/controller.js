@@ -93,7 +93,7 @@ module.exports = (db) => {
 
         const sendSaveSuccess = () =>
             event.sender.send(channels.SHOW_BACKUP_DIALOG, {
-                open: `backup-${new Date().toLocaleDateString()}.sqlite3`,
+                open: `${new Date().toLocaleDateString()}`,
             });
 
         try {
@@ -102,13 +102,16 @@ module.exports = (db) => {
                 defaultPath: `membership.sqlite3`,
                 filters: [{ name: 'Sqlite3', extensions: ['sqlite3'] }],
             };
-
             const saveFile = await db.backupFile(saveSetting);
-            if (saveFile) {
+
+            if (saveFile)
                 fs.copyFile(db.dbFile, saveFile, (err) =>
                     err ? sendFailSave() : sendSaveSuccess()
                 );
-            }
+            else
+                event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                    open: 'Backup',
+                });
         } catch (err) {
             return console.log(err.message);
         }

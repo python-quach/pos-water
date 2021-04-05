@@ -1,33 +1,30 @@
-import { useContext } from 'react';
-import { LoginContext } from '../Screen/LoginScreen';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Username = () => {
-    const { state } = useContext(LoginContext);
-    return (
-        <Field
-            name='username'
-            render={({ input }) => (
-                <Form.Input
-                    {...input}
-                    id='username'
-                    placeholder='username'
-                    className={state.iconColor}
-                    type='text'
-                    size='massive'
-                    icon='user circle'
-                    iconPosition='left'
-                    focus
-                    fluid
-                    transparent
-                    inverted
-                    autoComplete='off'
-                    spellCheck='false'
-                />
-            )}
-        />
-    );
-};
+export const Username = ({ className }) => (
+    <Field
+        name='username'
+        render={({ input }) => (
+            <Form.Input
+                id='username'
+                placeholder='username'
+                className={className}
+                type='text'
+                size='massive'
+                icon='user circle'
+                iconPosition='left'
+                autoComplete='off'
+                spellCheck='false'
+                focus
+                fluid
+                transparent
+                inverted
+                name={input.name}
+                value={input.value}
+                onChange={input.onChange}
+            />
+        )}
+    />
+);
 
 export default Username;

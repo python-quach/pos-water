@@ -1,58 +1,79 @@
-import { useState, useEffect, createContext } from 'react';
+import { useState, useEffect } from 'react';
 import Portal from '../../Portal/Portal';
-import { api } from '../../../api/api';
-import { withRouter } from 'react-router';
+import { mckeeApi } from '../../../api/api';
 import Header from '../Header/LoginHeader';
-import Form from '../Form/LoginForm';
+import LoginForm from '../Form/LoginForm';
+import { Button } from '../Button';
+import { Field } from '../Field';
 
-export const LoginContext = createContext();
-
-const LoginScreen = ({ history }) => {
-    const [errorMessage, setErrorMessage] = useState(false);
+export const LoginScreen = ({ history }) => {
+    const [loading, setLoading] = useState(false);
+    const [fileSave, setFileSave] = useState('Backup');
     const [iconColor, setIconColor] = useState('blueIcon');
-    const [save, setSave] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(false);
+    const [visible, setVisible] = useState(false);
 
-    const handleLogin = async ({ username, password }) => {
-        api.login({ username, password }, (auth) => {
-            if (!auth) {
-                setErrorMessage(true);
-            } else {
-                history.push({
-                    pathname: '/dashboard',
-                    state: { user_id: auth.user_id },
-                });
-            }
-        });
+    const onSubmit = async (values) => {
+        console.log('onSubmit', values);
+        setErrorMessage(false);
+        document.getElementById('username').focus();
     };
 
-    const store = {
-        api,
-        state: {
-            errorMessage,
-            iconColor,
-            save,
-        },
-        handle: {
-            errorMessage: setErrorMessage,
-            iconColor: setIconColor,
-            save: setSave,
-            login: handleLogin,
-        },
-        initialValues: { username: '', password: '' },
+    const backupDatabase = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const result = await mckeeApi.backup();
+            setFileSave(result.open);
+            setLoading(false);
+        } catch (err) {
+            return console.log(err.message);
+        }
     };
+
+    const openAdminScreen = () =>
+        history.push({ pathname: '/admin', state: { open: true } });
 
     useEffect(() => {
+        if (errorMessage) setVisible(true);
         errorMessage ? setIconColor('whiteIcon') : setIconColor('blueIcon');
+        setVisible(false);
     }, [errorMessage]);
 
+    useEffect(() => {
+        return () => console.log('Login Screen clean up');
+    }, []);
+
     return (
-        <LoginContext.Provider value={store}>
-            <Portal>
-                <Header title='Mckee Pure Water' content='User Login' />
-                <Form size='large' history={history} />
-            </Portal>
-        </LoginContext.Provider>
+        <Portal open={history ? true : false}>
+            <Header title='Mckee Pure Water' content='User Login' />
+            <LoginForm
+                onSubmit={onSubmit}
+                field={{
+                    username: <Field.Username className={iconColor} />,
+                    password: <Field.Password className={iconColor} />,
+                }}
+                button={{
+                    login: ({ username, password }) => (
+                        <Button.Login
+                            disabled={!username || !password}
+                            visible={visible}
+                            errorMessage={errorMessage}
+                        />
+                    ),
+                    admin: <Button.Admin onClick={openAdminScreen} />,
+                    close: <Button.Close onClick={mckeeApi.closeApp} />,
+                    backup: (
+                        <Button.Backup
+                            file={fileSave}
+                            loading={loading}
+                            onClick={backupDatabase}
+                        />
+                    ),
+                }}
+            />
+        </Portal>
     );
 };
 
-export default withRouter(LoginScreen);
+export default LoginScreen;

@@ -1,30 +1,18 @@
-import { useContext } from 'react';
-import { LoginContext } from '../Screen/LoginScreen';
-import { Button } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 
-const BackupButton = () => {
-    const { api, handle, state } = useContext(LoginContext);
-    return (
-        <Button
-            className='LoginButton'
-            circular
-            fluid={true}
-            size='huge'
-            color='pink'
-            icon='save'
-            labelPosition='right'
-            content='Backup'
-            loading={state.save}
-            onClick={(e) => {
-                e.preventDefault();
-                handle.save(true);
-                api.backup((response) => {
-                    console.log(response);
-                    handle.save(false);
-                });
-            }}
-        />
-    );
-};
+export const BackupButton = ({ file, loading, onClick }) => (
+    <Form.Button
+        content={file}
+        type='button'
+        className='LoginButton'
+        color='pink'
+        size='huge'
+        icon='save'
+        fluid
+        circular
+        loading={loading}
+        onClick={onClick}
+    />
+);
 
 export default BackupButton;

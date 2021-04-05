@@ -290,3 +290,41 @@ export const api = {
     addUser,
     editUser,
 };
+
+export const mckeeApi = {
+    closeApp: () => {
+        ipcRenderer.send(channels.CLOSE_APP);
+    },
+    backup: () => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.SHOW_BACKUP_DIALOG);
+            ipcRenderer.on(channels.SHOW_BACKUP_DIALOG, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.SHOW_BACKUP_DIALOG);
+                if (!response.open) reject(response.open);
+                else resolve(response);
+            });
+        });
+    },
+
+    addUser: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.ADD_USER, data);
+            ipcRenderer.on(channels.ADD_USER, (_, arg) => {
+                ipcRenderer.removeAllListeners(channels.ADD_USER);
+                console.log('addUser Response from Server');
+                if (!arg) reject('Unable to add use');
+                resolve(arg);
+            });
+        });
+    },
+    editUser: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.EDIT_USER, data);
+            ipcRenderer.on(channels.EDIT_USER, (_, arg) => {
+                ipcRenderer.removeAllListeners(channels.EDIT_USER);
+                if (!arg) reject('Unable to Edit Users');
+                resolve(arg);
+            });
+        });
+    },
+};

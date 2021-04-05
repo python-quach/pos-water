@@ -292,7 +292,19 @@ export const api = {
 };
 
 export const mckeeApi = {
+    login: ({ password, username }) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.LOGIN, { username, password });
+            ipcRenderer.on(channels.LOGIN, (_, { login }) => {
+                ipcRenderer.removeAllListeners(channels.LOGIN);
+                if (!login) reject('Invalid Login');
+                resolve(login);
+            });
+        });
+    },
+
     closeApp: () => {
+        console.log('closeApp');
         ipcRenderer.send(channels.CLOSE_APP);
     },
     backup: () => {

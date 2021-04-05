@@ -29,6 +29,7 @@ function LoginScreen({ history }) {
         setLoading(true);
         try {
             const result = await api.backup();
+            console.log(result);
             setFileSave(result.open);
             setLoading(false);
         } catch (err) {

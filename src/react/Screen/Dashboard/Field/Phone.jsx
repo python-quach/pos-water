@@ -10,24 +10,13 @@ const normalizePhone = (value) => {
     return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
 };
 
-// const Phone = ({ form, setErrorMessage, values }) => {
-const Phone = ({ form, values, reset }) => {
-    // useEffect(() => {
-    //     const { phone, account, firstName, lastName } = values;
-    //     if (phone || account || firstName || lastName) {
-    //         setErrorMessage((error) => {
-    //             if (error) return false;
-    //         });
-    //     }
-    // });
-
+const Phone = ({ form, reset }) => {
     return (
         <Field
             name='phone'
             parse={normalizePhone}
             render={({ input }) => (
                 <Form.Input
-                    {...input}
                     className='blueIcon'
                     id='phone'
                     placeholder='xxx-xxxx'
@@ -45,12 +34,10 @@ const Phone = ({ form, values, reset }) => {
                         return input.onChange(value);
                     }}
                     onFocus={() => {
-                        const { phone } = values;
-                        form.reset({
-                            phone,
-                            account: '',
-                            firstName: '',
-                            lastName: '',
+                        form.batch(() => {
+                            form.change('account', undefined);
+                            form.change('firstName', undefined);
+                            form.change('lastName', undefined);
                         });
                     }}
                 />

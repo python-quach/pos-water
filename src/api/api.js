@@ -302,6 +302,31 @@ export const mckeeApi = {
             });
         });
     },
+    find: ({ phone, account, firstName, lastName }) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.FIND, {
+                phone,
+                account,
+                firstName,
+                lastName,
+            });
+            ipcRenderer.on(channels.FIND, (_, data) => {
+                ipcRenderer.removeAllListeners(channels.FIND);
+                if (!data) reject(data);
+                resolve(data);
+            });
+        });
+    },
+    lastRecord: () => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.LAST_RECORD);
+            ipcRenderer.on(channels.LAST_RECORD, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.LAST_RECORD);
+                if (!response) reject('Unable to find last record');
+                resolve(response);
+            });
+        });
+    },
     closeApp: () => {
         console.log('closeApp');
         ipcRenderer.send(channels.CLOSE_APP);
@@ -344,6 +369,17 @@ export const mckeeApi = {
                 ipcRenderer.removeAllListeners(channels.DELETE_USER);
                 if (!arg) reject('Unable to Delete User');
                 resolve(arg);
+            });
+        });
+    },
+
+    getDailyReport: (date, time) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.REPORT, { date, time });
+            ipcRenderer.on(channels.REPORT, (event, response) => {
+                ipcRenderer.removeAllListeners(channels.REPORT);
+                if (!response) reject('Unable to get daily report');
+                resolve(response);
             });
         });
     },

@@ -10,10 +10,10 @@ const FindForm = ({ onSubmit, button, field }) => {
                     onSubmit={(event) => {
                         handleSubmit(event).then(() => setTimeout(form.reset));
                     }}>
-                    {field.phone(form, values)}
-                    {field.account(form, values)}
-                    {field.first(form, values)}
-                    {field.last(form, values)}
+                    {field.phone(form)}
+                    {field.account(form)}
+                    {field.first(form)}
+                    {field.last(form)}
                     {button.find(values)}
                     {button.add}
                     {button.report}

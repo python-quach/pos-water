@@ -1,7 +1,7 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Name = ({ name, placeholder, form, reset, values }) => (
+const Name = ({ name, placeholder, form, reset }) => (
     <Field
         name={name}
         render={({ input }) => (
@@ -23,10 +23,9 @@ const Name = ({ name, placeholder, form, reset, values }) => (
                     return input.onChange(value);
                 }}
                 onFocus={() => {
-                    form.reset({
-                        ...values,
-                        phone: '',
-                        account: '',
+                    form.batch(() => {
+                        form.change('phone', undefined);
+                        form.change('account', undefined);
                     });
                 }}
             />

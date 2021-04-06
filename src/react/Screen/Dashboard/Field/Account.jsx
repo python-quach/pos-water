@@ -9,14 +9,13 @@ const normalizeAccount = (value) => {
     return onlyNums.slice(0, 9);
 };
 
-const Account = ({ form, reset, values }) => {
+const Account = ({ form, reset }) => {
     return (
         <Field
             name='account'
             parse={normalizeAccount}
-            render={({ input, meta }) => (
+            render={({ input }) => (
                 <Form.Input
-                    {...input}
                     className='blueIcon'
                     id='account'
                     type='text'
@@ -36,12 +35,10 @@ const Account = ({ form, reset, values }) => {
                         return input.onChange(value);
                     }}
                     onFocus={() => {
-                        const { account } = values;
-                        form.reset({
-                            phone: '',
-                            account,
-                            firstName: '',
-                            lastName: '',
+                        form.batch(() => {
+                            form.change('phone', undefined);
+                            form.change('firstName', undefined);
+                            form.change('lastName', undefined);
                         });
                     }}
                 />

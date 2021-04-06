@@ -1,25 +1,18 @@
-import { Form } from 'semantic-ui-react';
+import { Form, Transition } from 'semantic-ui-react';
 
-const DoneButton = ({ values }) => {
+const DoneButton = ({ disabled, visible, onClick }) => {
     return (
-        <Form.Button
-            primary
-            size='huge'
-            type='submit'
-            content='Done'
-            style={{ marginTop: '30px' }}
-            disabled={
-                !values.fee ||
-                !values.renew ||
-                !values.firstName ||
-                !values.lastName ||
-                !values.phone ||
-                !values.areaCode ||
-                values.areaCode.length < 3 ||
-                values.phone.length < 8 ||
-                !values.account
-            }
-        />
+        <Transition visible={visible} animation='pulse'>
+            <Form.Button
+                primary
+                size='huge'
+                type='submit'
+                content='Done'
+                style={{ marginTop: '30px' }}
+                disabled={disabled}
+                onClick={onClick}
+            />
+        </Transition>
     );
 };
 

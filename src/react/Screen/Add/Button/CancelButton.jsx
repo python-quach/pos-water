@@ -1,16 +1,14 @@
 import { Form } from 'semantic-ui-react';
 
-const CancelButton = ({ history }) => {
+const CancelButton = ({ onClick }) => {
     return (
         <Form.Button
+            type='button'
             secondary
             size='huge'
             content='Cancel'
             style={{ marginTop: '30px' }}
-            onClick={(e) => {
-                e.preventDefault();
-                history.push('/dashboard');
-            }}
+            onClick={onClick}
         />
     );
 };

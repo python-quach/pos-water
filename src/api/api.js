@@ -383,4 +383,15 @@ export const mckeeApi = {
             });
         });
     },
+    add(data) {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.ADD, data);
+            ipcRenderer.on(channels.ADD, (event, arg) => {
+                ipcRenderer.removeAllListeners(channels.ADD);
+                console.log(arg);
+                // if (!arg) reject(arg);
+                resolve(arg);
+            });
+        });
+    },
 };

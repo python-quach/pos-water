@@ -8,7 +8,14 @@ const normalizeAccount = (value) => {
     return parseInt(onlyNums.slice(0, 9));
 };
 
-const Account = ({ width, setError, setErrorMessage, error, errorMessage }) => (
+const Account = ({
+    onFocus,
+    width,
+    setError,
+    setErrorMessage,
+    error,
+    errorMessage,
+}) => (
     <Field
         name='account'
         parse={normalizeAccount}
@@ -24,10 +31,7 @@ const Account = ({ width, setError, setErrorMessage, error, errorMessage }) => (
                 iconPosition='left'
                 inverted
                 width={width}
-                onFocus={() => {
-                    setError(false);
-                    setErrorMessage('');
-                }}
+                onFocus={onFocus}
             />
         )}
     />

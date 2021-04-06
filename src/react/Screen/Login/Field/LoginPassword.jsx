@@ -7,8 +7,8 @@ export const Password = ({ className, reset }) => (
         render={({ input }) => (
             <Form.Input
                 id='password'
-                placeholder='password'
                 className={className}
+                placeholder='password'
                 type='password'
                 size='massive'
                 icon='lock'

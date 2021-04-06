@@ -17,8 +17,8 @@ export const LoginScreen = ({ history }) => {
             const result = await mckeeApi.login(values);
             history.push({ pathname: '/dashboard', state: { result } });
         } catch (err) {
-            setErrorMessage(err);
             setVisible(false);
+            setErrorMessage(err);
             setVisible(true);
             document.getElementById('username').focus();
             throw err;

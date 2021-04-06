@@ -5,7 +5,6 @@ const LoginHeader = (props) => {
     return (
         <>
             <Header as='h1' inverted size='huge' textAlign='left'>
-                {/* <Header as='h1' inverted size='massive' textAlign='left'> */}
                 <Icon name='braille' color='blue' />
                 <Header.Content>
                     {title}

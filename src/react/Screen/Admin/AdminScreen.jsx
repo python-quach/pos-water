@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import Portal from '../Portal/Portal';
-import Header from '../Header/StoreHeader';
+import Portal from '../../Portal/Portal';
+import Header from '../../Header/StoreHeader';
 import { Form as FinalForm, Field } from 'react-final-form';
 import { Form, Transition } from 'semantic-ui-react';
-import { api } from '../../api/api';
+import { api } from '../../../api/api';
 
 export const AdminLoginScreen = ({ history }) => {
     const [visible, setVisible] = useState(true);
@@ -11,9 +11,9 @@ export const AdminLoginScreen = ({ history }) => {
 
     const onSubmit = async ({ auth }) => {
         console.log('onSubmit', auth);
+        setVisible(false);
+        setVisible(true);
         if (auth === '911') {
-            setVisible(false);
-            setVisible(true);
             api.getUsers((users) => {
                 history.push({
                     pathname: '/admin/table',
@@ -21,8 +21,6 @@ export const AdminLoginScreen = ({ history }) => {
                 });
             });
         } else {
-            setVisible(false);
-            setVisible(true);
             setError('Invalid Password');
             document.getElementById('auth').focus();
             return 'Unable to login';

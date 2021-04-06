@@ -78,7 +78,7 @@ usbDetect.on('add', function () {
                     setTimeout(function () {
                         device = new escpos.USB();
                         printer = new escpos.Printer(device, options);
-                    }, 1000);
+                    }, 300);
                 }
             });
         })
@@ -260,6 +260,7 @@ ipcMain.on(channels.ADD_USER, (event, args) => {
 
 // Delete User
 ipcMain.on(channels.DELETE_USER, (event, args) => {
+    console.log(args);
     deleteUser(db, args, (err, result) => {
         event.sender.send(channels.DELETE_USER, result);
     });

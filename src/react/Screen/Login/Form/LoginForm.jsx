@@ -19,7 +19,6 @@ export const LoginForm = ({ onSubmit, button, field }) => {
                     {field.password}
                     <Divider hidden />
                     {button.login(values)}
-
                     {button.admin}
                     <Form.Group widths={2}>
                         {button.close}

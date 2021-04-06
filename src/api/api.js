@@ -302,7 +302,6 @@ export const mckeeApi = {
             });
         });
     },
-
     closeApp: () => {
         console.log('closeApp');
         ipcRenderer.send(channels.CLOSE_APP);
@@ -317,7 +316,6 @@ export const mckeeApi = {
             });
         });
     },
-
     addUser: (data) => {
         return new Promise((resolve, reject) => {
             ipcRenderer.send(channels.ADD_USER, data);
@@ -335,6 +333,16 @@ export const mckeeApi = {
             ipcRenderer.on(channels.EDIT_USER, (_, arg) => {
                 ipcRenderer.removeAllListeners(channels.EDIT_USER);
                 if (!arg) reject('Unable to Edit Users');
+                resolve(arg);
+            });
+        });
+    },
+    deleteUser: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.DELETE_USER, { user_id: data });
+            ipcRenderer.on(channels.DELETE_USER, (_, arg) => {
+                ipcRenderer.removeAllListeners(channels.DELETE_USER);
+                if (!arg) reject('Unable to Delete User');
                 resolve(arg);
             });
         });

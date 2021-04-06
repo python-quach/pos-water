@@ -61,6 +61,8 @@ module.exports = (db) => {
         const { phone, account, firstName, lastName } = args;
         const fullname = firstName + '%' + lastName;
 
+        console.log(fullname);
+
         const sendFindResult = (data) => {
             event.sender.send(channels.FIND, data);
         };

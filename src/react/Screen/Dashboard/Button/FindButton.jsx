@@ -1,15 +1,14 @@
-import { Form, Transition } from 'semantic-ui-react';
+import { Transition, Form } from 'semantic-ui-react';
 
-export const LoginButton = ({ errorMessage, disabled, visible }) =>
+export const FindButton = ({ errorMessage, disabled, visible }) =>
     !errorMessage ? (
         <Form.Button
+            id='find'
             type='submit'
-            id='LoginButton'
-            content='Login'
-            className='LoginButton'
+            content='Find Membership'
             size='huge'
             color='blue'
-            icon='sign in'
+            icon='search'
             labelPosition='right'
             primary
             circular
@@ -21,18 +20,17 @@ export const LoginButton = ({ errorMessage, disabled, visible }) =>
             animation='pulse'
             duration={500}
             visible={visible}
-            unmountOnHide={true}>
+            unmountOnHide>
             <Form.Button
-                content='Invalid Login'
-                circular
-                fluid
-                size='huge'
-                id='LoginButton'
+                content='Find Membership'
                 color='red'
                 icon='warning sign'
                 labelPosition='right'
+                size='huge'
+                circular
+                fluid
             />
         </Transition>
     );
 
-export default LoginButton;
+export default FindButton;

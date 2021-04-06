@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Header, Icon, Divider } from 'semantic-ui-react';
-import Portal from '../../Portal/Portal';
-import { AddPortalConfig as config } from '../../../config/portal';
+import Portal from '../../../Portal/Portal';
+import { AddPortalConfig as config } from '../../../../config/portal';
 import AddForm from '../Form/AddForm';
 
 const AddScreen = (props) => {

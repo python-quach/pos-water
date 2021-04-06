@@ -3,11 +3,10 @@ import { Form } from 'semantic-ui-react';
 const DoneButton = ({ values }) => {
     return (
         <Form.Button
+            primary
             size='huge'
             type='submit'
             content='Done'
-            color='facebook'
-            // style={{ marginTop: '30px', width: '130px' }}
             style={{ marginTop: '30px' }}
             disabled={
                 !values.fee ||

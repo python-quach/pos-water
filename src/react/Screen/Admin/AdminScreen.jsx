@@ -31,6 +31,7 @@ export const AdminLoginScreen = ({ history }) => {
         if (!history.location.state) {
             history.push('/');
         }
+        document.getElementById('auth').focus();
         return () => {
             console.log('AdminLoginScreen Cleanup');
         };

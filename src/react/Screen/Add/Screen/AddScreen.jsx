@@ -12,6 +12,7 @@ const AddScreen = ({ history }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [visible, setVisible] = useState(true);
     const record = history.location.state;
+    console.log(record);
     const date = new Date();
     const initialValues = {
         record_id: record,
@@ -50,7 +51,7 @@ const AddScreen = ({ history }) => {
                 setErrorMessage(response.error);
             } else {
                 const result = await mckeeApi.find({ account: data.account });
-                const record_id = await mckeeApi.lastRecord();
+                const { record_id } = await mckeeApi.lastRecord();
                 history.push({
                     pathname: '/buy',
                     state: {

@@ -1,5 +1,6 @@
 const { sql, buyData, renewData, editData } = require('../query');
 const { dialog } = require('electron');
+const { totalFee, total_account_invoices } = require('../db');
 
 module.exports = (db, dbFile) => {
     /**
@@ -319,12 +320,31 @@ module.exports = (db, dbFile) => {
      * @returns {Promise<[string]>} - Customer account history records
      */
     async function history(queries) {
+        console.log({ queries });
         return new Promise((resolve, reject) => {
             db.all(sql.history, queries, (err, records) =>
                 err ? reject(err) : resolve(records)
             );
         });
     }
+
+    // async function testhistory(queries) {
+    //     console.log({ queries });
+    //     const account = queries[0];
+    //     const memberSince = queries[1];
+    //     const data = [account, memberSince];
+
+    //     try {
+    //         const fee = await totalFee(data);
+    //         return new Promise((resolve, reject) => {
+    //             db.all(sql.history, queries, (err, records) =>
+    //                 err ? reject(err) : resolve(records)
+    //             );
+    //         });
+    //     } catch (err) {
+    //         throw err;
+    //     }
+    // }
 
     /**
      * Query the database for the total account invoices for a membership
@@ -373,7 +393,162 @@ module.exports = (db, dbFile) => {
         });
     }
 
+    async function totalRenew(queries) {
+        return new Promise((resolve, reject) => {
+            db.all(sql.totalRenew, queries, (err, row) => {
+                if (err) reject(err);
+                let sum = 0;
+                row.forEach((data) => {
+                    if (parseInt(data.field19) === 0 && data.field28 === null) {
+                        sum = sum + parseInt(data.field31);
+                    } else {
+                        if (data.field28 !== null) {
+                            sum = sum + parseInt(data.field28);
+                        }
+                    }
+                });
+
+                resolve({
+                    totalRenewalGallon: sum,
+                });
+            });
+        });
+    }
+
+    async function totalBuy(queries) {
+        return new Promise((resolve, reject) => {
+            db.get(sql.totalBuy, queries, (err, row) => {
+                if (err) reject(err);
+                const { totalBuyGallon } = row;
+                resolve({ totalBuyGallon });
+            });
+        });
+    }
+
+    async function reportRenew(date) {
+        return new Promise((resolve, reject) => {
+            db.get(
+                sql.reportRenew,
+                date,
+                (err, { totalFee, totalRenewAmount }) => {
+                    if (err) reject(err);
+                    resolve({ totalFee, totalRenewAmount });
+                }
+            );
+        });
+    }
+    async function reportBuy(date) {
+        return new Promise((resolve, reject) => {
+            db.get(sql.reportBuy, date, (err, { totalBuy }) => {
+                console.log('reportBuy', totalBuy);
+                if (err) reject(err);
+                resolve({ totalBuy });
+            });
+        });
+    }
+    async function reportNew(date) {
+        return new Promise((resolve, reject) => {
+            db.get(sql.reportNew, date, (err, { totalNew }) => {
+                if (err) reject(err);
+                resolve({ totalNew });
+            });
+        });
+    }
+
+    async function deleteUser({ user_id }) {
+        return new Promise((resolve, reject) => {
+            const sql_delete = `DELETE FROM users WHERE rowid = ?`;
+            db.run(sql_delete, [user_id], function (err) {
+                if (err) reject(err);
+                resolve(this.changes);
+            });
+        });
+    }
+
+    /**
+     * Get all users
+     * @returns
+     */
+    async function getAllUsers() {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM users`;
+            db.all(sql, [], (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    }
+
+    /**
+     * Print Daily Report
+     * @param {*} param0
+     * @returns
+     */
+    async function getDailyReport({ date, time }) {
+        try {
+            const { totalFee, totalRenewAmount } = await reportRenew(date);
+            const { totalNew } = await reportNew(date);
+            const { totalBuy } = await reportBuy(date);
+            const data = {
+                totalFee: totalFee || 0,
+                totalRenew: totalRenewAmount || 0,
+                totalBuy: totalBuy || 0,
+                totalNew: totalNew || 0,
+                date,
+                time,
+            };
+            return data;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async function addUser({ username, password }) {
+        return new Promise((resolve, reject) => {
+            const sql = `INSERT into users ( username, password) VALUES (?, ?)`;
+            db.run(sql, [username, password], function (err) {
+                if (err) reject(err);
+                db.get(
+                    `SELECT * FROM users WHERE rowid = ?`,
+                    this.lastID,
+                    (err, row) => {
+                        if (err) reject(err);
+                        resolve(row);
+                    }
+                );
+            });
+        });
+    }
+
+    async function editUser({ username, password, user_id }) {
+        return new Promise((resolve, reject) => {
+            const sql = `UPDATE users SET username = ?, password = ? WHERE rowid = ?`;
+            db.run(sql, [username, password, user_id], function (err) {
+                if (err) reject(err);
+                resolve(this.changes);
+            });
+        });
+    }
+
+    async function deleteAccount({ account, memberSince, password }) {
+        return new Promise((resolve, reject) => {
+            const sql_delete = `DELETE FROM test WHERE field22 = ? AND field10 = ? `;
+            if (password === '911') {
+                db.run(sql_delete, [account, memberSince], function (err) {
+                    if (err) reject(err);
+                    resolve(this.changes);
+                });
+            } else {
+                reject(false);
+            }
+        });
+    }
+
     return {
+        deleteAccount,
+        editUser,
+        addUser,
+        deleteUser,
         verifyLogin,
         backupFile,
         checkDuplicateAccount,
@@ -383,6 +558,7 @@ module.exports = (db, dbFile) => {
         findPhoneAndAccount,
         getLastRecord,
         insert,
+        getAllUsers,
         dbFile,
         buy,
         renew,
@@ -391,5 +567,8 @@ module.exports = (db, dbFile) => {
         totalInvoices,
         newRecord,
         totalFee,
+        totalRenew,
+        totalBuy,
+        getDailyReport,
     };
 };

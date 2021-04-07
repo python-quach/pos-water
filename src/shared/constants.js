@@ -9,6 +9,7 @@ module.exports = {
         RENEW: 'RENEW',
         ADD: 'ADD',
         HISTORY: 'HISTORY',
+        ALL_HISTORY: 'ALL_HISTORY',
         TOTAL: 'TOTAL',
         LAST_RECORD: 'LAST_RECORD',
         TOTAL_FEE: 'TOTAL_FEE',

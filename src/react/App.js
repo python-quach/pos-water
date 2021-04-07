@@ -2,7 +2,6 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { Screen } from './Screen';
 
 import AccountScreen from './Account/Screen/AccountScreen';
-import BuyScreen from './Buy/Screen/BuyScreen';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -15,7 +14,7 @@ const App = () => (
             <Route exact path='/add' component={Screen.Add} />
             <Route exact path='/dashboard' component={Screen.Dashboard} />
             <Route exact path='/accounts' component={AccountScreen} />
-            <Route exact path='/buy' component={BuyScreen} />
+            <Route exact path='/buy' component={Screen.Buy} />
         </Switch>
     </Router>
 );

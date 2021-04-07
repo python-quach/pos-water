@@ -1,6 +1,68 @@
 const fs = require('fs');
 const Membership = require('./model/membership');
 const { channels } = require('../src/shared/constants');
+const usbDetect = require('usb-detection');
+const {
+    printAddReceipt,
+    printBuyReceipt,
+    printRenewReceipt,
+    printDailyReport,
+} = require('./printer');
+
+// POS PRINTER SETUP
+const options = { encoding: 'GB18030' /* default */ };
+let escpos;
+let device;
+let printer;
+
+usbDetect.startMonitoring();
+usbDetect
+    .find()
+    .then(function (devices) {
+        devices.forEach(function (item) {
+            if (item.deviceName === 'USB Printing Support') {
+                escpos = require('escpos');
+                escpos.USB = require('escpos-usb');
+                device = new escpos.USB();
+                printer = new escpos.Printer(device, options);
+            }
+        });
+    })
+    .catch(function (err) {
+        escpos = null;
+        device = null;
+        printer = null;
+    });
+
+usbDetect.on('add', function () {
+    usbDetect
+        .find()
+        .then(function (devices) {
+            devices.forEach(function (item) {
+                if (item.deviceName === 'USB Printing Support') {
+                    console.log('add', item);
+                    escpos = require('escpos');
+                    escpos.USB = require('escpos-usb');
+                    setTimeout(function () {
+                        device = new escpos.USB();
+                        printer = new escpos.Printer(device, options);
+                    }, 300);
+                }
+            });
+        })
+        .catch(function () {
+            escpos = null;
+            device = null;
+            printer = null;
+        });
+});
+
+usbDetect.on('remove', function () {
+    console.log('remove');
+    escpos = null;
+    device = null;
+    printer = null;
+});
 
 module.exports = (db) => {
     /**
@@ -195,6 +257,35 @@ module.exports = (db) => {
         }
     }
 
+    async function getEverything(event, data) {
+        const { account, limit, offset, memberSince } = data;
+        try {
+            const history = await db.history([
+                account,
+                memberSince,
+                limit,
+                offset,
+            ]);
+            const totalFee = await db.totalFee([account, memberSince]);
+            const { totalRenewalGallon } = await db.totalRenew([
+                account,
+                memberSince,
+            ]);
+            const { totalBuyGallon } = await db.totalBuy([
+                account,
+                memberSince,
+            ]);
+            event.sender.send(channels.ALL_HISTORY, {
+                history,
+                totalRenewalFee: totalFee,
+                totalRenew: totalRenewalGallon,
+                totalBuy: totalBuyGallon,
+            });
+        } catch (err) {
+            return console.log('getMembershipHistory Error:', err.message);
+        }
+    }
+
     /**
      * Get the number of invoices associated with a given membership account
      *
@@ -251,10 +342,154 @@ module.exports = (db) => {
         }
     }
 
+    async function getTotalRenewalGallon(event, { account, memberSince }) {
+        try {
+            const totalRenew = await db.totalRenew([account, memberSince]);
+            console.log('totalRenew', totalRenew);
+            event.sender.send(channels.TOTAL_RENEW, totalRenew);
+        } catch (err) {
+            return console.log('getTotalRenewalGallon', err.message);
+        }
+    }
+
+    async function getTotalBuyGallon(event, { account, memberSince }) {
+        try {
+            const totalBuy = await db.totalBuy([account, memberSince]);
+            console.log('totalBuy', totalBuy);
+            event.sender.send(channels.TOTAL_BUY, totalBuy);
+        } catch (err) {
+            return console.log('getTotalBuyGallon', err.message);
+        }
+    }
+
     /**
-     * Controller Object
+     * Daily Report
+     * @param {*} event
+     * @param {*} args
+     * @returns
      */
+    async function dailyReport(event, args) {
+        console.log('getDailyReport Controller', args);
+        try {
+            const report = await db.getDailyReport(args);
+            console.log('dailyReport', report);
+            if (device) {
+                printDailyReport(device, printer, report);
+                event.sender.send(channels.REPORT, report);
+            } else {
+                event.sender.send(channels.REPORT, report);
+            }
+        } catch (err) {
+            event.sender.send(channels.REPORT, err);
+            return console.log('getDailyReport', err.message);
+        }
+    }
+
+    /**
+     * Print New Membership Receipt
+     * @param {*} event
+     * @param {*} args
+     * @returns
+     */
+    function newReceipt(event, args) {
+        if (device) {
+            printAddReceipt(device, printer, args);
+            event.sender.send(channels.PRINT_RECEIPT, { done: true });
+        } else {
+            event.sender.send(channels.PRINT_RECEIPT, { done: false });
+        }
+    }
+    /**
+     * Print Buy Gallon Receipt
+     * @param {*} event
+     * @param {*} args
+     * @returns
+     */
+    function buyReceipt(event, args) {
+        if (device) {
+            printBuyReceipt(device, printer, args);
+            event.sender.send(channels.PRINT_BUY_RECEIPT, { done: true });
+        } else {
+            event.sender.send(channels.PRINT_BUY_RECEIPT, { done: false });
+        }
+    }
+    /**
+     * Print Renew Gallon Receipt
+     * @param {*} event
+     * @param {*} args
+     * @returns
+     */
+    function renewReceipt(event, args) {
+        if (device) {
+            printRenewReceipt(device, printer, args);
+            event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: true });
+        } else {
+            event.sender.send(channels.PRINT_RENEW_RECEIPT, { done: false });
+        }
+    }
+
+    async function deleteAccount(event, args) {
+        try {
+        } catch (err) {}
+    }
+    async function getUsers(event, _) {
+        console.log('getUsers');
+        try {
+            const result = await db.getAllUsers();
+            console.log(result);
+            event.sender.send(channels.GET_USERS, result);
+        } catch (err) {
+            event.sender.send(channels.GET_USERS, []);
+        }
+    }
+    async function addUser(event, args) {
+        console.log('controller: addUser', args);
+        try {
+            const result = await db.addUser(args);
+            event.sender.send(channels.ADD_USER, result);
+        } catch (err) {
+            event.sender.send(channels.ADD_USER, err);
+        }
+    }
+    async function deleteUser(event, args) {
+        try {
+            const result = await db.deleteUser(args);
+            event.sender.send(channels.DELETE_USER, result);
+        } catch (err) {
+            event.sender.send(channels.DELETE_USER, err);
+        }
+    }
+    async function editUser(event, args) {
+        try {
+            const result = await db.editUser(args);
+            event.sender.send(channels.EDIT_USER, result);
+        } catch (err) {
+            event.sender.send(channels.EDIT_USER, err);
+        }
+    }
+
+    async function deleteMembership(event, args) {
+        try {
+            const result = await db.deleteAccount(args);
+            event.sender.send(channels.DELETE_ACCOUNT, {
+                delete: true,
+                result: result,
+            });
+        } catch (err) {
+            event.sender.send(channels.DELETE_ACCOUNT, { delete: false });
+        }
+    }
+
     return {
+        deleteMembership,
+        editUser,
+        deleteUser,
+        addUser,
+        deleteAccount,
+        getUsers,
+        newReceipt,
+        buyReceipt,
+        renewReceipt,
         verifyCredential,
         addNewMember,
         findMembership,
@@ -266,5 +501,9 @@ module.exports = (db) => {
         getTotalAccountInvoices,
         getLastRecord,
         getTotalFee,
+        getTotalRenewalGallon,
+        getTotalBuyGallon,
+        getEverything,
+        dailyReport,
     };
 };

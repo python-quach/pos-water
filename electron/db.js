@@ -1,5 +1,4 @@
 const { sql, addData, buyData, renewData, editData } = require('./query');
-const { dialog } = require('electron');
 
 module.exports = {
     api: {
@@ -213,6 +212,7 @@ module.exports = {
                 });
             });
         },
+        testHistory: function (db, args, callback) {},
         totalFee: function (db, args, callback) {
             const { account, memberSince } = args;
 

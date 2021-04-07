@@ -1,4 +1,5 @@
 import LoginScreen from './Login/LoginScreen';
+import BuyScreen from './Buy/Screen/BuyScreen';
 import AdminScreen from './Admin/AdminScreen';
 import AddScreen from './Add/Screen/AddScreen';
 import DashboardScreen from './Dashboard/Screen/DashboardScreen';
@@ -10,6 +11,7 @@ export const Screen = {
     Admin: AdminScreen,
     Table: AdminTableScreen,
     Add: AddScreen,
+    Buy: BuyScreen,
 };
 
 export default Screen;

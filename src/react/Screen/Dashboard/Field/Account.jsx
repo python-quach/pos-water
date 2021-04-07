@@ -36,9 +36,9 @@ const Account = ({ form, reset }) => {
                     }}
                     onFocus={() => {
                         form.batch(() => {
-                            form.change('phone', undefined);
-                            form.change('firstName', undefined);
-                            form.change('lastName', undefined);
+                            form.change('phone', '');
+                            form.change('firstName', '');
+                            form.change('lastName', '');
                         });
                     }}
                 />

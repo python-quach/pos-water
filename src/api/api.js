@@ -394,4 +394,79 @@ export const mckeeApi = {
             });
         });
     },
+    buy: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.BUY, data);
+            ipcRenderer.on(channels.BUY, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.BUY);
+                resolve(response);
+            });
+        });
+    },
+    renew: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.RENEW, data);
+            ipcRenderer.on(channels.RENEW, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.RENEW);
+                resolve(response);
+            });
+        });
+    },
+    history: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.HISTORY, data);
+            ipcRenderer.on(channels.HISTORY, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.HISTORY);
+                resolve(response);
+            });
+        });
+    },
+    everything: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.ALL_HISTORY, data);
+            ipcRenderer.on(channels.ALL_HISTORY, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.ALL_HISTORY);
+                resolve(response);
+            });
+        });
+    },
+    totalFee: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.TOTAL_FEE, data);
+            ipcRenderer.on(channels.TOTAL_FEE, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.TOTAL_FEE);
+                const { totalRenewalFee } = response;
+                resolve(totalRenewalFee);
+            });
+        });
+    },
+    totalRenew: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.TOTAL_RENEW, data);
+            ipcRenderer.on(channels.TOTAL_RENEW, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.TOTAL_RENEW);
+                const { totalRenewalGallon } = response;
+                resolve(totalRenewalGallon);
+            });
+        });
+    },
+    totalBuy: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.TOTAL_BUY, data);
+            ipcRenderer.on(channels.TOTAL_BUY, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.TOTAL_BUY);
+                const { totalBuyGallon } = response;
+                resolve(totalBuyGallon);
+            });
+        });
+    },
+    totalInvoices: (data) => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.TOTAL, data);
+            ipcRenderer.on(channels.TOTAL, (_, response) => {
+                ipcRenderer.removeAllListeners(channels.TOTAL);
+                resolve(response);
+            });
+        });
+    },
 };

@@ -24,8 +24,8 @@ const Name = ({ name, placeholder, form, reset }) => (
                 }}
                 onFocus={() => {
                     form.batch(() => {
-                        form.change('phone', undefined);
-                        form.change('account', undefined);
+                        form.change('phone', '');
+                        form.change('account', '');
                     });
                 }}
             />

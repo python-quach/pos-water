@@ -23,8 +23,8 @@ usbDetect
             if (item.deviceName === 'USB Printing Support') {
                 escpos = require('escpos');
                 escpos.USB = require('escpos-usb');
-                device = new escpos.USB();
-                printer = new escpos.Printer(device, options);
+                    device = new escpos.USB();
+                    printer = new escpos.Printer(device, options);
             }
         });
     })

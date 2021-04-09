@@ -8,22 +8,23 @@ const normalizeName = (value) => {
 };
 
 const Name = ({ edit }) => {
-    return !edit ? (
-        <Field
-            name='fullname'
-            render={({ input }) => (
-                <Form.Input
-                    {...input}
-                    className='Name'
-                    label='Customer Name'
-                    readOnly
-                    error={edit}
-                    inverted
-                    width={4}
-                />
-            )}
-        />
-    ) : (
+    return (
+        // return !edit ? (
+        //     <Field
+        //         name='fullname'
+        //         render={({ input }) => (
+        //             <Form.Input
+        //                 {...input}
+        //                 className='Name'
+        //                 label='Customer Name'
+        //                 readOnly
+        //                 error={edit}
+        //                 inverted
+        //                 width={4}
+        //             />
+        //         )}
+        //     />
+        // ) : (
         <>
             <Field
                 name='firstName'
@@ -34,6 +35,7 @@ const Name = ({ edit }) => {
                         id='firstName'
                         label='First Name'
                         className='Name'
+                        readOnly={!edit}
                         error={edit}
                         inverted
                         width={3}
@@ -48,6 +50,7 @@ const Name = ({ edit }) => {
                         {...input}
                         label='Last Name'
                         className='Name'
+                        readOnly={!edit}
                         error={edit}
                         inverted
                         width={3}
@@ -56,6 +59,7 @@ const Name = ({ edit }) => {
             />
         </>
     );
+    // );
 };
 
 export default Name;

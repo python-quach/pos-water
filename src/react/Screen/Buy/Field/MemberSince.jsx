@@ -1,9 +1,9 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const MemberSince = ({ name, edit }) => (
+const MemberSince = ({ edit }) => (
     <Field
-        name={name}
+        name='memberSince'
         render={({ input }) => (
             <Form.Input
                 {...input}

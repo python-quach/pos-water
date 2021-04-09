@@ -1,9 +1,9 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Account = ({ name, edit }) => (
+const Account = ({ edit }) => (
     <Field
-        name={name}
+        name='account'
         render={({ input }) => (
             <Form.Input
                 {...input}

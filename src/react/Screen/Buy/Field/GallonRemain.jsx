@@ -1,16 +1,16 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const GallonRemain = ({ edited, name, remain }) => (
+const GallonRemain = ({ disabled, error }) => (
     <Field
-        name={name}
+        name='remain'
         render={({ input }) => (
             <Form.Input
                 {...input}
                 className='AreaCode'
                 label='Remain'
-                error={remain < 0 ? true : false}
-                disabled={edited}
+                error={error}
+                disabled={disabled}
                 width={1}
                 inverted
                 readOnly

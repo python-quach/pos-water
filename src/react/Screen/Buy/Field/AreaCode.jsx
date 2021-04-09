@@ -8,7 +8,7 @@ const normalizeAreaCode = (value) => {
     return onlyNums.slice(0, 3);
 };
 
-const AreaCode = ({ edit, name }) => {
+const AreaCode = ({ edit }) => {
     const required = (value) => (value ? undefined : 'Required');
     const mustBeNumber = (value) =>
         isNaN(value) ? 'Must be a number' : undefined;
@@ -24,10 +24,10 @@ const AreaCode = ({ edit, name }) => {
 
     return (
         <Field
-            name={name}
+            name='areaCode'
             parse={normalizeAreaCode}
             validate={composeValidators(required, mustBeNumber, minValue(3))}
-            render={({ input, meta }) => (
+            render={({ input }) => (
                 <Form.Input
                     {...input}
                     id='areaCode'

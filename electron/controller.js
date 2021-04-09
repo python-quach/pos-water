@@ -23,8 +23,10 @@ usbDetect
             if (item.deviceName === 'USB Printing Support') {
                 escpos = require('escpos');
                 escpos.USB = require('escpos-usb');
+                setTimeout(function () {
                     device = new escpos.USB();
                     printer = new escpos.Printer(device, options);
+                }, 500);
             }
         });
     })
@@ -46,7 +48,7 @@ usbDetect.on('add', function () {
                     setTimeout(function () {
                         device = new escpos.USB();
                         printer = new escpos.Printer(device, options);
-                    }, 300);
+                    }, 500);
                 }
             });
         })
@@ -55,13 +57,6 @@ usbDetect.on('add', function () {
             device = null;
             printer = null;
         });
-});
-
-usbDetect.on('remove', function () {
-    console.log('remove');
-    escpos = null;
-    device = null;
-    printer = null;
 });
 
 module.exports = (db) => {
@@ -428,10 +423,6 @@ module.exports = (db) => {
         }
     }
 
-    async function deleteAccount(event, args) {
-        try {
-        } catch (err) {}
-    }
     async function getUsers(event, _) {
         console.log('getUsers');
         try {
@@ -485,7 +476,6 @@ module.exports = (db) => {
         editUser,
         deleteUser,
         addUser,
-        deleteAccount,
         getUsers,
         newReceipt,
         buyReceipt,

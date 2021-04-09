@@ -1,6 +1,6 @@
 import { Form } from 'semantic-ui-react';
 
-const BuyButton = ({ values, disable }) => {
+const BuyButton = ({ disabled }) => {
     return (
         <Form.Button
             type='submit'
@@ -11,7 +11,7 @@ const BuyButton = ({ values, disable }) => {
                 width: '160px',
             }}
             color='green'
-            disabled={values.buy <= 0 || disable}
+            disabled={disabled}
         />
     );
 };

@@ -1,103 +1,21 @@
 import { Form } from 'semantic-ui-react';
-import {
-    Form as FinalForm,
-    FormSpy,
-    Field as FinalField,
-} from 'react-final-form';
-import { OnChange } from 'react-final-form-listeners';
-import SaveButton from '../Button/SaveButton';
-import EditButton from '../Button/EditButton';
-import CancelButton from '../Button/CancelButton';
-import BuyButton from '../Button/BuyButton';
-import RenewButton from '../Button/RenewButton';
-import Account from '../Field/Account';
-import AreaCode from '../Field/AreaCode';
-import BuyGallon from '../Field/BuyGallon';
-import Date from '../Field/Date';
-import GallonRemain from '../Field/GallonRemain';
-import MemberSince from '../Field/MemberSince';
-import Name from '../Field/Name';
-import Phone from '../Field/Phone';
-import Time from '../Field/Time';
-import RenewAmount from '../Field/RenewAmount';
-import Fee from '../Field/Fee';
-import { api } from '../../../../api/api';
-import { currentTime, currentDate } from '../../../../helpers/helpers';
-
-const updateForm = (form, values) => {
-    const { buy, renew, remain, record_id } = values;
-    if (buy) {
-        form.initialize({
-            ...values,
-            record_id: record_id + 1,
-            prev: remain,
-            buy: 0,
-            invoiceDate: currentDate(),
-            invoiceTime: currentTime(),
-        });
-    }
-
-    if (renew) {
-        form.initialize({
-            ...values,
-            record_id: values.record_id + 1 || '',
-            prev: remain + renew,
-            remain: remain + renew,
-            fee: 0,
-            renew: 0,
-            invoiceDate: currentDate(),
-            invoiceTime: currentTime(),
-        });
-    }
-};
-
-const resetRenewForm = (form) => {
-    form.change('fee', 0);
-    form.change('renew', 0);
-};
-
-const resetBuyForm = (form, previous) => {
-    form.change('buy', 0);
-    form.change('remain', previous);
-};
+import { Form as FinalForm } from 'react-final-form';
 
 const BuyForm = ({
-    receipt,
-    disable,
-    edit,
-    setEdit,
-    setDisable,
-    updateHistory,
-    setReceipt,
-    initialValues,
     onSubmit,
+    initialValues,
+    updateForm,
+    edit,
+    change,
+    field,
+    button,
 }) => {
-    const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
-        <FinalField name={set} subscription={{}}>
-            {({ input: { onChange } }) => (
-                <FormSpy subscription={{}}>
-                    {({ form }) => (
-                        <OnChange name={field}>
-                            {(value) => {
-                                if (becomes) {
-                                    onChange(to);
-                                } else {
-                                    onChange(reset);
-                                }
-                            }}
-                        </OnChange>
-                    )}
-                </FormSpy>
-            )}
-        </FinalField>
-    );
-
     return (
         <FinalForm
-            initialValuesEqual={() => true}
             onSubmit={onSubmit}
             initialValues={initialValues}
-            render={({ handleSubmit, form, values, initialValues }) => (
+            initialValuesEqual={() => true}
+            render={({ handleSubmit, form, values }) => (
                 <Form
                     size='huge'
                     onSubmit={(event) => {
@@ -106,115 +24,32 @@ const BuyForm = ({
                             document.getElementById('buy').focus();
                         });
                     }}>
-                    <WhenBuyFieldChanges
-                        field='firstName'
-                        becomes={edit}
-                        set='fullname'
-                        to={values.firstName + ' ' + values.lastName}
-                    />
-                    <WhenBuyFieldChanges
-                        field='lastName'
-                        becomes={edit}
-                        set='fullname'
-                        to={values.firstName + ' ' + values.lastName}
-                    />
-                    <WhenBuyFieldChanges
-                        field='buy'
-                        becomes={values.buy > 0}
-                        set='remain'
-                        to={parseInt(values.prev - values.buy)}
-                        reset={values.prev}
-                    />
                     <Form.Group>
-                        <Account name='account' edit={edit} />
-                        <MemberSince name='memberSince' edit={edit} />
-                        <AreaCode edit={edit} name='areaCode' />
-                        <Phone edit={edit} name='phone' />
-                        <Name edit={edit} name='fullname' />
-                        {!edit ? (
-                            <EditButton
-                                edit={edit}
-                                form={form}
-                                setEdit={setEdit}
-                                handleEdit={api.edit}
-                                values={values}
-                                initialValues={initialValues}
-                            />
-                        ) : (
-                            <>
-                                <CancelButton
-                                    edit={edit}
-                                    form={form}
-                                    setEdit={setEdit}
-                                    handleEdit={api.edit}
-                                    values={values}
-                                    initialValues={initialValues}
-                                />
-                                <SaveButton
-                                    edit={edit}
-                                    form={form}
-                                    setEdit={setEdit}
-                                    handleEdit={api.edit}
-                                    values={values}
-                                    initialValues={initialValues}
-                                    updateReceipt={setReceipt}
-                                    updateHistory={updateHistory}
-                                />
-                            </>
-                        )}
-                        <Date name='invoiceDate' edit={edit} />
-                        <Time name='invoiceTime' edit={edit} />
+                        {change.buy(values)}
+                        {field.account}
+                        {field.since}
+                        {field.areaCode}
+                        {field.phone}
+                        {field.fullname}
+                        {field.first}
+                        {field.last}
+                        {!edit && button.edit}
+                        {edit && button.cancel(form, values)}
+                        {edit && button.save(form, values)}
+                        {field.date}
+                        {field.time}
                     </Form.Group>
                     <Form.Group>
                         <Form.Input type='hidden' width={13} />
-                        <BuyGallon
-                            name='buy'
-                            edit={edit}
-                            disable={disable}
-                            setDisable={setDisable}
-                            previous={values.previousGallon}
-                            form={form}
-                            gallonBuy={values.gallonBuy}
-                            renewAmount={values.renewalAmount}
-                            remain={receipt ? receipt.remain : ''}
-                            reset={resetRenewForm}
-                        />
-                        <GallonRemain
-                            edited={edit}
-                            name='remain'
-                            remain={values.remain}
-                        />
-                        <BuyButton values={values} disable={disable} />
+                        {field.buy(form)}
+                        {field.remain(values.remain)}
+                        {button.buy(values)}
                     </Form.Group>
                     <Form.Group>
                         <Form.Input type='hidden' width={13} />
-                        <Fee
-                            name='fee'
-                            edit={edit}
-                            form={form}
-                            disable={disable}
-                            fee={values.fee}
-                            previous={values.prev}
-                            renew={values.renew}
-                            values={values}
-                            reset={resetBuyForm}
-                            setDisable={setDisable}
-                            updateForm={updateForm}
-                        />
-                        <RenewAmount
-                            name='renew'
-                            edit={edit}
-                            form={form}
-                            disable={disable}
-                            fee={values.fee}
-                            renew={values.renew}
-                            previous={values.prev}
-                            values={values}
-                            reset={resetBuyForm}
-                            setDisable={setDisable}
-                            updateForm={updateForm}
-                        />
-                        <RenewButton values={values} />
+                        {field.fee(form, values)}
+                        {field.gallon(form, values)}
+                        {button.renew(values)}
                     </Form.Group>
                 </Form>
             )}

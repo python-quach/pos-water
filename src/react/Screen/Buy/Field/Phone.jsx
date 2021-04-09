@@ -4,16 +4,14 @@ import { Form } from 'semantic-ui-react';
 const normalizePhone = (value) => {
     if (!value) return value;
     const onlyNums = value.replace(/[^\d]/g, '');
-    // if (onlyNums.length <= 3) return onlyNums;
     if (onlyNums.length <= 6) return onlyNums;
     return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
 };
 
-const Phone = ({ edit, name }) => {
+const Phone = ({ error, readOnly }) => {
     return (
         <Field
-            // name='phone'
-            name={name}
+            name='phone'
             parse={normalizePhone}
             render={({ input }) => (
                 <Form.Input
@@ -22,8 +20,8 @@ const Phone = ({ edit, name }) => {
                     className='PhoneNumber'
                     label='Phone Number'
                     placeholder='xxx-xxxx'
-                    error={!edit ? false : true}
-                    readOnly={!edit}
+                    error={error}
+                    readOnly={readOnly}
                     inverted
                     width={2}
                 />

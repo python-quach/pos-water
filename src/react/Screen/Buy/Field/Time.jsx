@@ -1,9 +1,9 @@
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 
-const Time = ({ name, edit }) => (
+const Time = ({ edit }) => (
     <Field
-        name={name}
+        name='invoiceTime'
         render={({ input }) => (
             <Form.Input
                 {...input}

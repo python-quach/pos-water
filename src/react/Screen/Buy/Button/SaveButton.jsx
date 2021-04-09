@@ -7,6 +7,7 @@ const SaveButton = ({
     handleEdit,
     updateReceipt,
     updateHistory,
+    form,
 }) => (
     <Form.Button
         size='huge'
@@ -26,7 +27,15 @@ const SaveButton = ({
             if (!edit) {
                 setEdit(true);
             } else {
-                handleEdit(values, (result) => {
+                const data = {
+                    ...values,
+                    fullname: values.firstName + ' ' + values.lastName,
+                };
+                form.change(
+                    'fullname',
+                    values.firstName + ' ' + values.lastName
+                );
+                handleEdit(data, (result) => {
                     updateReceipt(result);
                     updateHistory();
                     setEdit(false);

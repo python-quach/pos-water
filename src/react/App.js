@@ -12,7 +12,9 @@ import AdminScreen from './MPW-POS/AdminScreen';
 import Login from './MPW-POS/LoginScreen';
 // import { Component } from './MPW-POS/Component';
 // const { Dashboard } = Component;
-import Dashboard from './MPW-POS/Dashboard';
+// import Dashboard from './MPW-POS/Dashboard';
+// import Dashboard from './MPW-POS/Dashboard/';
+import Dashboard from './MPW-POS/Dashboard/index';
 
 const App = () => (
     <Router>
@@ -34,5 +36,5 @@ const App = () => (
         </Switch>
     </Router>
 );
-
+//
 export default App;

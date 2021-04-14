@@ -146,7 +146,9 @@ export const FindForm = ({ onSubmit, reset, error, goTo }) => {
                     <AddButton
                         onClick={(setVisible) => {
                             setVisible((prev) => !prev);
-                            goTo.AddScreen();
+                            setTimeout(() => {
+                                goTo.AddScreen();
+                            }, 500);
                         }}
                     />
                     <ReportButton onClick={() => goTo.ReportScreen()} />

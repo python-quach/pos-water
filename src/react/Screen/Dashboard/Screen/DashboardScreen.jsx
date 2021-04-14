@@ -36,9 +36,27 @@ const DashBoardScreen = ({ history }) => {
             const data = await mckeeApi.find(values);
             if (data.membership) {
                 const { record_id } = await mckeeApi.lastRecord();
+                // history.push({
+                //     pathname: '/buy',
+                //     state: { ...data.membership, newRecordID: record_id },
+                // });
                 history.push({
-                    pathname: '/buy',
-                    state: { ...data.membership, newRecordID: record_id },
+                    pathname: '/test',
+                    state: {
+                        // ...data.membership,
+                        record: data.membership,
+                        newRecordID: record_id,
+                        open: true,
+                        initialValues: {
+                            ...data.membership,
+                            record_id: record_id,
+                            renew: 0,
+                            buy: 0,
+                            fee: 0,
+                            invoiceDate: new Date().toLocaleDateString(),
+                            invoiceTime: new Date().toLocaleTimeString(),
+                        },
+                    },
                 });
             } else if (data.memberships) {
                 history.push({
@@ -116,6 +134,7 @@ const DashBoardScreen = ({ history }) => {
                     add: <Button.Add onClick={addNewMembership} />,
                     report: <Button.Report onClick={dailyReport} />,
                     logout: <Button.Logout onClick={() => history.push('/')} />,
+                    // test: <Button.Test onClick={() => {}} />,
                 }}
             />
         </Portal>

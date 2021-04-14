@@ -4,16 +4,11 @@ import { BuyPortalConfig as config } from '../../../../config/portal';
 import { currentTime, currentDate } from '../../../../helpers/helpers';
 
 import BuyForm from '../Form/BuyForm';
-
 import Portal from '../../../Portal/Portal';
 import RecordPortal from '../Portal/RecordPortal';
 import Receipt from '../../../Receipt/Receipt';
 import Record from '../Record/Record';
 import ReceiptPortal from '../Portal/ReceiptPortal';
-import BuyGallon from '../Field/BuyGallon';
-import GallonRemain from '../Field/GallonRemain';
-import RenewAmount from '../Field/RenewAmount';
-import Fee from '../Field/Fee';
 import Button from '../Button/Button';
 import Field from '../Field';
 import Header from '../Header/StoreHeader';
@@ -39,14 +34,14 @@ const WhenBuyFieldChanges = ({ field, becomes, set, to, reset }) => (
 const BuyScreen = ({ history }) => {
     const { account, phone, firstName, lastName, memberSince } =
         history.location.state || {};
-
-    const [openReceipt, setOpenReceipt] = useState(false);
-
     const [receipt, setReceipt] = useState(history.location.state || {});
-    const [records, setRecords] = useState(0);
+    const [openReceipt, setOpenReceipt] = useState(false);
     const [disable, setDisable] = useState(false);
     const [edit, setEdit] = useState(false);
     const [open, setOpenPortal] = useState(false);
+
+    // History Page
+    const [records, setRecords] = useState(0);
     const [totalFee, setTotalFee] = useState(0);
     const [totalRenew, setTotalRenew] = useState(0);
     const [totalBuy, setTotalBuy] = useState(0);
@@ -56,13 +51,10 @@ const BuyScreen = ({ history }) => {
     const [offset, setOffset] = useState(0);
     const [activePage, setActivePage] = useState(1);
 
-    const onChange = (e, pageInfo) => {
-        console.log('onchange');
+    const onChange = (_, pageInfo) => {
         setActivePage(pageInfo.activePage);
         setOffset(pageInfo.activePage * 10 - 10);
     };
-
-    const data = history.location.state;
 
     const updateHistory = async () => {
         const {
@@ -72,9 +64,6 @@ const BuyScreen = ({ history }) => {
             totalBuy,
         } = await mckeeApi.everything({
             account,
-            phone,
-            firstName,
-            lastName,
             memberSince,
             limit: 10,
             offset: 0,
@@ -86,73 +75,74 @@ const BuyScreen = ({ history }) => {
         setTotalBuy(totalBuy);
     };
 
-    const onSubmit = async (data) => {
-        const { buy, renew, prev } = data;
-        console.log('onSubmit', data);
-
+    const buyWater = async (data) => {
+        const modifiedData = {
+            ...data,
+            fullname: data.firstName + ' ' + data.lastName,
+            renew: null,
+        };
         try {
-            if (buy) {
-                console.log(data);
-                const response = await mckeeApi.buy({
-                    ...data,
-                    fullname: data.firstName + ' ' + data.lastName,
-                    renew: null,
-                });
-                console.log(response);
-                const {
-                    history,
-                    totalRenewalFee,
-                    totalRenew,
-                    totalBuy,
-                } = await mckeeApi.everything({
-                    ...data,
-                    limit: 10,
-                    offset: 0,
-                });
+            const newReceipt = await mckeeApi.buy(modifiedData);
+            const updatedHistory = await mckeeApi.everything({
+                ...data,
+                limit: 10,
+                offset: 0,
+            });
+            return {
+                newReceipt,
+                updatedHistory,
+            };
+        } catch (err) {
+            throw err;
+        }
+    };
 
-                setOpenReceipt(true);
-                setReceipt(response);
-                setRecords(history);
-                setActivePage(1);
-                setTotalFee(totalRenewalFee);
-                setTotalRenew(totalRenew);
-                setTotalBuy(totalBuy);
-            }
+    const renewWater = async (data) => {
+        const { renew, prev } = data;
+        const modifiedData = {
+            ...data,
+            fullname: data.firstName + ' ' + data.lastName,
+            buy: null,
+            remain: prev + renew,
+        };
+        try {
+            const newReceipt = await mckeeApi.renew(modifiedData);
+            const updatedHistory = await mckeeApi.everything({
+                ...data,
+                limit: 10,
+                offset: 0,
+            });
+            return {
+                newReceipt,
+                updatedHistory,
+            };
+        } catch (err) {
+            throw err;
+        }
+    };
 
-            if (renew) {
-                const response = await mckeeApi.renew({
-                    ...data,
-                    fullname: data.firstName + ' ' + data.lastName,
-                    buy: null,
-                    remain: prev + renew,
-                });
+    const updateBuyScreen = (data) => {
+        const { newReceipt, updatedHistory } = data;
+        const {
+            history,
+            totalRenewalFee,
+            totalRenew,
+            totalBuy,
+        } = updatedHistory;
+        setOpenReceipt(true);
+        setReceipt(newReceipt);
+        setRecords(history);
+        setActivePage(1);
+        setTotalFee(totalRenewalFee);
+        setTotalRenew(totalRenew);
+        setTotalBuy(totalBuy);
+    };
 
-                const {
-                    history,
-                    totalRenewalFee,
-                    totalRenew,
-                    totalBuy,
-                } = await mckeeApi.everything({
-                    ...data,
-                    limit: 10,
-                    offset: 0,
-                });
-
-                console.log(
-                    history,
-                    totalRenewalFee,
-                    totalRenewalFee,
-                    totalBuy
-                );
-
-                setOpenReceipt(true);
-                setReceipt(response);
-                setRecords(history);
-                setActivePage(1);
-                setTotalFee(totalRenewalFee);
-                setTotalRenew(totalRenew);
-                setTotalBuy(totalBuy);
-            }
+    const onSubmit = async (data) => {
+        try {
+            data.buy
+                ? updateBuyScreen(await buyWater(data))
+                : updateBuyScreen(await renewWater(data));
         } catch (err) {
             return console.log(err);
         }
@@ -240,12 +230,17 @@ const BuyScreen = ({ history }) => {
         setTotalBuy(totalBuy);
     };
 
+    const openHistoryPortal = () => {
+        setOpenPortal((prev) => !prev);
+        getAllHistory();
+    };
+
     useEffect(() => {
         const getTotalInvoice = async () => {
             console.log('loading History Data');
             try {
                 const total = await mckeeApi.totalInvoices({
-                    account: data.account,
+                    account,
                     memberSince,
                 });
                 const {
@@ -254,7 +249,8 @@ const BuyScreen = ({ history }) => {
                     totalRenew,
                     totalBuy,
                 } = await mckeeApi.everything({
-                    ...data,
+                    account,
+                    memberSince,
                     limit: 10,
                     offset: offset,
                 });
@@ -268,12 +264,11 @@ const BuyScreen = ({ history }) => {
             }
         };
 
-        if (!totalPages && data) getTotalInvoice();
-    }, [totalPages, setTotalPages, data, offset, memberSince]);
+        if (!totalPages) getTotalInvoice();
+    }, [totalPages, setTotalPages, account, offset, memberSince]);
 
     useEffect(() => {
         if (!history.location.state) history.push('/dashboard');
-
         const getTotalInvoice = async () => {
             try {
                 const response = await mckeeApi.everything({
@@ -323,8 +318,13 @@ const BuyScreen = ({ history }) => {
                 edit={edit}
                 field={{
                     account: <Field.Account edit={edit} />,
-                    since: <Field.Since edit={edit} />,
-                    areaCode: <Field.AreaCode edit={edit} />,
+                    since: <Field.Since disabled={edit} />,
+                    areaCode: (
+                        <Field.AreaCode
+                            readOnly={!edit}
+                            error={!edit ? false : true}
+                        />
+                    ),
                     phone: (
                         <Field.Phone
                             error={!edit ? false : true}
@@ -334,10 +334,10 @@ const BuyScreen = ({ history }) => {
                     fullname: <Field.Fullname />,
                     first: <Field.FirstName error={edit} readOnly={!edit} />,
                     last: <Field.LastName error={edit} readOnly={!edit} />,
-                    date: <Field.Date edit={edit} />,
-                    time: <Field.Time edit={edit} />,
+                    date: <Field.Date disabled={edit} />,
+                    time: <Field.Time disabled={edit} />,
                     buy: (form) => (
-                        <BuyGallon
+                        <Field.Buy
                             disabled={edit}
                             onFocus={() => {
                                 form.change('fee', 0);
@@ -347,13 +347,13 @@ const BuyScreen = ({ history }) => {
                         />
                     ),
                     remain: (remain) => (
-                        <GallonRemain
+                        <Field.Remain
                             disabled={edit}
                             error={remain < 0 ? true : false}
                         />
                     ),
                     fee: (form, values) => (
-                        <Fee
+                        <Field.Fee
                             onKeyDown={(e) =>
                                 (e.key === 'Enter' || e.keyCode === 13) &&
                                 values.fee > 0 &&
@@ -373,7 +373,7 @@ const BuyScreen = ({ history }) => {
                         />
                     ),
                     gallon: (form, values) => (
-                        <RenewAmount
+                        <Field.Renew
                             onKeyPress={(e) =>
                                 (e.key === 'Enter' || e.keyCode === 13) &&
                                 values.fee > 0 &&
@@ -483,23 +483,18 @@ const BuyScreen = ({ history }) => {
             <Divider hidden />
             <Button.Done
                 disabled={edit}
-                style={{
-                    width: '160px',
-                }}
+                style={{ width: '160px' }}
                 onClick={() => history.push('/dashboard')}
             />
             <Button.History
                 open={open}
                 disabled={edit}
-                onClick={() => {
-                    setOpenPortal((prev) => !prev);
-                    getAllHistory();
-                }}
                 style={{ width: '160px', marginRight: '15px' }}
+                onClick={openHistoryPortal}
             />
 
             <RecordPortal
-                data={data}
+                data={receipt}
                 open={open}
                 totalBuy={totalBuy}
                 totalFee={totalFee}

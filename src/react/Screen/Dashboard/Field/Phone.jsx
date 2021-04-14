@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 

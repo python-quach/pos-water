@@ -6,10 +6,7 @@ const FindForm = ({ onSubmit, button, field }) => {
         <FinalForm
             onSubmit={onSubmit}
             render={({ handleSubmit, form, values }) => (
-                <Form
-                    onSubmit={(event) => {
-                        handleSubmit(event).then(() => setTimeout(form.reset));
-                    }}>
+                <Form onSubmit={handleSubmit}>
                     {field.phone(form)}
                     {field.account(form)}
                     {field.first(form)}
@@ -18,6 +15,7 @@ const FindForm = ({ onSubmit, button, field }) => {
                     {button.add}
                     {button.report}
                     {button.logout}
+                    {button.test}
                 </Form>
             )}
         />

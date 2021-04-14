@@ -1,20 +1,36 @@
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { Screen } from './Screen';
+// import { Screen } from './Screen';
 
-import AccountScreen from './Account/Screen/AccountScreen';
+// import BuyScreen from '../react/Screen/NewBuyScreen/BuyScreen';
+// import AccountScreen from './Account/Screen/AccountScreen';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
+
+// import { DashboardScreen } from './MPW-POS';
+import AdminScreen from './MPW-POS/AdminScreen';
+// import LoginScreen from './MPW-POS/LoginScreen';
+import Login from './MPW-POS/LoginScreen';
+// import { Component } from './MPW-POS/Component';
+// const { Dashboard } = Component;
+import Dashboard from './MPW-POS/Dashboard';
 
 const App = () => (
     <Router>
         <Switch>
-            <Route exact path='/' component={Screen.Login} />
+            {/* <Route exact path='/' component={Screen.Login} />
             <Route exact path='/admin' component={Screen.Admin} />
             <Route exact path='/admin/table' component={Screen.Table} />
             <Route exact path='/add' component={Screen.Add} />
             <Route exact path='/dashboard' component={Screen.Dashboard} />
             <Route exact path='/accounts' component={AccountScreen} />
-            <Route exact path='/buy' component={Screen.Buy} />
+            <Route exact path='/buy' component={Screen.Buy} /> */}
+            {/* TEST NEW SCREEN */}
+            {/* <Route exact path='/test' component={BuyScreen} /> */}
+            <Route exact path='/' component={Login} />
+            {/* <Route exact path='/dashboard' component={DashboardScreen} /> */}
+            <Route exact path='/dashboard' component={Dashboard} />
+            <Route exact path='/admin' component={AdminScreen} />
+            <Route exact path='/add' component={() => <div>Add</div>} />
         </Switch>
     </Router>
 );

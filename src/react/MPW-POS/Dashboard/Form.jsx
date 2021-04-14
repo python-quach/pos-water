@@ -19,7 +19,11 @@ export const FindForm = ({ history }) => {
     return (
         <FinalForm
             onSubmit={handleFindMembership}
-            render={({ handleSubmit, form, values }) => (
+            render={({
+                handleSubmit,
+                form,
+                values: { phone, account, firstName, lastName },
+            }) => (
                 <Form onSubmit={handleSubmit}>
                     <Field.Phone
                         reset={setError}
@@ -62,11 +66,8 @@ export const FindForm = ({ history }) => {
                     <Button.Find
                         error={error}
                         disabled={
-                            (!values.phone &&
-                                !values.account &&
-                                !values.firstName &&
-                                !values.lastName) ||
-                            (values.phone && values.phone.length < 7)
+                            (!phone && !account && !firstName && !lastName) ||
+                            (phone && phone.length < 7)
                                 ? true
                                 : false
                         }

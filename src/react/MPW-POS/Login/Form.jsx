@@ -31,6 +31,7 @@ export const LoginForm = ({ history }) => {
     };
 
     const handleAdminLogin = async (values, form, initialValues) => {
+        console.log('handleAdminLogin', values);
         try {
             await sleep(500);
             history.push({
@@ -69,7 +70,8 @@ export const LoginForm = ({ history }) => {
                         }}
                     />
                     <Button.Login
-                        error={error}
+                        content={!error ? 'Login' : error}
+                        color={!error ? 'blue' : 'red'}
                         onClick={(setVisible) => {
                             setVisible((prev) => !prev);
                         }}
@@ -82,8 +84,11 @@ export const LoginForm = ({ history }) => {
                     />
                     <Form.Group widths={2}>
                         <Button.Close
-                            onClick={() => {
-                                api.closeApp();
+                            onClick={(setVisible) => {
+                                setVisible((prev) => !prev);
+                                setTimeout(() => {
+                                    api.closeApp();
+                                }, 500);
                             }}
                         />
                         <Button.Backup

@@ -7,7 +7,7 @@ import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
 // import { DashboardScreen } from './MPW-POS';
-import AdminScreen from './MPW-POS/AdminScreen';
+// import AdminScreen from './MPW-POS/AdminScreen';
 // import LoginScreen from './MPW-POS/LoginScreen';
 // import Login from './MPW-POS/LoginScreen';
 // import { Component } from './MPW-POS/Component';
@@ -15,6 +15,7 @@ import AdminScreen from './MPW-POS/AdminScreen';
 // import Dashboard from './MPW-POS/Dashboard';
 // import Dashboard from './MPW-POS/Dashboard/';
 import Login from './MPW-POS/Login/index';
+import Admin from './MPW-POS/Admin/index';
 import Dashboard from './MPW-POS/Dashboard/index';
 
 const App = () => (
@@ -32,7 +33,8 @@ const App = () => (
             <Route exact path='/' component={Login} />
             {/* <Route exact path='/dashboard' component={DashboardScreen} /> */}
             <Route exact path='/dashboard' component={Dashboard} />
-            <Route exact path='/admin' component={AdminScreen} />
+            <Route exact path='/admin' component={Admin} />
+            {/* <Route exact path='/admin' component={AdminScreen} /> */}
             <Route exact path='/add' component={() => <div>Add</div>} />
         </Switch>
     </Router>

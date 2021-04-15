@@ -292,6 +292,15 @@ export const api = {
 };
 
 export const mckeeApi = {
+    getUsers: () => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer.send(channels.GET_USERS);
+            ipcRenderer.on(channels.GET_USERS, (_, arg) => {
+                ipcRenderer.removeAllListeners(channels.GET_USERS);
+                !arg ? reject('Unable to get users') : resolve(arg);
+            });
+        });
+    },
     login: ({ password, username }) => {
         return new Promise((resolve, reject) => {
             ipcRenderer.send(channels.LOGIN, { username, password });

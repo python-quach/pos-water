@@ -2,26 +2,25 @@ import { Transition, Form } from 'semantic-ui-react';
 import { useState } from 'react';
 
 // BUTTONS
-export const LoginButton = ({ error, onClick }) => {
+export const LoginButton = ({ color, content, onClick }) => {
     const [visible, setVisible] = useState(true);
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
-                content={!error ? 'Login' : error}
                 type='submit'
-                color={!error ? 'blue' : 'red'}
+                content={content}
+                color={color}
                 size='huge'
                 icon='sign-in'
                 labelPosition='right'
                 circular
                 fluid
                 onClick={() => onClick(setVisible)}
-                // onClick={() => setVisible((prev) => !prev)}
             />
         </Transition>
     );
 };
-export const AdminButton = ({ login, onClick }) => {
+export const AdminButton = ({ onClick }) => {
     const [visible, setVisible] = useState(true);
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -35,17 +34,14 @@ export const AdminButton = ({ login, onClick }) => {
                 circular
                 fluid
                 onClick={() => onClick(setVisible)}
-                // onClick={() => {
-                //     setVisible((visible) => !visible);
-                //     login();
-                // }}
             />
         </Transition>
     );
 };
-export const CloseButton = ({ closeApp, onClick }) => {
+export const CloseButton = ({ onClick }) => {
+    const [visible, setVisible] = useState(true);
     return (
-        <Transition visible={true} animation='pulse' duration='500'>
+        <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
                 content='Close'
                 type='button'
@@ -55,8 +51,7 @@ export const CloseButton = ({ closeApp, onClick }) => {
                 labelPosition='right'
                 circular
                 fluid
-                onClick={onClick}
-                // onClick={closeApp}
+                onClick={() => onClick(setVisible)}
             />
         </Transition>
     );
@@ -75,7 +70,6 @@ export const BackupButton = ({ onClick }) => {
                 color='pink'
                 fluid
                 onClick={() => onClick(setVisible)}
-                // onClick={() => setVisible((prev) => !prev)}
             />
         </Transition>
     );

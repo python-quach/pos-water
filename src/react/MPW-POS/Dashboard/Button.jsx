@@ -82,11 +82,11 @@ export const LogoutButton = ({ onClick }) => {
     );
 };
 
-const DashboardButton = {
+const DashboardScreenButton = {
     Find: FindButton,
     Add: AddButton,
     Report: ReportButton,
     Logout: LogoutButton,
 };
 
-export default DashboardButton;
+export default DashboardScreenButton;

@@ -9,11 +9,12 @@ import 'semantic-ui-css/semantic.min.css';
 // import { DashboardScreen } from './MPW-POS';
 import AdminScreen from './MPW-POS/AdminScreen';
 // import LoginScreen from './MPW-POS/LoginScreen';
-import Login from './MPW-POS/LoginScreen';
+// import Login from './MPW-POS/LoginScreen';
 // import { Component } from './MPW-POS/Component';
 // const { Dashboard } = Component;
 // import Dashboard from './MPW-POS/Dashboard';
 // import Dashboard from './MPW-POS/Dashboard/';
+import Login from './MPW-POS/Login/index';
 import Dashboard from './MPW-POS/Dashboard/index';
 
 const App = () => (

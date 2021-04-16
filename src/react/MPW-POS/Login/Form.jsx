@@ -2,15 +2,16 @@ import { useEffect, useContext } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { Form, Divider } from 'semantic-ui-react';
 import { sleep } from '../Helpers';
-import { withRouter } from 'react-router-dom';
-import { StoreContext } from './store';
+// import { withRouter } from 'react-router-dom';
+// import { StoreContext } from './store';
+import { StoreContext } from '../store';
 import api from '../Api';
 
 // FORM
-export const LoginForm = ({ history, button, field }) => {
-    const { setError } = useContext(StoreContext);
+export const LoginForm = ({ button, field }) => {
+    const { setError, history } = useContext(StoreContext);
 
-    const handleLogin = async (values, form) => {
+    const handleLogin = async (values) => {
         try {
             await sleep(500);
             history.push({
@@ -18,14 +19,10 @@ export const LoginForm = ({ history, button, field }) => {
                 state: await api.login(values),
             });
         } catch (err) {
-            showLoginError(err);
+            setError(err);
+            document.getElementById('username').focus();
             throw err;
         }
-    };
-
-    const showLoginError = (err) => {
-        setError(err);
-        document.getElementById('username').focus();
     };
 
     useEffect(() => {
@@ -59,4 +56,5 @@ export const LoginForm = ({ history, button, field }) => {
     );
 };
 
-export default withRouter(LoginForm);
+// export default withRouter(LoginForm);
+export default LoginForm;

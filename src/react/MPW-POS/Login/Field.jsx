@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
-import { StoreContext } from './store';
+// import { StoreContext } from './store';
+import { StoreContext } from '../store';
 
 // FIELD
 export const UsernameField = () => {

@@ -33,6 +33,9 @@ export const AdminButton = ({ onClick }) => {
                 labelPosition='right'
                 circular
                 fluid
+                // onClick={() => {
+                //     setVisible((prev) => !prev);
+                // }}
                 onClick={() => onClick(setVisible)}
             />
         </Transition>

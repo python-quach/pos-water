@@ -15,7 +15,8 @@ export const LoginForm = ({ history }) => {
         setError(err);
         document.getElementById('username').focus();
     };
-    const handleLogin = async (values, form) => {
+
+    const handleLogin = async (values) => {
         try {
             await sleep(500);
             history.push({
@@ -23,24 +24,8 @@ export const LoginForm = ({ history }) => {
                 state: await api.login(values),
             });
         } catch (err) {
-            setTimeout(() => {
-                showLoginError(err);
-                form.reset();
-            }, 100);
-        }
-    };
-
-    const handleAdminLogin = async (values, form, initialValues) => {
-        console.log('handleAdminLogin', values);
-        try {
-            await sleep(500);
-            history.push({
-                pathname: '/admin',
-                state: await api.login(values),
-            });
-        } catch (err) {
             showLoginError(err);
-            form.reset(initialValues);
+            throw err;
         }
     };
 
@@ -55,8 +40,15 @@ export const LoginForm = ({ history }) => {
                 username: '',
                 password: '',
             }}
-            render={({ handleSubmit, form, initialValues, values }) => (
-                <Form onSubmit={handleSubmit}>
+            render={({ handleSubmit, form }) => (
+                <Form
+                    onSubmit={(event) => {
+                        handleSubmit(event)
+                            .then()
+                            .catch((err) => {
+                                form.reset({});
+                            });
+                    }}>
                     <Field.Username
                         onChange={(value, input) => {
                             setError(false);
@@ -79,7 +71,12 @@ export const LoginForm = ({ history }) => {
                     <Button.Admin
                         onClick={(setVisible) => {
                             setVisible((prev) => !prev);
-                            handleAdminLogin(values, form, initialValues);
+                            setTimeout(() => {
+                                history.push({
+                                    pathname: '/admin/confirm',
+                                    state: true,
+                                });
+                            }, 500);
                         }}
                     />
                     <Form.Group widths={2}>

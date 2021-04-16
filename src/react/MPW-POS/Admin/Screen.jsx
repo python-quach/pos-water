@@ -1,6 +1,12 @@
 import { TransitionablePortal, Segment, Grid } from 'semantic-ui-react';
+import { useEffect } from 'react';
 
-const AdminScreen = ({ open, segment, grid, children, size, close }) => (
+import Screen from './Screen';
+import Header from './Header';
+import { AdminLoginForm } from './Form';
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const AdminScreen = ({ open, segment, grid, children, size, close }) => (
     <TransitionablePortal open={open} {...close}>
         <Segment {...segment}>
             <Grid {...grid}>
@@ -33,6 +39,36 @@ AdminScreen.defaultProps = {
             height: '100vh',
         },
     },
+};
+
+export const AdminPasswordScreen = ({ history }) => {
+    const onSubmit = async (values) => {
+        if (values.password === '911') {
+            await sleep(500);
+            history.push({ pathname: '/admin', state: true });
+        } else {
+            throw new Error('Invalid Password');
+        }
+    };
+
+    useEffect(() => {
+        if (!history.location.state) history.push('/');
+    });
+
+    useEffect(() => {
+        const input = document.getElementById('password');
+        if (input) input.focus();
+    }, []);
+
+    return (
+        <Screen open={history.location.state ? true : false} size={600}>
+            <Header />
+            <AdminLoginForm
+                onSubmit={onSubmit}
+                cancel={() => history.push('/')}
+            />
+        </Screen>
+    );
 };
 
 export default AdminScreen;

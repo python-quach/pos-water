@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-
 import Screen from './Screen';
 import Header from './Header';
 import { Modal, Button, Form, Icon, Table } from 'semantic-ui-react';
 import { Form as FinalForm, Field } from 'react-final-form';
-import { add, mckeeApi } from '../../../api/api';
+import { mckeeApi } from '../../../api/api';
+import { TransitionPulseButton } from './Button';
 
 export const Admin = ({ history }) => {
     const [data, setData] = useState([]);
@@ -29,10 +29,10 @@ export const Admin = ({ history }) => {
         setOpenModal(false);
     };
 
-    const removeUserFromList = (values) => {
-        setData((prev) =>
-            prev.filter((user) => user.user_id !== values.user_id)
-        );
+    const removeUserFromList = async (user_id) => {
+        setAction('delete');
+        await mckeeApi.deleteUser(user_id);
+        setData((prev) => prev.filter((user) => user.user_id !== user_id));
         setAction('');
     };
 
@@ -48,6 +48,16 @@ export const Admin = ({ history }) => {
         }
 
         return { username, password };
+    };
+
+    const editUser = ({ user_id, username, password }) => {
+        setUser({
+            user_id,
+            username,
+            password,
+        });
+        setAction('edit');
+        setOpenModal(true);
     };
 
     useEffect(() => {
@@ -70,11 +80,13 @@ export const Admin = ({ history }) => {
             <Table celled compact definition basic inverted size='large'>
                 <Table.Header fullWidth>
                     <Table.Row style={{ fontSize: '22px' }}>
-                        <Table.HeaderCell>Username</Table.HeaderCell>
-                        <Table.HeaderCell>Password</Table.HeaderCell>
-                        <Table.HeaderCell width={5} textAlign='right'>
-                            Action
-                        </Table.HeaderCell>
+                        <Table.HeaderCell content='Username' />
+                        <Table.HeaderCell content='Password' />
+                        <Table.HeaderCell
+                            content='Action'
+                            width={5}
+                            textAlign='right'
+                        />
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -94,33 +106,28 @@ export const Admin = ({ history }) => {
                                         floated='right'
                                         negative
                                         size='huge'
-                                        onClick={async () => {
-                                            console.log('delete');
-                                            setAction('delete');
-                                            await mckeeApi.deleteUser(user_id);
-                                            setData((prev) =>
-                                                prev.filter(
-                                                    (user) =>
-                                                        user.user_id !== user_id
-                                                )
-                                            );
-                                            setAction('');
+                                        onClick={() => {
+                                            removeUserFromList(user_id);
                                         }}
                                     />
-                                    <Button
-                                        size='huge'
-                                        content='Edit'
-                                        floated='right'
-                                        primary
-                                        onClick={() => {
-                                            setUser({
-                                                user_id,
-                                                username,
-                                                password,
-                                            });
-                                            setAction('edit');
-                                            setOpenModal(true);
-                                        }}
+                                    <TransitionPulseButton
+                                        button={(handleClick) => (
+                                            <Form.Button
+                                                size='huge'
+                                                content='Edit'
+                                                floated='right'
+                                                primary
+                                                onClick={() =>
+                                                    handleClick(
+                                                        editUser({
+                                                            user_id,
+                                                            username,
+                                                            password,
+                                                        })
+                                                    )
+                                                }
+                                            />
+                                        )}
                                     />
                                 </Table.Cell>
                             </Table.Row>

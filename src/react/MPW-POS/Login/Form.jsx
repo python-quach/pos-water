@@ -1,22 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { Form as FinalForm } from 'react-final-form';
-import { Form } from 'semantic-ui-react';
-import Field from './Field';
-import Button from './Button';
+import { Form, Divider } from 'semantic-ui-react';
+import { sleep } from '../Helpers';
+import { withRouter } from 'react-router-dom';
+import { StoreContext } from './store';
 import api from '../Api';
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 // FORM
-export const LoginForm = ({ history }) => {
-    const [error, setError] = useState(false);
+export const LoginForm = ({ history, button, field }) => {
+    const { setError } = useContext(StoreContext);
 
-    const showLoginError = (err) => {
-        setError(err);
-        document.getElementById('username').focus();
-    };
-
-    const handleLogin = async (values) => {
+    const handleLogin = async (values, form) => {
         try {
             await sleep(500);
             history.push({
@@ -29,6 +23,11 @@ export const LoginForm = ({ history }) => {
         }
     };
 
+    const showLoginError = (err) => {
+        setError(err);
+        document.getElementById('username').focus();
+    };
+
     useEffect(() => {
         document.getElementById('username').focus();
     }, []);
@@ -36,10 +35,6 @@ export const LoginForm = ({ history }) => {
     return (
         <FinalForm
             onSubmit={handleLogin}
-            initialValues={{
-                username: '',
-                password: '',
-            }}
             render={({ handleSubmit, form }) => (
                 <Form
                     onSubmit={(event) => {
@@ -49,50 +44,14 @@ export const LoginForm = ({ history }) => {
                                 form.reset({});
                             });
                     }}>
-                    <Field.Username
-                        onChange={(value, input) => {
-                            setError(false);
-                            return input.onChange(value);
-                        }}
-                    />
-                    <Field.Password
-                        onChange={(value, input) => {
-                            setError(false);
-                            return input.onChange(value);
-                        }}
-                    />
-                    <Button.Login
-                        content={!error ? 'Login' : error}
-                        color={!error ? 'blue' : 'red'}
-                        onClick={(setVisible) => {
-                            setVisible((prev) => !prev);
-                        }}
-                    />
-                    <Button.Admin
-                        onClick={(setVisible) => {
-                            setVisible((prev) => !prev);
-                            setTimeout(() => {
-                                history.push({
-                                    pathname: '/admin/confirm',
-                                    state: true,
-                                });
-                            }, 500);
-                        }}
-                    />
+                    {field.username}
+                    {field.password}
+                    <Divider hidden />
+                    {button.login}
+                    {button.admin}
                     <Form.Group widths={2}>
-                        <Button.Close
-                            onClick={(setVisible) => {
-                                setVisible((prev) => !prev);
-                                setTimeout(() => {
-                                    api.closeApp();
-                                }, 500);
-                            }}
-                        />
-                        <Button.Backup
-                            onClick={(setVisible) => {
-                                setVisible((prev) => !prev);
-                            }}
-                        />
+                        {button.close}
+                        {button.backup}
                     </Form.Group>
                 </Form>
             )}
@@ -100,4 +59,4 @@ export const LoginForm = ({ history }) => {
     );
 };
 
-export default LoginForm;
+export default withRouter(LoginForm);

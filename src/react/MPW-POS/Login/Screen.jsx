@@ -1,15 +1,23 @@
 import { TransitionablePortal, Segment, Grid } from 'semantic-ui-react';
+import { useContext } from 'react';
+import { StoreContext } from './store';
 
 // Screen
-export const LoginScreen = ({ open, close, segment, grid, children }) => (
-    <TransitionablePortal open={open} {...close}>
-        <Segment {...segment}>
-            <Grid {...grid}>
-                <Grid.Column style={{ maxWidth: 450 }}>{children}</Grid.Column>
-            </Grid>
-        </Segment>
-    </TransitionablePortal>
-);
+export const LoginScreen = ({ close, segment, grid, children }) => {
+    const { history } = useContext(StoreContext);
+
+    return (
+        <TransitionablePortal open={history ? true : false} {...close}>
+            <Segment {...segment}>
+                <Grid {...grid}>
+                    <Grid.Column style={{ maxWidth: 450 }}>
+                        {children}
+                    </Grid.Column>
+                </Grid>
+            </Segment>
+        </TransitionablePortal>
+    );
+};
 
 LoginScreen.defaultProps = {
     close: {

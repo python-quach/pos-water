@@ -19,6 +19,7 @@ import Admin from './MPW-POS/Admin/index';
 import ModalAdminPassword, { AdminPasswordModal } from './MPW-POS/Login/Modal';
 import { AdminPasswordScreen } from './MPW-POS/Admin/Screen';
 import Dashboard from './MPW-POS/Dashboard/index';
+import StoreProvider from './MPW-POS/store';
 
 const App = () => (
     <Router>

@@ -1,27 +1,32 @@
 import { Transition, Form } from 'semantic-ui-react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { StoreContext } from './store';
 
 // BUTTONS
-export const LoginButton = ({ color, content, onClick }) => {
+export const LoginButton = () => {
     const [visible, setVisible] = useState(true);
+    const { error } = useContext(StoreContext);
+
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
                 type='submit'
-                content={content}
-                color={color}
+                content={!error ? 'Login' : error}
+                color={!error ? 'blue' : 'red'}
                 size='huge'
                 icon='sign-in'
                 labelPosition='right'
                 circular
                 fluid
-                onClick={() => onClick(setVisible)}
+                onClick={() => setVisible((prev) => !prev)}
             />
         </Transition>
     );
 };
-export const AdminButton = ({ onClick }) => {
+export const AdminButton = () => {
     const [visible, setVisible] = useState(true);
+    const { history } = useContext(StoreContext);
+
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
@@ -33,16 +38,23 @@ export const AdminButton = ({ onClick }) => {
                 labelPosition='right'
                 circular
                 fluid
-                // onClick={() => {
-                //     setVisible((prev) => !prev);
-                // }}
-                onClick={() => onClick(setVisible)}
+                onClick={() => {
+                    setVisible((prev) => !prev);
+                    setTimeout(() => {
+                        history.push({
+                            pathname: '/admin/confirm',
+                            state: true,
+                        });
+                    }, 500);
+                }}
             />
         </Transition>
     );
 };
-export const CloseButton = ({ onClick }) => {
+export const CloseButton = () => {
     const [visible, setVisible] = useState(true);
+    const { api } = useContext(StoreContext);
+
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
@@ -54,12 +66,15 @@ export const CloseButton = ({ onClick }) => {
                 labelPosition='right'
                 circular
                 fluid
-                onClick={() => onClick(setVisible)}
+                onClick={() => {
+                    setVisible((prev) => !prev);
+                    setTimeout(api.closeApp, 500);
+                }}
             />
         </Transition>
     );
 };
-export const BackupButton = ({ onClick }) => {
+export const BackupButton = () => {
     const [visible, setVisible] = useState(true);
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -72,7 +87,7 @@ export const BackupButton = ({ onClick }) => {
                 circular
                 color='pink'
                 fluid
-                onClick={() => onClick(setVisible)}
+                onClick={() => setVisible((prev) => !prev)}
             />
         </Transition>
     );

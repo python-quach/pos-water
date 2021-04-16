@@ -1,15 +1,11 @@
 import { useEffect, useContext } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { Form, Divider } from 'semantic-ui-react';
-import { sleep } from '../Helpers';
-// import { withRouter } from 'react-router-dom';
-// import { StoreContext } from './store';
 import { StoreContext } from '../store';
-import api from '../Api';
 
 // FORM
 export const LoginForm = ({ button, field }) => {
-    const { setError, history } = useContext(StoreContext);
+    const { setError, history, api, sleep } = useContext(StoreContext);
 
     const handleLogin = async (values) => {
         try {
@@ -56,5 +52,4 @@ export const LoginForm = ({ button, field }) => {
     );
 };
 
-// export default withRouter(LoginForm);
 export default LoginForm;

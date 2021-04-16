@@ -1,6 +1,5 @@
 import { Transition, Form } from 'semantic-ui-react';
 import { useState, useContext } from 'react';
-// import { StoreContext } from './store';
 import { StoreContext } from '../store';
 
 // BUTTONS
@@ -93,12 +92,10 @@ export const BackupButton = () => {
         </Transition>
     );
 };
-
-const LoginScreenButton = {
+export const LoginScreenButton = {
     Login: LoginButton,
     Admin: AdminButton,
     Close: CloseButton,
     Backup: BackupButton,
 };
-
 export default LoginScreenButton;

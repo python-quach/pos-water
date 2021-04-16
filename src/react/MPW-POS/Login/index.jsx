@@ -7,7 +7,7 @@ import Button from './Button';
 // LOGIN
 export const Login = () => (
     <Screen>
-        <Header />
+        <Header title='Mckee Pure Water' content='Login Screen' />
         <Form
             field={{
                 username: <Field.Username />,

@@ -76,6 +76,7 @@ export const CloseButton = () => {
 };
 export const BackupButton = () => {
     const [visible, setVisible] = useState(true);
+    const { api } = useContext(StoreContext);
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
@@ -87,7 +88,10 @@ export const BackupButton = () => {
                 circular
                 color='pink'
                 fluid
-                onClick={() => setVisible((prev) => !prev)}
+                onClick={() => {
+                    setVisible((prev) => !prev);
+                    setTimeout(api.backup, 500);
+                }}
             />
         </Transition>
     );

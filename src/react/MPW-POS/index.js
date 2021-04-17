@@ -1,3 +1,5 @@
 import Login from './Login';
+import Dashboard from './Dashboard';
+import Purchase from './Purchase';
 
-export { Login };
+export { Login, Dashboard, Purchase };

@@ -115,10 +115,11 @@ module.exports = (db) => {
      * @returns
      */
     async function findMembership(event, args) {
+        console.log('findMembership', args);
         const { phone, account, firstName, lastName } = args;
         const fullname = firstName + '%' + lastName;
 
-        console.log(fullname);
+        // console.log(fullname);
 
         const sendFindResult = (data) => {
             event.sender.send(channels.FIND, data);

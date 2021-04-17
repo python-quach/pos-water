@@ -1,21 +1,23 @@
-import { useEffect } from 'react';
-import Screen from './Screen';
-import Header from './Header';
-import Form from './Form';
+import { Screen, Header, Form, Field, Button } from './Components';
 
-// DASHBOARD
-export const Dashboard = ({ history }) => {
-    useEffect(() => {
-        if (!history.location.state) history.push('/');
-        console.log('Dashboard', { history });
-    }, [history]);
-
-    return (
-        <Screen open={history.location.state ? true : false}>
-            <Header />
-            <Form history={history} />
-        </Screen>
-    );
-};
+export const Dashboard = () => (
+    <Screen>
+        <Header />
+        <Form
+            field={{
+                phone: (form) => <Field.Phone form={form} />,
+                account: (form) => <Field.Account form={form} />,
+                firstName: (form) => <Field.FirstName form={form} />,
+                lastName: (form) => <Field.LastName form={form} />,
+            }}
+            button={{
+                find: (values) => <Button.Find values={values} />,
+                add: <Button.Add />,
+                report: <Button.Report />,
+                logout: <Button.Logout />,
+            }}
+        />
+    </Screen>
+);
 
 export default Dashboard;

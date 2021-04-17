@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { StoreContext } from '../../store';
 import { Transition, Form } from 'semantic-ui-react';
 
 // BUTTON
-export const FindButton = ({ error, disabled }) => {
+export const FindButton = ({ values }) => {
     const [visible, setVisible] = useState(true);
+    const { error } = useContext(StoreContext);
+    const { phone, account, firstName, lastName } = values;
+
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
+                id='FindMembership'
                 content='Find Membership'
                 type='submit'
                 color={!error ? 'blue' : 'red'}
@@ -15,14 +20,20 @@ export const FindButton = ({ error, disabled }) => {
                 labelPosition='right'
                 circular
                 fluid
-                disabled={disabled}
+                disabled={
+                    (!phone && !account && !firstName && !lastName) ||
+                    (phone && phone.length < 7)
+                        ? true
+                        : false
+                }
                 onClick={() => setVisible((prev) => !prev)}
             />
         </Transition>
     );
 };
-export const AddButton = ({ onClick }) => {
+export const AddButton = () => {
     const [visible, setVisible] = useState(true);
+    const { history } = useContext(StoreContext);
 
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -36,34 +47,47 @@ export const AddButton = ({ onClick }) => {
                 labelPosition='right'
                 circular
                 fluid
-                onClick={() => onClick(setVisible)}
+                onClick={() => {
+                    setVisible((prev) => !prev);
+                    setTimeout(() => {
+                        history.push({ pathname: '/add', state: {} });
+                    }, 500);
+                }}
             />
         </Transition>
     );
 };
 export const ReportButton = () => {
     const [visible, setVisible] = useState(true);
+    const { history } = useContext(StoreContext);
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
                 id='ReportButton'
+                content={`Daily Report: ${new Date().toLocaleDateString()}`}
                 type='button'
                 color='yellow'
                 size='huge'
                 icon='calendar'
                 labelPosition='right'
-                content={`Daily Report: ${new Date().toLocaleDateString()}`}
                 circular
                 fluid
                 onClick={() => {
                     setVisible((prev) => !prev);
+                    setTimeout(() => {
+                        history.push({
+                            pathname: '/report',
+                            state: {},
+                        });
+                    }, 500);
                 }}
             />
         </Transition>
     );
 };
-export const LogoutButton = ({ onClick }) => {
+export const LogoutButton = () => {
     const [visible, setVisible] = useState(true);
+    const { history } = useContext(StoreContext);
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
@@ -76,7 +100,12 @@ export const LogoutButton = ({ onClick }) => {
                 labelPosition='right'
                 circular
                 fluid
-                onClick={() => onClick(setVisible)}
+                onClick={() => {
+                    setVisible((prev) => !prev);
+                    setTimeout(() => {
+                        history.push({ pathname: '/', state: {} });
+                    }, 500);
+                }}
             />
         </Transition>
     );

@@ -3,7 +3,6 @@ import { Form as FinalForm } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
 import Field from './Field';
 import Button from './Button';
-import api from '../Api';
 
 // FORM
 export const FindForm = ({ history }) => {

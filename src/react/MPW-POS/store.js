@@ -1,6 +1,6 @@
 import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
-import api from '../MPW-POS/Api';
+import api from '../MPW-POS/api';
 
 export const StoreContext = createContext(null);
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

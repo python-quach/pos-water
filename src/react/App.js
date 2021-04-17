@@ -2,7 +2,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
-import Login from './MPW-POS/Login/index';
+import { Login } from './MPW-POS';
 import Admin from './MPW-POS/Admin/index';
 import { AdminPasswordScreen } from './MPW-POS/Admin/Screen';
 import Dashboard from './MPW-POS/Dashboard/index';

@@ -1,8 +1,4 @@
-import Screen from './Screen';
-import Header from './Header';
-import Form from './Form';
-import Field from './Field';
-import Button from './Button';
+import { Screen, Header, Form, Field, Button } from './Components';
 
 // LOGIN
 export const Login = () => (

@@ -1,6 +1,6 @@
 import { Transition, Form } from 'semantic-ui-react';
 import { useState, useContext } from 'react';
-import { StoreContext } from '../store';
+import { StoreContext } from '../../store';
 
 // BUTTONS
 export const LoginButton = () => {

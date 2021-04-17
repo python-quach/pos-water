@@ -17,6 +17,17 @@ export const login = ({ password, username }) => {
     });
 };
 
+export const backup = () => {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.SHOW_BACKUP_DIALOG);
+        ipcRenderer.on(channels.SHOW_BACKUP_DIALOG, (_, response) => {
+            ipcRenderer.removeAllListeners(channels.SHOW_BACKUP_DIALOG);
+            if (!response.open) reject(response.open);
+            else resolve(response);
+        });
+    });
+};
+
 export const closeApp = () => {
     console.log('closeApp');
     ipcRenderer.send(channels.CLOSE_APP);
@@ -24,6 +35,7 @@ export const closeApp = () => {
 
 const api = {
     login,
+    backup,
     closeApp,
 };
 

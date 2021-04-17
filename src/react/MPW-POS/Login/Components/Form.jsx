@@ -1,7 +1,7 @@
 import { useEffect, useContext } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { Form, Divider } from 'semantic-ui-react';
-import { StoreContext } from '../store';
+import { StoreContext } from '../../store';
 
 // FORM
 export const LoginForm = ({ button, field }) => {

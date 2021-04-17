@@ -1,6 +1,6 @@
 import { TransitionablePortal, Segment, Grid } from 'semantic-ui-react';
 import { useContext } from 'react';
-import { StoreContext } from '../store';
+import { StoreContext } from '../../store';
 
 // Screen
 export const LoginScreen = ({ close, segment, grid, children }) => {

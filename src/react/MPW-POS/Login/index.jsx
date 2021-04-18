@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
-import { Screen, Header, Form, Field, Button } from './Components';
+import Screen from './Components/Screen';
+import Header from './Components/Header';
+import Form from './Components/Form';
+import Button from './Components/Button';
+import Field from './Components/Field';
 
 // LOGIN CONTAINER
-
 export const Login = () => {
     useEffect(() => document.getElementById('username').focus(), []);
     return (

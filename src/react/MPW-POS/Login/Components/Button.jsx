@@ -53,7 +53,7 @@ export const AdminButton = () => {
 };
 export const CloseButton = () => {
     const [visible, setVisible] = useState(true);
-    const { api } = useContext(StoreContext);
+    const { close } = useContext(StoreContext);
 
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -68,7 +68,7 @@ export const CloseButton = () => {
                 fluid
                 onClick={() => {
                     setVisible((prev) => !prev);
-                    setTimeout(api.closeApp, 500);
+                    setTimeout(close, 500);
                 }}
             />
         </Transition>

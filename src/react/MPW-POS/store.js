@@ -54,6 +54,11 @@ const Store = ({ children, history }) => {
         }
     };
 
+    const close = async () => {
+        console.log('closeApp');
+        setInterval(ipcRenderer.send(channels.CLOSE_APP), 500);
+    };
+
     const store = {
         error,
         setError,
@@ -62,6 +67,7 @@ const Store = ({ children, history }) => {
         sleep,
         login,
         send,
+        close,
         channels,
         normalize: {
             phone: normalizePhone,

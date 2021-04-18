@@ -1,5 +1,6 @@
 import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
+import { channels } from '../../shared/constants';
 import api from '../MPW-POS/api';
 
 export const StoreContext = createContext(null);
@@ -27,6 +28,7 @@ const Store = ({ children, history }) => {
         history,
         api,
         sleep,
+        channels,
         normalize: {
             phone: normalizePhone,
             account: normalizeAccount,

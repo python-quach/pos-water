@@ -70,7 +70,10 @@ module.exports = (db) => {
     async function verifyCredential(event, { username, password }) {
         try {
             const auth = await db.verifyLogin({ username, password });
-            event.sender.send(channels.LOGIN, { login: auth });
+            // event.sender.send(channels.LOGIN, { login: auth });
+            auth
+                ? event.sender.send(channels.LOGIN, { data: auth })
+                : event.sender.send(channels.LOGIN, { error: 'Invalid Login' });
         } catch (err) {
             return console.log(err.message);
         }

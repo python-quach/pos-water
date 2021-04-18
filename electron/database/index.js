@@ -14,11 +14,11 @@ module.exports = (db, dbFile) => {
      *
      */
     const verifyLogin = ({ username, password }) =>
-        new Promise((resolve, reject) =>
-            db.get(sql.login, [username, password], (err, user) =>
-                err ? reject(err) : resolve(user)
-            )
-        );
+        new Promise((resolve, reject) => {
+            db.get(sql.login, [username, password], (err, user) => {
+                err ? reject(err) : resolve(user);
+            });
+        });
 
     const getBuyLastRecord = (lastId) =>
         new Promise((resolve, reject) => {

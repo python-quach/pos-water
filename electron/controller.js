@@ -152,11 +152,17 @@ module.exports = (db) => {
      */
     async function backupDatabase(event) {
         const sendFailSave = () =>
-            event.sender.send(channels.SHOW_BACKUP_DIALOG, { open: false });
+            // event.sender.send(channels.SHOW_BACKUP_DIALOG, { open: false });
+            event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+                error: 'Backup',
+            });
 
         const sendSaveSuccess = () =>
+            // event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+            // open: `${new Date().toLocaleDateString()}`,
+            // });
             event.sender.send(channels.SHOW_BACKUP_DIALOG, {
-                open: `${new Date().toLocaleDateString()}`,
+                data: `${new Date().toLocaleDateString()}`,
             });
 
         try {
@@ -171,9 +177,12 @@ module.exports = (db) => {
                 fs.copyFile(db.dbFile, saveFile, (err) =>
                     err ? sendFailSave() : sendSaveSuccess()
                 );
+            // event.sender.send(channels.SHOW_BACKUP_DIALOG, {
+            //     open: 'Backup',
+            // });
             else
                 event.sender.send(channels.SHOW_BACKUP_DIALOG, {
-                    open: 'Backup',
+                    error: 'Backup',
                 });
         } catch (err) {
             return console.log(err.message);

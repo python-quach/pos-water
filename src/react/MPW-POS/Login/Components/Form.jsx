@@ -6,7 +6,7 @@ import { StoreContext } from '../../store';
 // FORM
 export const LoginForm = ({ button, field }) => (
     <FinalForm
-        onSubmit={useContext(StoreContext).login}
+        onSubmit={useContext(StoreContext).api.login}
         render={({ handleSubmit, form }) => (
             <Form
                 onSubmit={(event) => {
@@ -14,6 +14,7 @@ export const LoginForm = ({ button, field }) => (
                         .then()
                         .catch((err) => {
                             console.log(err);
+                            document.getElementById('username').focus();
                             form.reset({});
                         });
                 }}>

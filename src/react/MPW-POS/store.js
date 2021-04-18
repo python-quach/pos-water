@@ -1,24 +1,9 @@
 import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import { channels } from '../../shared/constants';
-import api from '../MPW-POS/api';
 const { ipcRenderer } = window;
 
 export const StoreContext = createContext(null);
-export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-export const normalizePhone = (value) => {
-    if (!value) return value;
-    const onlyNums = value.replace(/[^\d]/g, '');
-    if (onlyNums.length <= 3) return onlyNums;
-    if (onlyNums.length <= 6) return onlyNums;
-    return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
-};
-export const normalizeAccount = (value) => {
-    if (!value) return value;
-    const onlyNums = value.replace(/[^\d]/g, '');
-    if (onlyNums.length <= 9) return onlyNums;
-    return onlyNums.slice(0, 9);
-};
 
 /**
  * API to make request to Electron Backend SQLite Database
@@ -39,40 +24,84 @@ export const send = (message, values) =>
 const Store = ({ children, history }) => {
     const [error, setError] = useState(false);
 
-    const login = async (values) => {
-        try {
-            await sleep(500);
-            history.push({
-                pathname: '/dashboard',
-                state: await send(channels.LOGIN, values),
-            });
-            return values;
-        } catch (err) {
-            setError(err);
-            document.getElementById('username').focus();
-            throw err;
-        }
+    // Backup States
+    const [loading, setLoading] = useState(false);
+    const [fileSave, setFileSave] = useState('Backup');
+
+    // Helpers
+    const helpers = {
+        sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+        normalize: {
+            phone: (value) => {
+                if (!value) return value;
+                const onlyNums = value.replace(/[^\d]/g, '');
+                if (onlyNums.length <= 3) return onlyNums;
+                if (onlyNums.length <= 6) return onlyNums;
+                return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
+            },
+            account: (value) => {
+                if (!value) return value;
+                const onlyNums = value.replace(/[^\d]/g, '');
+                if (onlyNums.length <= 9) return onlyNums;
+                return onlyNums.slice(0, 9);
+            },
+        },
     };
 
-    const close = async () => {
-        console.log('closeApp');
-        setInterval(ipcRenderer.send(channels.CLOSE_APP), 500);
+    // API
+    const api = {
+        login: async (values) => {
+            try {
+                await helpers.sleep(500);
+                history.push({
+                    pathname: '/dashboard',
+                    state: await send(channels.LOGIN, values),
+                });
+                return values;
+            } catch (err) {
+                setError(err);
+                throw err;
+            }
+        },
+        close: async () => {
+            setInterval(send(channels.CLOSE_APP), 500);
+        },
+        backup: async () => {
+            setLoading(true);
+            try {
+                setFileSave(await send(channels.SHOW_BACKUP_DIALOG));
+                setLoading(false);
+            } catch (err) {
+                setLoading(false);
+                setFileSave(err);
+            }
+        },
+    };
+
+    const openAdminScreen = () => {
+        setTimeout(() => {
+            history.push({
+                pathname: '/admin/confirm',
+                state: true,
+            });
+        }, 500);
+    };
+
+    const open = {
+        admin: openAdminScreen,
     };
 
     const store = {
+        open,
+        api,
         error,
         setError,
         history,
-        api,
-        sleep,
-        login,
+        helpers,
         send,
-        close,
+        loading,
+        fileSave,
         channels,
-        normalize: {
-            phone: normalizePhone,
-            account: normalizeAccount,
-        },
     };
 
     return (

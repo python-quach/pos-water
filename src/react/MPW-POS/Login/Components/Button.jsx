@@ -25,7 +25,7 @@ export const LoginButton = () => {
 };
 export const AdminButton = () => {
     const [visible, setVisible] = useState(true);
-    const { history } = useContext(StoreContext);
+    const { open } = useContext(StoreContext);
 
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -40,12 +40,7 @@ export const AdminButton = () => {
                 fluid
                 onClick={() => {
                     setVisible((prev) => !prev);
-                    setTimeout(() => {
-                        history.push({
-                            pathname: '/admin/confirm',
-                            state: true,
-                        });
-                    }, 500);
+                    open.admin();
                 }}
             />
         </Transition>
@@ -76,21 +71,22 @@ export const CloseButton = () => {
 };
 export const BackupButton = () => {
     const [visible, setVisible] = useState(true);
-    const { api } = useContext(StoreContext);
+    const { backup, loading, fileSave } = useContext(StoreContext);
+
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
             <Form.Button
-                content='Backup'
+                content={fileSave}
+                loading={loading}
                 type='button'
                 size='huge'
-                icon='file'
-                labelPosition='right'
+                icon='save'
                 circular
                 color='pink'
                 fluid
                 onClick={() => {
                     setVisible((prev) => !prev);
-                    setTimeout(api.backup, 500);
+                    setTimeout(backup, 500);
                 }}
             />
         </Transition>

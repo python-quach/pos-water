@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { Field } from 'react-final-form';
 import { Form } from 'semantic-ui-react';
+import { useContext } from 'react';
 import { StoreContext } from '../../store';
 
 // FIELD
@@ -18,7 +18,6 @@ export const UsernameField = () => {
                     placeholder='username'
                     className='blueIcon'
                     size='massive'
-                    focus
                     icon='user circle'
                     iconPosition='left'
                     autoComplete='off'
@@ -26,6 +25,7 @@ export const UsernameField = () => {
                     inverted
                     transparent
                     fluid
+                    focus
                     onChange={(_, { value }) => {
                         setError(false);
                         return input.onChange(value);

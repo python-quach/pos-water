@@ -67,9 +67,9 @@ module.exports = (db) => {
      * @param {string } password
      * @returns { function} Console log an error message
      */
-    async function verifyCredential(event, { username, password }) {
+    async function verifyCredential(event, args) {
         try {
-            const auth = await db.verifyLogin({ username, password });
+            const auth = await db.verifyLogin(args);
             // event.sender.send(channels.LOGIN, { login: auth });
             auth
                 ? event.sender.send(channels.LOGIN, { data: auth })

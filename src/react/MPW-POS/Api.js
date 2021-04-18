@@ -10,6 +10,15 @@ export const login = (values) =>
         });
     });
 
+export const sendRequest = (message, values) =>
+    new Promise((resolve, reject) => {
+        ipcRenderer.send(message, values);
+        ipcRenderer.on(message, (_, { error, data }) => {
+            ipcRenderer.removeAllListeners(message);
+            error ? reject(error) : resolve(data);
+        });
+    });
+
 export const backup = () =>
     new Promise((resolve, reject) => {
         ipcRenderer.send(channels.SHOW_BACKUP_DIALOG);
@@ -152,6 +161,7 @@ const api = {
     totalFee,
     totalBuy,
     totalRenew,
+    sendRequest,
 };
 
 export default api;

@@ -2,6 +2,7 @@ import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import { channels } from '../../shared/constants';
 import api from '../MPW-POS/api';
+const { ipcRenderer } = window;
 
 export const StoreContext = createContext(null);
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,8 +20,39 @@ export const normalizeAccount = (value) => {
     return onlyNums.slice(0, 9);
 };
 
+/**
+ * API to make request to Electron Backend SQLite Database
+ * @param {*} message
+ * @param {*} values
+ * @returns
+ */
+export const send = (message, values) =>
+    new Promise((resolve, reject) => {
+        console.log('send', { message, values });
+        ipcRenderer.send(message, values);
+        ipcRenderer.on(message, (_, { error, data }) => {
+            ipcRenderer.removeAllListeners(message);
+            error ? reject(error) : resolve(data);
+        });
+    });
+
 const Store = ({ children, history }) => {
     const [error, setError] = useState(false);
+
+    const login = async (values) => {
+        try {
+            await sleep(500);
+            history.push({
+                pathname: '/dashboard',
+                state: await send(channels.LOGIN, values),
+            });
+            return values;
+        } catch (err) {
+            setError(err);
+            document.getElementById('username').focus();
+            throw err;
+        }
+    };
 
     const store = {
         error,
@@ -28,6 +60,8 @@ const Store = ({ children, history }) => {
         history,
         api,
         sleep,
+        login,
+        send,
         channels,
         normalize: {
             phone: normalizePhone,

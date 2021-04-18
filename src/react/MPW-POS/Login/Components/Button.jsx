@@ -48,7 +48,7 @@ export const AdminButton = () => {
 };
 export const CloseButton = () => {
     const [visible, setVisible] = useState(true);
-    const { close } = useContext(StoreContext);
+    const { api } = useContext(StoreContext);
 
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -63,7 +63,7 @@ export const CloseButton = () => {
                 fluid
                 onClick={() => {
                     setVisible((prev) => !prev);
-                    setTimeout(close, 500);
+                    setTimeout(api.close, 500);
                 }}
             />
         </Transition>
@@ -71,7 +71,7 @@ export const CloseButton = () => {
 };
 export const BackupButton = () => {
     const [visible, setVisible] = useState(true);
-    const { backup, loading, fileSave } = useContext(StoreContext);
+    const { api, loading, fileSave } = useContext(StoreContext);
 
     return (
         <Transition visible={visible} animation='pulse' duration='500'>
@@ -84,18 +84,17 @@ export const BackupButton = () => {
                 circular
                 color='pink'
                 fluid
-                onClick={() => {
-                    setVisible((prev) => !prev);
-                    setTimeout(backup, 500);
-                }}
+                onClick={() => api.backup(setVisible)}
             />
         </Transition>
     );
 };
+
 export const LoginScreenButton = {
     Login: LoginButton,
     Admin: AdminButton,
     Close: CloseButton,
     Backup: BackupButton,
 };
+
 export default LoginScreenButton;

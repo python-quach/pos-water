@@ -64,11 +64,14 @@ const Store = ({ children, history }) => {
             }
         },
         close: async () => {
-            setInterval(send(channels.CLOSE_APP), 500);
+            await helpers.sleep(500);
+            send(channels.CLOSE_APP);
         },
-        backup: async () => {
-            setLoading(true);
+        backup: async (setVisible) => {
+            setVisible((visible) => !visible);
+            await helpers.sleep(500);
             try {
+                setLoading(true);
                 setFileSave(await send(channels.SHOW_BACKUP_DIALOG));
                 setLoading(false);
             } catch (err) {
@@ -78,17 +81,13 @@ const Store = ({ children, history }) => {
         },
     };
 
-    const openAdminScreen = () => {
-        setTimeout(() => {
+    const open = {
+        admin: async () => {
+            await helpers.sleep(500);
             history.push({
                 pathname: '/admin/confirm',
-                state: true,
             });
-        }, 500);
-    };
-
-    const open = {
-        admin: openAdminScreen,
+        },
     };
 
     const store = {
@@ -98,7 +97,6 @@ const Store = ({ children, history }) => {
         setError,
         history,
         helpers,
-        send,
         loading,
         fileSave,
         channels,

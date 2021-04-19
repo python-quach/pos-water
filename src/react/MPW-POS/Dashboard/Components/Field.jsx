@@ -5,11 +5,11 @@ import { Form } from 'semantic-ui-react';
 
 // FIELD
 export const PhoneField = ({ form }) => {
-    const { setError, normalize } = useContext(StoreContext);
+    const { setError, normalize, helpers } = useContext(StoreContext);
     return (
         <Field
             name='phone'
-            parse={normalize.phone}
+            parse={helpers.normalize.phone}
             render={({ input }) => (
                 <Form.Input
                     className='blueIcon'
@@ -39,11 +39,11 @@ export const PhoneField = ({ form }) => {
     );
 };
 export const AccountField = ({ form }) => {
-    const { setError, normalize } = useContext(StoreContext);
+    const { setError, normalize, helpers } = useContext(StoreContext);
     return (
         <Field
             name='account'
-            parse={normalize.account}
+            parse={helpers.normalize.account}
             render={({ input }) => (
                 <Form.Input
                     className='blueIcon'

@@ -5,8 +5,9 @@ import { StoreContext } from '../../store';
 // TRANSITION
 export const PulseTransition = ({ button }) => {
     const [visible, setVisible] = useState(true);
+    const { effect } = useContext(StoreContext);
     return (
-        <Transition visible={visible} animation='pulse' duration='500'>
+        <Transition visible={visible} {...effect.pulse}>
             {button(setVisible)}
         </Transition>
     );
@@ -14,22 +15,11 @@ export const PulseTransition = ({ button }) => {
 
 // BUTTONS
 export const LoginButton = () => {
-    const { error } = useContext(StoreContext);
-
+    const { button } = useContext(StoreContext);
     return (
         <PulseTransition
             button={(setVisible) => (
-                <Form.Button
-                    type='submit'
-                    content={!error ? 'Login' : error}
-                    color={!error ? 'blue' : 'red'}
-                    size='huge'
-                    icon='sign-in'
-                    labelPosition='right'
-                    circular
-                    fluid
-                    onClick={() => setVisible((visible) => !visible)}
-                />
+                <Form.Button {...button.login(setVisible)} />
             )}
         />
     );
@@ -81,6 +71,7 @@ export const CloseButton = () => {
         />
     );
 };
+
 export const BackupButton = () => {
     const { api, loading, fileSave } = useContext(StoreContext);
 

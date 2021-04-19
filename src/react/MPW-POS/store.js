@@ -28,6 +28,37 @@ const Store = ({ children, history }) => {
     const [loading, setLoading] = useState(false);
     const [fileSave, setFileSave] = useState('Backup');
 
+    const TransitionEffect = {
+        pulse: {
+            animation: 'pulse',
+            duration: 500,
+        },
+    };
+
+    const LoginComponent = {
+        transition: {
+            animation: 'pulse',
+            duration: 500,
+        },
+        button: {
+            login: (setVisible) => {
+                return {
+                    type: 'submit',
+                    content: !error ? 'Login' : error,
+                    color: !error ? 'blue' : 'red',
+                    size: 'huge',
+                    icon: 'sign-in',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    onClick: () => setVisible((visible) => !visible),
+                };
+            },
+            admin: (setVisible) => {},
+            close: (setVisible) => {},
+            backup: (setVisible) => {},
+        },
+    };
     // Helpers
     const helpers = {
         field: {
@@ -57,11 +88,15 @@ const Store = ({ children, history }) => {
     // API
     const api = {
         login: async (values) => {
+            console.log({ values });
             try {
                 await helpers.sleep(500);
+                const result = await send(channels.LOGIN, values);
+                console.log(result);
                 history.push({
                     pathname: '/dashboard',
-                    state: await send(channels.LOGIN, values),
+                    // state: await send(channels.LOGIN, values),
+                    state: result,
                 });
                 return values;
             } catch (err) {
@@ -108,6 +143,13 @@ const Store = ({ children, history }) => {
         open,
         api,
         error,
+        button: {
+            login: LoginComponent.button.login,
+        },
+        effect: {
+            pulse: LoginComponent.transition,
+        },
+        TransitionEffect,
         resetError,
         setError,
         history,

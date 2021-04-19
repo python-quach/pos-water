@@ -3,7 +3,7 @@ import Screen from './Components/Screen';
 import Header from './Components/Header';
 import Form from './Components/Form';
 import Field from './Components/Field';
-import { Button } from './Components/Button';
+import Button from './Components/Button';
 
 // LOGIN CONTAINER
 export const Login = () => {

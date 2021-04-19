@@ -3,7 +3,7 @@ import { StoreContext } from '../../store';
 import { Transition, Form } from 'semantic-ui-react';
 
 // TRANSITION BUTTON
-export const PulseTransition = ({ name }) => {
+export const PulseTransitionButton = ({ name }) => {
     const [visible, setVisible] = useState(true);
     const { effect, button } = useContext(StoreContext);
 
@@ -14,12 +14,11 @@ export const PulseTransition = ({ name }) => {
     );
 };
 
-export const Button = {
-    Pulse: PulseTransition,
-    Login: () => <PulseTransition name='login' />,
-    Admin: () => <PulseTransition name='admin' />,
-    Close: () => <PulseTransition name='close' />,
-    Backup: () => <PulseTransition name='backup' />,
+export const LoginScreenButton = {
+    Login: () => <PulseTransitionButton name='login' />,
+    Admin: () => <PulseTransitionButton name='admin' />,
+    Close: () => <PulseTransitionButton name='close' />,
+    Backup: () => <PulseTransitionButton name='backup' />,
 };
 
-export default Button;
+export default LoginScreenButton;

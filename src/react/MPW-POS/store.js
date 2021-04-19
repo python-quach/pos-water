@@ -78,6 +78,112 @@ const Store = ({ children, history }) => {
                 },
             };
         },
+        phone: (input, form) => {
+            return {
+                className: 'blueIcon',
+                id: 'phone',
+                placeholder: 'xxx-xxxx',
+                focus: true,
+                type: 'text',
+                size: 'massive',
+                icon: 'whatsapp',
+                fluid: true,
+                iconPosition: 'left',
+                transparent: true,
+                value: input.value,
+                name: input.name,
+                onFocus: () => {
+                    form.change('account', '');
+                    form.change('firstName', '');
+                    form.change('lastName', '');
+                },
+                onChange: (e, { value }) => {
+                    setError(false);
+                    return input.onChange(value);
+                },
+            };
+        },
+        account: (input, form) => {
+            return {
+                className: 'blueIcon',
+                id: 'account',
+                type: 'text',
+                placeholder: 'account #',
+                size: 'massive',
+                focus: true,
+                fluid: true,
+                icon: 'credit card',
+                iconPosition: 'left',
+                transparent: true,
+                spellCheck: 'false',
+                inverted: true,
+                value: input.value,
+                name: input.name,
+                onFocus: () => {
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('firstName', '');
+                        form.change('lastName', '');
+                    });
+                },
+                onChange: (e, { value }) => {
+                    setError(false);
+                    return input.onChange(value);
+                },
+            };
+        },
+        firstName: (input, form) => {
+            return {
+                placeholder: 'first name',
+                className: 'blueIcon',
+                icon: 'user circle',
+                iconPosition: 'left',
+                size: 'massive',
+                spellCheck: 'false',
+                fluid: true,
+                focus: true,
+                transparent: true,
+                inverted: true,
+                value: input.value,
+                name: input.name,
+                onFocus: () => {
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('account', '');
+                    });
+                },
+                onChange: (e, { value }) => {
+                    setError(false);
+                    return input.onChange(value);
+                },
+            };
+        },
+        lastName: (input, form) => {
+            return {
+                placeholder: 'last name',
+                className: 'blueIcon',
+                icon: 'user circle',
+                iconPosition: 'left',
+                size: 'massive',
+                spellCheck: 'false',
+                fluid: true,
+                focus: true,
+                transparent: true,
+                inverted: true,
+                value: input.value,
+                name: input.name,
+                onFocus: () => {
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('account', '');
+                    });
+                },
+                onChange: (e, { value }) => {
+                    setError(false);
+                    return input.onChange(value);
+                },
+            };
+        },
     };
 
     const ButtonStore = {
@@ -303,6 +409,10 @@ const Store = ({ children, history }) => {
         field: {
             username: Field.username,
             password: Field.password,
+            phone: Field.phone,
+            account: Field.account,
+            firstName: Field.lastName,
+            lastName: Field.firstName,
         },
     };
 

@@ -5,10 +5,10 @@ export const Dashboard = () => (
         <Header />
         <Form
             field={{
-                phone: (form) => <Field.Phone form={form} />,
-                account: (form) => <Field.Account form={form} />,
-                firstName: (form) => <Field.FirstName form={form} />,
-                lastName: (form) => <Field.LastName form={form} />,
+                phone: (form) => <Field name='phone' form={form} />,
+                account: (form) => <Field name='account' form={form} />,
+                firstName: (form) => <Field name='firstName' form={form} />,
+                lastName: (form) => <Field name='lastName' form={form} />,
             }}
             button={{
                 find: (values) => <Button.Find values={values} />,

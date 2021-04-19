@@ -35,6 +35,109 @@ const Store = ({ children, history }) => {
         },
     };
 
+    const Field = {
+        username: (input) => {
+            return {
+                ...input,
+                id: 'username',
+                type: 'text',
+                placeholder: 'username',
+                className: 'blueIcon',
+                size: 'massive',
+                icon: 'user circle',
+                iconPosition: 'left',
+                autoComplete: 'off',
+                spellCheck: 'false',
+                inverted: true,
+                transparent: true,
+                fluid: true,
+                focus: true,
+                onChange: (_, { value }) => {
+                    helpers.field.resetError(input, value);
+                },
+            };
+        },
+        password: (input) => {
+            return {
+                ...input,
+                id: 'password',
+                type: 'password',
+                placeholder: 'password',
+                className: 'blueIcon',
+                size: 'massive',
+                icon: 'lock',
+                iconPosition: 'left',
+                autoComplete: 'off',
+                spellCheck: 'false',
+                inverted: true,
+                transparent: true,
+                fluid: true,
+                focus: true,
+                onChange: (_, { value }) => {
+                    helpers.field.resetError(input, value);
+                },
+            };
+        },
+    };
+
+    const ButtonStore = {
+        login: (setVisible) => {
+            return {
+                type: 'submit',
+                content: !error ? 'Login' : error,
+                color: !error ? 'blue' : 'red',
+                size: 'huge',
+                icon: 'sign-in',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
+                onClick: () => setVisible((visible) => !visible),
+            };
+        },
+        admin: (setVisible) => {
+            return {
+                content: 'Admin',
+                type: 'button',
+                color: 'yellow',
+                size: 'huge',
+                icon: 'database',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
+                onClick: () => {
+                    setVisible((prev) => !prev);
+                    open.admin();
+                },
+            };
+        },
+        close: (setVisible) => {
+            return {
+                content: 'Close',
+                type: 'button',
+                color: 'black',
+                size: 'huge',
+                icon: 'close',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
+                onClick: () => api.close(setVisible),
+            };
+        },
+        backup: (setVisible) => {
+            return {
+                content: fileSave,
+                loading: loading,
+                type: 'button',
+                size: 'huge',
+                icon: 'save',
+                circular: true,
+                color: 'pink',
+                fluid: true,
+                onClick: () => api.backup(setVisible),
+            };
+        },
+    };
+
     const LoginComponent = {
         transition: {
             animation: 'pulse',
@@ -195,6 +298,12 @@ const Store = ({ children, history }) => {
         loading,
         fileSave,
         channels,
+        ButtonStore,
+        Field,
+        field: {
+            username: Field.username,
+            password: Field.password,
+        },
     };
 
     return (

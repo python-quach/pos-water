@@ -1,15 +1,12 @@
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import Screen from './Components/Screen';
 import Header from './Components/Header';
 import Form from './Components/Form';
-import { Button } from './Components/Button';
 import Field from './Components/Field';
-import { StoreContext } from '../store';
+import { Button } from './Components/Button';
 
 // LOGIN CONTAINER
 export const Login = () => {
-    const { button } = useContext(StoreContext);
-
     useEffect(() => document.getElementById('username').focus(), []);
 
     return (
@@ -21,10 +18,10 @@ export const Login = () => {
                     password: <Field.Password />,
                 }}
                 button={{
-                    login: <Button.Pulse render={button.login} />,
-                    admin: <Button.Pulse render={button.admin} />,
-                    close: <Button.Pulse render={button.close} />,
-                    backup: <Button.Pulse render={button.backup} />,
+                    login: <Button.Login />,
+                    admin: <Button.Admin />,
+                    close: <Button.Close />,
+                    backup: <Button.Backup />,
                 }}
             />
         </Screen>

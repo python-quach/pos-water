@@ -15,12 +15,12 @@ export const PulseTransition = ({ button }) => {
 
 // BUTTONS
 export const LoginButton = () => {
-    const { button } = useContext(StoreContext);
+    const {
+        button: { login },
+    } = useContext(StoreContext);
     return (
         <PulseTransition
-            button={(setVisible) => (
-                <Form.Button {...button.login(setVisible)} />
-            )}
+            button={(event) => <Form.Button {...login(event)} />}
         />
     );
 };

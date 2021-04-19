@@ -5,8 +5,7 @@ import { StoreContext } from '../../store';
 
 // FIELD
 export const UsernameField = () => {
-    const { setError } = useContext(StoreContext);
-
+    const { helpers } = useContext(StoreContext);
     return (
         <Field
             name='username'
@@ -26,18 +25,17 @@ export const UsernameField = () => {
                     transparent
                     fluid
                     focus
-                    onChange={(_, { value }) => {
-                        setError(false);
-                        return input.onChange(value);
-                    }}
+                    onChange={(_, { value }) =>
+                        helpers.field.resetError(input, value)
+                    }
                 />
             )}
         />
     );
 };
-export const PasswordField = () => {
-    const { setError } = useContext(StoreContext);
 
+export const PasswordField = () => {
+    const { helpers } = useContext(StoreContext);
     return (
         <Field
             name='password'
@@ -53,14 +51,13 @@ export const PasswordField = () => {
                     iconPosition='left'
                     autoComplete='off'
                     spellCheck='false'
-                    focus
                     inverted
                     transparent
                     fluid
-                    onChange={(_, { value }) => {
-                        setError(false);
-                        return input.onChange(value);
-                    }}
+                    focus
+                    onChange={(_, { value }) =>
+                        helpers.field.resetError(input, value)
+                    }
                 />
             )}
         />

@@ -30,6 +30,12 @@ const Store = ({ children, history }) => {
 
     // Helpers
     const helpers = {
+        field: {
+            resetError: (input, value) => {
+                setError(false);
+                return input.onChange(value);
+            },
+        },
         sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
         normalize: {
             phone: (value) => {
@@ -63,7 +69,8 @@ const Store = ({ children, history }) => {
                 throw err;
             }
         },
-        close: async () => {
+        close: async (setVisible) => {
+            setVisible((visible) => !visible);
             await helpers.sleep(500);
             send(channels.CLOSE_APP);
         },
@@ -86,14 +93,22 @@ const Store = ({ children, history }) => {
             await helpers.sleep(500);
             history.push({
                 pathname: '/admin/confirm',
+                state: { open: true },
             });
         },
+    };
+
+    // FIELD HELPERS
+    const resetError = (input, value) => {
+        setError(false);
+        return input.onChange(value);
     };
 
     const store = {
         open,
         api,
         error,
+        resetError,
         setError,
         history,
         helpers,

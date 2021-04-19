@@ -15,7 +15,7 @@ export const LoginForm = ({ button, field }) => {
                         handleSubmit(event)
                             .then()
                             .catch((err) => {
-                                console.log(err);
+                                console.log({ err });
                                 document.getElementById('username').focus();
                                 form.reset({});
                             });

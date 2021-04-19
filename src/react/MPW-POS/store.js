@@ -54,9 +54,48 @@ const Store = ({ children, history }) => {
                     onClick: () => setVisible((visible) => !visible),
                 };
             },
-            admin: (setVisible) => {},
-            close: (setVisible) => {},
-            backup: (setVisible) => {},
+            admin: (setVisible) => {
+                return {
+                    content: 'Admin',
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'database',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    onClick: () => {
+                        setVisible((prev) => !prev);
+                        open.admin();
+                    },
+                };
+            },
+            close: (setVisible) => {
+                return {
+                    content: 'Close',
+                    type: 'button',
+                    color: 'black',
+                    size: 'huge',
+                    icon: 'close',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    onClick: () => api.close(setVisible),
+                };
+            },
+            backup: (setVisible) => {
+                return {
+                    content: fileSave,
+                    loading: loading,
+                    type: 'button',
+                    size: 'huge',
+                    icon: 'save',
+                    circular: true,
+                    color: 'pink',
+                    fluid: true,
+                    onClick: () => api.backup(setVisible),
+                };
+            },
         },
     };
     // Helpers
@@ -88,17 +127,13 @@ const Store = ({ children, history }) => {
     // API
     const api = {
         login: async (values) => {
-            console.log({ values });
             try {
-                await helpers.sleep(500);
                 const result = await send(channels.LOGIN, values);
                 console.log(result);
                 history.push({
                     pathname: '/dashboard',
-                    // state: await send(channels.LOGIN, values),
                     state: result,
                 });
-                return values;
             } catch (err) {
                 setError(err);
                 throw err;
@@ -145,6 +180,9 @@ const Store = ({ children, history }) => {
         error,
         button: {
             login: LoginComponent.button.login,
+            admin: LoginComponent.button.admin,
+            close: LoginComponent.button.close,
+            backup: LoginComponent.button.backup,
         },
         effect: {
             pulse: LoginComponent.transition,

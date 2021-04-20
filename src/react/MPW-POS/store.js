@@ -1,17 +1,11 @@
 import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import { channels } from '../../shared/constants';
-import DashboardScreen from './Dashboard/Components/Screen';
+
 const { ipcRenderer } = window;
 
 export const StoreContext = createContext(null);
 
-/**
- * API to make request to Electron Backend SQLite Database
- * @param {*} message
- * @param {*} values
- * @returns
- */
 export const send = (message, values) =>
     new Promise((resolve, reject) => {
         console.log('send', { message, values });
@@ -410,6 +404,23 @@ const Store = ({ children, history }) => {
         },
     };
 
+    // FORM
+    const onSubmit = {
+        login: async (values) => {
+            try {
+                const result = await send(channels.LOGIN, values);
+                console.log(result);
+                history.push({
+                    pathname: '/dashboard',
+                    state: result,
+                });
+            } catch (err) {
+                setError(err);
+                throw err;
+            }
+        },
+    };
+
     // API
     const api = {
         login: async (values) => {
@@ -479,6 +490,7 @@ const Store = ({ children, history }) => {
     };
 
     const store = {
+        onSubmit,
         open,
         api,
         error,

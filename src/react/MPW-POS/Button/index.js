@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { StoreContext } from '../../store';
+import { StoreContext } from '../store';
 import { Transition, Form } from 'semantic-ui-react';
 
 // TRANSITION BUTTON
@@ -14,4 +14,8 @@ export const PulseTransitionButton = ({ name, values }) => {
     );
 };
 
-export default PulseTransitionButton;
+export const Button = {
+    Pulse: PulseTransitionButton,
+};
+
+export default Button;

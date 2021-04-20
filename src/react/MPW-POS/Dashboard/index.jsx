@@ -1,4 +1,5 @@
-import { Screen, Header, Form, Field, Button } from './Components';
+import { Screen, Header, Form, Field } from './Components';
+import Button from '../Button';
 
 export const Dashboard = () => (
     <Screen>
@@ -11,10 +12,10 @@ export const Dashboard = () => (
                 lastName: (form) => <Field name='lastName' form={form} />,
             }}
             button={{
-                find: (values) => <Button.Find values={values} />,
-                add: <Button.Add />,
-                report: <Button.Report />,
-                logout: <Button.Logout />,
+                find: (values) => <Button.Pulse name='find' values={values} />,
+                add: <Button.Pulse name='add' />,
+                report: <Button.Pulse name='report' />,
+                logout: <Button.Pulse name='logout' />,
             }}
         />
     </Screen>

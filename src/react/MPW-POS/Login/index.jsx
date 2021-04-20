@@ -14,14 +14,14 @@ export const Login = () => {
             <Header title='Mckee Pure Water' content='Login Screen' />
             <Form
                 field={{
-                    username: <Field.Username />,
-                    password: <Field.Password />,
+                    username: <Field name='username' />,
+                    password: <Field name='password' />,
                 }}
                 button={{
-                    login: <Button.Login />,
-                    admin: <Button.Admin />,
-                    close: <Button.Close />,
-                    backup: <Button.Backup />,
+                    login: <Button name='login' />,
+                    admin: <Button name='admin' />,
+                    close: <Button name='close' />,
+                    backup: <Button name='backup' />,
                 }}
             />
         </Screen>

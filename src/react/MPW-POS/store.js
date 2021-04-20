@@ -1,6 +1,7 @@
 import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import { channels } from '../../shared/constants';
+import DashboardScreen from './Dashboard/Components/Screen';
 const { ipcRenderer } = window;
 
 export const StoreContext = createContext(null);
@@ -307,6 +308,82 @@ const Store = ({ children, history }) => {
             },
         },
     };
+
+    const DashboardComponent = {
+        button: {
+            find: (setVisible, { phone, account, firstName, lastName }) => {
+                return {
+                    type: 'submit',
+                    id: 'FindMembership',
+                    content: 'Find Membership',
+                    color: !error ? 'blue' : 'red',
+                    size: 'huge',
+                    icon: 'search',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    disabled:
+                        (!phone && !account && !firstName && !lastName) ||
+                        (phone && phone.length < 7)
+                            ? true
+                            : false,
+                    onClick: () => setVisible((prev) => !prev),
+                };
+            },
+            add: (setVisible) => {
+                return {
+                    id: 'AddButton',
+                    content: 'New Membership',
+                    type: 'button',
+                    size: 'huge',
+                    color: 'teal',
+                    icon: 'add circle',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    onClick: () => {
+                        setVisible((prev) => !prev);
+                        open.add();
+                    },
+                };
+            },
+            report: (setVisible) => {
+                return {
+                    id: 'ReportButton',
+                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'calendar',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    onClick: () => {
+                        setVisible((prev) => !prev);
+                        open.report();
+                    },
+                };
+            },
+            logout: (setVisible) => {
+                return {
+                    content: 'Logout',
+                    type: 'button',
+                    id: 'LogoutButton',
+                    size: 'huge',
+                    color: 'black',
+                    icon: 'sign-out',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                    onClick: () => {
+                        setVisible((prev) => !prev);
+                        close.dashboard();
+                    },
+                };
+            },
+        },
+    };
+
     // Helpers
     const helpers = {
         field: {
@@ -375,6 +452,24 @@ const Store = ({ children, history }) => {
                 state: { open: true },
             });
         },
+        add: async () => {
+            await helpers.sleep(500);
+            history.push({ pathname: '/add', state: {} });
+        },
+        report: async () => {
+            await helpers.sleep(500);
+            history.push({
+                pathname: '/report',
+                state: {},
+            });
+        },
+    };
+
+    const close = {
+        dashboard: async () => {
+            await helpers.sleep(500);
+            history.push({ pathname: '/add', state: {} });
+        },
     };
 
     // FIELD HELPERS
@@ -392,6 +487,10 @@ const Store = ({ children, history }) => {
             admin: LoginComponent.button.admin,
             close: LoginComponent.button.close,
             backup: LoginComponent.button.backup,
+            find: DashboardComponent.button.find,
+            add: DashboardComponent.button.add,
+            report: DashboardComponent.button.report,
+            logout: DashboardComponent.button.logout,
         },
         effect: {
             pulse: LoginComponent.transition,

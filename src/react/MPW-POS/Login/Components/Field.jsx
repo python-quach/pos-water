@@ -13,9 +13,4 @@ export const FinalFormField = ({ name }) => {
     );
 };
 
-const LoginScreenField = {
-    Username: () => <FinalFormField name='username' />,
-    Password: () => <FinalFormField name='password' />,
-};
-
-export default LoginScreenField;
+export default FinalFormField;

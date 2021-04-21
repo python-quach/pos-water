@@ -3,8 +3,8 @@ import { useContext } from 'react';
 import { StoreContext } from '../store';
 
 export const Screen = ({ children, name }) => {
-    const { history, screen } = useContext(StoreContext);
-    const { close, segment, grid, width } = screen[name];
+    const { history, component } = useContext(StoreContext);
+    const { close, segment, grid, width } = component[name].screen;
     return (
         <TransitionablePortal open={history ? true : false} {...close}>
             <Segment {...segment}>

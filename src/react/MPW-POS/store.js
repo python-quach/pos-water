@@ -155,6 +155,44 @@ const Store = ({ children, history }) => {
         },
     };
 
+    const AdminComponent = {
+        screen: {
+            width: {
+                style: {
+                    maxWidth: 450,
+                },
+            },
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                style: {
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                },
+            },
+            grid: {
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                style: {
+                    height: '100vh',
+                },
+            },
+            header: {
+                title: 'Mckee Pure Water',
+                content: 'Version 1.0',
+            },
+        },
+        button: {},
+        field: {},
+    };
+
     const DashboardComponent = {
         screen: {
             width: {
@@ -680,6 +718,11 @@ const Store = ({ children, history }) => {
         onClick,
         open,
         error,
+        component: {
+            login: LoginComponent,
+            dashboard: DashboardComponent,
+            admin: AdminComponent,
+        },
         field: {
             ...Field,
             // ...LoginComponent.field,

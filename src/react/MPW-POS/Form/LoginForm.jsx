@@ -10,8 +10,8 @@ export const LoginForm = ({ handleSubmit, form }) => {
         handleSubmit(event)
             .then()
             .catch(() => {
-                document.getElementById('username').focus();
-                form.reset({});
+                // document.getElementById('username').focus();
+                // form.reset({});
             });
     };
 

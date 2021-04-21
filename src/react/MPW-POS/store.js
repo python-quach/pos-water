@@ -25,6 +25,39 @@ const Store = ({ children, history }) => {
 
     // LOGIN SCREEN COMPONENT
     const LoginComponent = {
+        screen: {
+            width: {
+                style: {
+                    maxWidth: 450,
+                },
+            },
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                style: {
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                },
+            },
+            grid: {
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                style: {
+                    height: '100vh',
+                },
+            },
+            header: {
+                title: 'Mckee Pure Water',
+                content: 'Version 1.0',
+            },
+        },
         button: {
             login: () => {
                 return {
@@ -79,6 +112,39 @@ const Store = ({ children, history }) => {
     };
 
     const DashboardComponent = {
+        screen: {
+            width: {
+                style: {
+                    maxWidth: 450,
+                },
+            },
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                style: {
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                },
+            },
+            grid: {
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                style: {
+                    height: '100vh',
+                },
+            },
+            header: {
+                title: 'Mckee Pure Water',
+                content: 'Version 1.0',
+            },
+        },
         button: {
             find: () => {
                 return {
@@ -471,6 +537,10 @@ const Store = ({ children, history }) => {
         },
         effect: {
             pulse: TransitionEffect.pulse,
+        },
+        screen: {
+            dashboard: DashboardComponent.screen,
+            login: DashboardComponent.screen,
         },
         TransitionEffect,
         resetError,

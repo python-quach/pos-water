@@ -63,3 +63,10 @@ export const FindForm = ({ button, field }) => {
         />
     );
 };
+
+const MPW_POS_FORM = {
+    Login: LoginForm,
+    Find: FindForm,
+};
+
+export default MPW_POS_FORM;

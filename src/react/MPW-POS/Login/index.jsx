@@ -1,14 +1,14 @@
-import Screen from './Components/Screen';
-import Header from './Components/Header';
-import Form from './Components/Form';
+import Screen from '../Screen';
+import Header from '../Header';
+import Form from '../Form';
 import Field from '../Field';
 import Button from '../Button';
 
 // LOGIN CONTAINER
 export const Login = () => (
-    <Screen>
-        <Header title='Mckee Pure Water' content='Login Screen' />
-        <Form
+    <Screen name='login'>
+        <Header title='Mckee Pure Water' content='User Login' />
+        <Form.Login
             field={{
                 username: <Field name='username' />,
                 password: <Field name='password' />,

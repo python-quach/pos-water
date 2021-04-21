@@ -5,11 +5,16 @@ import { Transition, Form } from 'semantic-ui-react';
 // TRANSITION BUTTON
 export const PulseTransitionButton = ({ name, values }) => {
     const [visible, setVisible] = useState(true);
-    const { effect, button } = useContext(StoreContext);
+    const { effect, button, onClick } = useContext(StoreContext);
 
     return (
         <Transition visible={visible} {...effect.pulse}>
-            <Form.Button {...button[name](setVisible, values)} />
+            <Form.Button
+                {...button[name](values)}
+                onClick={() => {
+                    onClick[name] && onClick[name](setVisible);
+                }}
+            />
         </Transition>
     );
 };

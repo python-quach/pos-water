@@ -125,7 +125,9 @@ module.exports = (db) => {
         // console.log(fullname);
 
         const sendFindResult = (data) => {
-            event.sender.send(channels.FIND, data);
+            console.log(data);
+            // event.sender.send(channels.FIND, data);
+            event.sender.send(channels.FIND, { data });
         };
 
         try {
@@ -139,6 +141,9 @@ module.exports = (db) => {
                 sendFindResult(await db.findByFullName(fullname));
             } else {
                 sendFindResult({ membership: null });
+                event.sender.send(channels.FIND, {
+                    error: 'Unable to locate Membership',
+                });
             }
         } catch (err) {
             return console.log(err.message);
@@ -324,9 +329,14 @@ module.exports = (db) => {
         try {
             const record = await db.newRecord();
             console.log('getLastRecord', record);
-            event.sender.send(channels.LAST_RECORD, record);
+            // event.sender.send(channels.LAST_RECORD, record);
+            record
+                ? event.sender.send(channels.LAST_RECORD, { data: record })
+                : event.sender.send(channels.LAST_RECORD, {
+                      error: 'Unable to get last record',
+                  });
         } catch (err) {
-            return console.logo('getLastRecord Error', err.message);
+            return console.log('getLastRecord Error', err.message);
         }
     }
 

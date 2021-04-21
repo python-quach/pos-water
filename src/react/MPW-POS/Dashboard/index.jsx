@@ -1,10 +1,11 @@
 import { Screen, Header, Form, Field } from './Components';
 import Button from '../Button';
+import { FindForm } from '../Form';
 
 export const Dashboard = () => (
     <Screen>
         <Header />
-        <Form
+        <FindForm
             field={{
                 phone: (form) => <Field name='phone' form={form} />,
                 account: (form) => <Field name='account' form={form} />,

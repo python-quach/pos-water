@@ -1,8 +1,8 @@
 import Screen from './Components/Screen';
 import Header from './Components/Header';
 import Form from './Components/Form';
-import Field from './Components/Field';
-import Button from './Components/Button';
+import Field from '../Field';
+import Button from '../Button';
 
 // LOGIN CONTAINER
 export const Login = () => (
@@ -14,10 +14,10 @@ export const Login = () => (
                 password: <Field name='password' />,
             }}
             button={{
-                login: <Button name='login' />,
-                admin: <Button name='admin' />,
-                close: <Button name='close' />,
-                backup: <Button name='backup' />,
+                login: <Button.Pulse name='login' />,
+                admin: <Button.Pulse name='admin' />,
+                close: <Button.Pulse name='close' />,
+                backup: <Button.Pulse name='backup' />,
             }}
         />
     </Screen>

@@ -1,7 +1,6 @@
 import { useState, createContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import { channels } from '../../shared/constants';
-
 const { ipcRenderer } = window;
 
 export const StoreContext = createContext(null);
@@ -17,12 +16,126 @@ export const send = (message, values) =>
     });
 
 const Store = ({ children, history }) => {
+    // Button Error
     const [error, setError] = useState(false);
 
     // Backup States
     const [loading, setLoading] = useState(false);
     const [fileSave, setFileSave] = useState('Backup');
 
+    // LOGIN SCREEN COMPONENT
+    const LoginComponent = {
+        button: {
+            login: () => {
+                return {
+                    type: 'submit',
+                    content: !error ? 'Login' : error,
+                    color: !error ? 'blue' : 'red',
+                    size: 'huge',
+                    icon: 'sign-in',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+            admin: () => {
+                return {
+                    content: 'Admin',
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'database',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+            close: () => {
+                return {
+                    content: 'Close',
+                    type: 'button',
+                    color: 'black',
+                    size: 'huge',
+                    icon: 'close',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+            backup: () => {
+                return {
+                    disabled: loading,
+                    content: fileSave,
+                    loading: loading,
+                    type: 'button',
+                    size: 'huge',
+                    icon: 'save',
+                    circular: true,
+                    color: 'pink',
+                    fluid: true,
+                };
+            },
+        },
+    };
+
+    const DashboardComponent = {
+        button: {
+            find: () => {
+                return {
+                    id: 'FindMembership',
+                    content: 'Find Membership',
+                    color: 'blue',
+                    type: 'submit',
+                    size: 'huge',
+                    icon: 'search',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+            add: () => {
+                return {
+                    id: 'AddButton',
+                    content: 'New Membership',
+                    type: 'button',
+                    size: 'huge',
+                    color: 'teal',
+                    icon: 'add circle',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+            report: () => {
+                return {
+                    id: 'ReportButton',
+                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'calendar',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+            logout: () => {
+                return {
+                    content: 'Logout',
+                    type: 'button',
+                    id: 'LogoutButton',
+                    size: 'huge',
+                    color: 'black',
+                    icon: 'sign-out',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                };
+            },
+        },
+    };
+
+    // Effect
     const TransitionEffect = {
         pulse: {
             animation: 'pulse',
@@ -181,203 +294,6 @@ const Store = ({ children, history }) => {
         },
     };
 
-    const ButtonStore = {
-        login: (setVisible) => {
-            return {
-                type: 'submit',
-                content: !error ? 'Login' : error,
-                color: !error ? 'blue' : 'red',
-                size: 'huge',
-                icon: 'sign-in',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-                onClick: () => setVisible((visible) => !visible),
-            };
-        },
-        admin: (setVisible) => {
-            return {
-                content: 'Admin',
-                type: 'button',
-                color: 'yellow',
-                size: 'huge',
-                icon: 'database',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-                onClick: () => {
-                    setVisible((prev) => !prev);
-                    open.admin();
-                },
-            };
-        },
-        close: (setVisible) => {
-            return {
-                content: 'Close',
-                type: 'button',
-                color: 'black',
-                size: 'huge',
-                icon: 'close',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-                onClick: () => api.close(setVisible),
-            };
-        },
-        backup: (setVisible) => {
-            return {
-                content: fileSave,
-                loading: loading,
-                type: 'button',
-                size: 'huge',
-                icon: 'save',
-                circular: true,
-                color: 'pink',
-                fluid: true,
-                onClick: () => api.backup(setVisible),
-            };
-        },
-    };
-
-    const LoginComponent = {
-        transition: {
-            animation: 'pulse',
-            duration: 500,
-        },
-        button: {
-            login: (setVisible) => {
-                return {
-                    type: 'submit',
-                    content: !error ? 'Login' : error,
-                    color: !error ? 'blue' : 'red',
-                    size: 'huge',
-                    icon: 'sign-in',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => setVisible((visible) => !visible),
-                };
-            },
-            admin: (setVisible) => {
-                return {
-                    content: 'Admin',
-                    type: 'button',
-                    color: 'yellow',
-                    size: 'huge',
-                    icon: 'database',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => {
-                        setVisible((prev) => !prev);
-                        open.admin();
-                    },
-                };
-            },
-            close: (setVisible) => {
-                return {
-                    content: 'Close',
-                    type: 'button',
-                    color: 'black',
-                    size: 'huge',
-                    icon: 'close',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => api.close(setVisible),
-                };
-            },
-            backup: (setVisible) => {
-                return {
-                    content: fileSave,
-                    loading: loading,
-                    type: 'button',
-                    size: 'huge',
-                    icon: 'save',
-                    circular: true,
-                    color: 'pink',
-                    fluid: true,
-                    onClick: () => api.backup(setVisible),
-                };
-            },
-        },
-    };
-
-    const DashboardComponent = {
-        button: {
-            find: (setVisible, { phone, account, firstName, lastName }) => {
-                return {
-                    type: 'submit',
-                    id: 'FindMembership',
-                    content: 'Find Membership',
-                    color: !error ? 'blue' : 'red',
-                    size: 'huge',
-                    icon: 'search',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    disabled:
-                        (!phone && !account && !firstName && !lastName) ||
-                        (phone && phone.length < 7)
-                            ? true
-                            : false,
-                    onClick: () => setVisible((prev) => !prev),
-                };
-            },
-            add: (setVisible) => {
-                return {
-                    id: 'AddButton',
-                    content: 'New Membership',
-                    type: 'button',
-                    size: 'huge',
-                    color: 'teal',
-                    icon: 'add circle',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => {
-                        setVisible((prev) => !prev);
-                        open.add();
-                    },
-                };
-            },
-            report: (setVisible) => {
-                return {
-                    id: 'ReportButton',
-                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
-                    type: 'button',
-                    color: 'yellow',
-                    size: 'huge',
-                    icon: 'calendar',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => {
-                        setVisible((prev) => !prev);
-                        open.report();
-                    },
-                };
-            },
-            logout: (setVisible) => {
-                return {
-                    content: 'Logout',
-                    type: 'button',
-                    id: 'LogoutButton',
-                    size: 'huge',
-                    color: 'black',
-                    icon: 'sign-out',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => {
-                        setVisible((prev) => !prev);
-                        close.dashboard();
-                    },
-                };
-            },
-        },
-    };
-
     // Helpers
     const helpers = {
         field: {
@@ -419,22 +335,59 @@ const Store = ({ children, history }) => {
                 throw err;
             }
         },
-    };
-
-    // API
-    const api = {
-        login: async (values) => {
+        find: async (values, form) => {
             try {
-                const result = await send(channels.LOGIN, values);
-                console.log(result);
-                history.push({
-                    pathname: '/dashboard',
-                    state: result,
-                });
+                const data = await send(channels.FIND, values);
+                console.log(data);
+                if (data.membership) {
+                    const { record_id } = await send(channels.LAST_RECORD);
+                    console.log({ data, record_id });
+                    setTimeout(form.reset, 100);
+                    // form.reset({});
+                    // history.push({
+                    //     pathname: '/purchase',
+                    //     state: {
+                    //         record: data.membership,
+                    //         newRecordID: record_id,
+                    //         open: true,
+                    //         initialValues: {
+                    //             ...data.membership,
+                    //             record_id: record_id,
+                    //             renew: 0,
+                    //             buy: 0,
+                    //             fee: 0,
+                    //             invoiceDate: new Date().toLocaleDateString(),
+                    //             invoiceTime: new Date().toLocaleTimeString(),
+                    //         },
+                    //     },
+                    // });
+                } else if (data.memberships) {
+                    setTimeout(form.reset, 100);
+                    console.log(data.memberships);
+                    // history.push({
+                    //     pathname: '/accounts',
+                    //     state: data.memberships,
+                    // });
+                } else {
+                    setTimeout(form.reset, 100);
+                    setError(true);
+                    document.getElementById('phone').focus();
+                    return data;
+                }
             } catch (err) {
-                setError(err);
                 throw err;
             }
+        },
+    };
+
+    // ONCLICK
+    const onClick = {
+        login: (setVisible) => {
+            setVisible((visible) => !visible);
+        },
+        admin: (setVisible) => {
+            setVisible((prev) => !prev);
+            open.admin();
         },
         close: async (setVisible) => {
             setVisible((visible) => !visible);
@@ -452,6 +405,21 @@ const Store = ({ children, history }) => {
                 setLoading(false);
                 setFileSave(err);
             }
+        },
+        find: (setVisible) => {
+            setVisible((prev) => !prev);
+        },
+        add: (setVisible) => {
+            setVisible((prev) => !prev);
+            open.add();
+        },
+        report: (setVisible) => {
+            setVisible((prev) => !prev);
+            open.report();
+        },
+        logout: (setVisible) => {
+            setVisible((prev) => !prev);
+            close.dashboard();
         },
     };
 
@@ -479,7 +447,7 @@ const Store = ({ children, history }) => {
     const close = {
         dashboard: async () => {
             await helpers.sleep(500);
-            history.push({ pathname: '/add', state: {} });
+            history.push({ pathname: '/', state: {} });
         },
     };
 
@@ -491,21 +459,18 @@ const Store = ({ children, history }) => {
 
     const store = {
         onSubmit,
+        onClick,
         open,
-        api,
         error,
+        field: {
+            ...Field,
+        },
         button: {
-            login: LoginComponent.button.login,
-            admin: LoginComponent.button.admin,
-            close: LoginComponent.button.close,
-            backup: LoginComponent.button.backup,
-            find: DashboardComponent.button.find,
-            add: DashboardComponent.button.add,
-            report: DashboardComponent.button.report,
-            logout: DashboardComponent.button.logout,
+            ...LoginComponent.button,
+            ...DashboardComponent.button,
         },
         effect: {
-            pulse: LoginComponent.transition,
+            pulse: TransitionEffect.pulse,
         },
         TransitionEffect,
         resetError,
@@ -515,16 +480,6 @@ const Store = ({ children, history }) => {
         loading,
         fileSave,
         channels,
-        ButtonStore,
-        Field,
-        field: {
-            username: Field.username,
-            password: Field.password,
-            phone: Field.phone,
-            account: Field.account,
-            firstName: Field.lastName,
-            lastName: Field.firstName,
-        },
     };
 
     return (

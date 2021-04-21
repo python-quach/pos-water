@@ -1,6 +1,6 @@
-import Header from '../Header';
-import Screen from '../Screen';
-import Form from '../Form';
+import Header from './Header';
+import Screen from './Screen';
+import Form from './Form';
 
 export const Dashboard = () => (
     <Screen name='dashboard'>

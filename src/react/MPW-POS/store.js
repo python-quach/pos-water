@@ -109,6 +109,50 @@ const Store = ({ children, history }) => {
                 };
             },
         },
+        field: {
+            username: (input) => {
+                return {
+                    ...input,
+                    id: 'username',
+                    type: 'text',
+                    placeholder: 'username',
+                    className: 'blueIcon',
+                    size: 'massive',
+                    icon: 'user circle',
+                    iconPosition: 'left',
+                    autoComplete: 'off',
+                    spellCheck: 'false',
+                    inverted: true,
+                    transparent: true,
+                    fluid: true,
+                    focus: true,
+                    onChange: (_, { value }) => {
+                        helpers.field.resetError(input, value);
+                    },
+                };
+            },
+            password: (input) => {
+                return {
+                    ...input,
+                    id: 'password',
+                    type: 'password',
+                    placeholder: 'password',
+                    className: 'blueIcon',
+                    size: 'massive',
+                    icon: 'lock',
+                    iconPosition: 'left',
+                    autoComplete: 'off',
+                    spellCheck: 'false',
+                    inverted: true,
+                    transparent: true,
+                    fluid: true,
+                    focus: true,
+                    onChange: (_, { value }) => {
+                        helpers.field.resetError(input, value);
+                    },
+                };
+            },
+        },
     };
 
     const DashboardComponent = {
@@ -196,6 +240,114 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                };
+            },
+        },
+        field: {
+            phone: (input, form) => {
+                return {
+                    className: 'blueIcon',
+                    id: 'phone',
+                    placeholder: 'xxx-xxxx',
+                    focus: true,
+                    type: 'text',
+                    size: 'massive',
+                    icon: 'whatsapp',
+                    fluid: true,
+                    iconPosition: 'left',
+                    transparent: true,
+                    value: input.value,
+                    name: input.name,
+                    onFocus: () => {
+                        form.change('account', '');
+                        form.change('firstName', '');
+                        form.change('lastName', '');
+                    },
+                    onChange: (e, { value }) => {
+                        setError(false);
+                        return input.onChange(value);
+                    },
+                };
+            },
+            account: (input, form) => {
+                return {
+                    className: 'blueIcon',
+                    id: 'account',
+                    type: 'text',
+                    placeholder: 'account #',
+                    size: 'massive',
+                    focus: true,
+                    fluid: true,
+                    icon: 'credit card',
+                    iconPosition: 'left',
+                    transparent: true,
+                    spellCheck: 'false',
+                    inverted: true,
+                    value: input.value,
+                    name: input.name,
+                    onFocus: () => {
+                        form.batch(() => {
+                            form.change('phone', '');
+                            form.change('firstName', '');
+                            form.change('lastName', '');
+                        });
+                    },
+                    onChange: (e, { value }) => {
+                        setError(false);
+                        return input.onChange(value);
+                    },
+                };
+            },
+            firstName: (input, form) => {
+                return {
+                    placeholder: 'first name',
+                    className: 'blueIcon',
+                    icon: 'user circle',
+                    iconPosition: 'left',
+                    size: 'massive',
+                    spellCheck: 'false',
+                    fluid: true,
+                    focus: true,
+                    transparent: true,
+                    inverted: true,
+                    value: input.value,
+                    name: input.name,
+                    onFocus: () => {
+                        form.batch(() => {
+                            form.change('phone', '');
+                            form.change('account', '');
+                        });
+                    },
+                    onChange: (e, { value }) => {
+                        setError(false);
+                        return input.onChange(value);
+                    },
+                };
+            },
+            lastName: (input, form) => {
+                return {
+                    placeholder: 'last name',
+                    className: 'blueIcon',
+                    icon: 'user circle',
+                    iconPosition: 'left',
+                    size: 'massive',
+                    spellCheck: 'false',
+                    fluid: true,
+                    focus: true,
+                    transparent: true,
+                    inverted: true,
+                    value: input.value,
+                    name: input.name,
+                    onFocus: () => {
+                        form.batch(() => {
+                            form.change('phone', '');
+                            form.change('account', '');
+                        });
+                    },
+                    onChange: (e, { value }) => {
+                        setError(false);
+                        return input.onChange(value);
+                    },
                 };
             },
         },
@@ -530,6 +682,8 @@ const Store = ({ children, history }) => {
         error,
         field: {
             ...Field,
+            // ...LoginComponent.field,
+            // ...DashboardComponent.field,
         },
         button: {
             ...LoginComponent.button,

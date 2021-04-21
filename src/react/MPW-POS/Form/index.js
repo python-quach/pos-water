@@ -11,7 +11,7 @@ export const FormWrapper = ({ action, form }) => {
 
 const MPW_POS_FORM = {
     Login: () => <FormWrapper action='login' form={LoginForm} />,
-    Find: () => <FormWrapper acton='find' form={FindForm} />,
+    Find: () => <FormWrapper action='find' form={FindForm} />,
 };
 
 export default MPW_POS_FORM;

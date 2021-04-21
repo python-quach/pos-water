@@ -8,10 +8,13 @@ export const LoginForm = ({ handleSubmit, form }) => {
 
     const onSubmit = (event) => {
         handleSubmit(event)
-            .then()
-            .catch(() => {
-                // document.getElementById('username').focus();
-                // form.reset({});
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((err) => {
+                console.log(err);
+                document.getElementById('username').focus();
+                form.reset({});
             });
     };
 

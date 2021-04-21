@@ -9,7 +9,13 @@ export const FindForm = ({ handleSubmit, form }) => {
     }, []);
 
     const onSubmit = (event) => {
-        handleSubmit(event);
+        handleSubmit(event)
+            .then()
+            .catch((err) => {
+                console.log(err);
+                document.getElementById('phone').focus();
+                form.reset({});
+            });
     };
 
     return (

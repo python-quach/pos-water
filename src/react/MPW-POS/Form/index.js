@@ -3,38 +3,38 @@ import { Form, Divider } from 'semantic-ui-react';
 import { useContext } from 'react';
 import { StoreContext } from '../store';
 import { useEffect } from 'react';
+import Field from '../Field';
+import Button from '../Button';
 
-// FORM
-export const LoginForm = ({ button, field }) => {
+export const FormWrapper = ({ name, form }) => {
     const { onSubmit } = useContext(StoreContext);
+    return <FinalForm onSubmit={onSubmit[name]} render={form} />;
+};
 
+export const LoginForm = ({ handleSubmit, form }) => {
     useEffect(() => document.getElementById('username').focus(), []);
 
+    const onSubmit = (event) => {
+        handleSubmit(event)
+            .then()
+            .catch(() => {
+                document.getElementById('username').focus();
+                form.reset({});
+            });
+    };
+
     return (
-        <FinalForm
-            onSubmit={onSubmit.login}
-            render={({ handleSubmit, form }) => (
-                <Form
-                    onSubmit={(event) => {
-                        handleSubmit(event)
-                            .then()
-                            .catch(() => {
-                                document.getElementById('username').focus();
-                                form.reset({});
-                            });
-                    }}>
-                    {field.username}
-                    {field.password}
-                    <Divider hidden />
-                    {button.login}
-                    {button.admin}
-                    <Form.Group widths={2}>
-                        {button.close}
-                        {button.backup}
-                    </Form.Group>
-                </Form>
-            )}
-        />
+        <Form onSubmit={onSubmit}>
+            <Field name='username' />
+            <Field name='password' />
+            <Divider hidden />
+            <Button.Pulse name='login' />
+            <Button.Pulse name='admin' />
+            <Form.Group widths={2}>
+                <Button.Pulse name='close' />
+                <Button.Pulse name='backup' />
+            </Form.Group>
+        </Form>
     );
 };
 
@@ -65,7 +65,7 @@ export const FindForm = ({ button, field }) => {
 };
 
 const MPW_POS_FORM = {
-    Login: LoginForm,
+    Login: () => <FormWrapper name='login' form={LoginForm} />,
     Find: FindForm,
 };
 

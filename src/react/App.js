@@ -16,7 +16,7 @@ const App = () => (
         <StoreProvider>
             <Switch>
                 <Route exact path='/' component={Login} />
-                <Route exact path='/dashboard' component={Dashboard} />
+                {/* <Route exact path='/dashboard' component={Dashboard} />
                 <Route exact path='/purchase' component={Purchase} />
                 <Route exact path='/admin' component={Admin} />
                 <Route
@@ -24,7 +24,7 @@ const App = () => (
                     path='/admin/confirm'
                     component={AdminPasswordScreen}
                 />
-                <Route exact path='/add' component={() => <div>Add</div>} />
+                <Route exact path='/add' component={() => <div>Add</div>} /> */}
             </Switch>
         </StoreProvider>
     </Router>

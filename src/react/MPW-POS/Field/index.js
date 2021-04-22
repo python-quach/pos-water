@@ -19,4 +19,23 @@ export const FinalFormField = ({ name, form, type }) => {
     );
 };
 
-export default FinalFormField;
+export const MyField = ({ name, onChange }) => (
+    <Field
+        name={name.id}
+        render={({ input }) => (
+            <Form.Input
+                {...input}
+                {...name}
+                onChange={(_, { value }) => {
+                    if (onChange) {
+                        onChange(input, value);
+                    }
+                    return input.onChange(value);
+                }}
+            />
+        )}
+    />
+);
+
+// export default FinalFormField;
+export default MyField;

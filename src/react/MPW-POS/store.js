@@ -59,7 +59,7 @@ const Store = ({ children, history }) => {
             },
         },
         button: {
-            login: () => {
+            login: (setVisible) => {
                 return {
                     type: 'submit',
                     content: !error ? 'Login' : error,
@@ -69,9 +69,10 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: () => setVisible((visible) => !visible),
                 };
             },
-            admin: () => {
+            admin: (setVisible) => {
                 return {
                     content: 'Admin',
                     type: 'button',
@@ -81,6 +82,10 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: () => {
+                        setVisible((prev) => !prev);
+                        open.admin();
+                    },
                 };
             },
             close: () => {
@@ -93,9 +98,14 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: async (setVisible) => {
+                        setVisible((visible) => !visible);
+                        await helpers.sleep(500);
+                        send(channels.CLOSE_APP);
+                    },
                 };
             },
-            backup: () => {
+            backup: (setVisible) => {
                 return {
                     disabled: loading,
                     content: fileSave,
@@ -106,54 +116,56 @@ const Store = ({ children, history }) => {
                     circular: true,
                     color: 'pink',
                     fluid: true,
-                };
-            },
-        },
-        field: {
-            username: (input) => {
-                return {
-                    ...input,
-                    id: 'username',
-                    type: 'text',
-                    placeholder: 'username',
-                    className: 'blueIcon',
-                    size: 'massive',
-                    icon: 'user circle',
-                    iconPosition: 'left',
-                    autoComplete: 'off',
-                    spellCheck: 'false',
-                    inverted: true,
-                    transparent: true,
-                    fluid: true,
-                    focus: true,
-                    onChange: (_, { value }) => {
-                        helpers.field.resetError(input, value);
-                    },
-                };
-            },
-            password: (input) => {
-                return {
-                    ...input,
-                    id: 'password',
-                    type: 'password',
-                    placeholder: 'password',
-                    className: 'blueIcon',
-                    size: 'massive',
-                    icon: 'lock',
-                    iconPosition: 'left',
-                    autoComplete: 'off',
-                    spellCheck: 'false',
-                    inverted: true,
-                    transparent: true,
-                    fluid: true,
-                    focus: true,
-                    onChange: (_, { value }) => {
-                        helpers.field.resetError(input, value);
+                    onClick: async () => {
+                        setVisible((visible) => !visible);
+                        await helpers.sleep(500);
+                        try {
+                            setLoading(true);
+                            setFileSave(
+                                await send(channels.SHOW_BACKUP_DIALOG)
+                            );
+                            setLoading(false);
+                        } catch (err) {
+                            setLoading(false);
+                            setFileSave(err);
+                        }
                     },
                 };
             },
         },
-        onSubmit: async (values) => {
+        input: {
+            username: {
+                id: 'username',
+                type: 'text',
+                placeholder: 'username',
+                className: 'blueIcon',
+                size: 'massive',
+                icon: 'user circle',
+                iconPosition: 'left',
+                autoComplete: 'off',
+                spellCheck: 'false',
+                inverted: true,
+                transparent: true,
+                fluid: true,
+                focus: true,
+            },
+            password: {
+                id: 'password',
+                type: 'password',
+                placeholder: 'password',
+                className: 'blueIcon',
+                size: 'massive',
+                icon: 'lock',
+                iconPosition: 'left',
+                autoComplete: 'off',
+                spellCheck: 'false',
+                inverted: true,
+                transparent: true,
+                fluid: true,
+                focus: true,
+            },
+        },
+        onSubmit: async (values, form) => {
             try {
                 const result = await send(channels.LOGIN, values);
                 console.log(result);
@@ -162,8 +174,12 @@ const Store = ({ children, history }) => {
                     state: result,
                 });
             } catch (err) {
-                setError(err);
-                throw err;
+                setTimeout(() => {
+                    console.log(err);
+                    setError(err);
+                    form.reset({});
+                    document.getElementById('username').focus();
+                }, 100);
             }
         },
     };
@@ -214,6 +230,9 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: (setVisible) => {
+                        setVisible((prev) => !prev);
+                    },
                 };
             },
             add: () => {
@@ -227,6 +246,10 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: (setVisible) => {
+                        setVisible((prev) => !prev);
+                        open.add();
+                    },
                 };
             },
             report: () => {
@@ -240,6 +263,10 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: (setVisible) => {
+                        setVisible((prev) => !prev);
+                        open.report();
+                    },
                 };
             },
             logout: () => {
@@ -253,6 +280,10 @@ const Store = ({ children, history }) => {
                     labelPosition: 'right',
                     circular: true,
                     fluid: true,
+                    onClick: (setVisible) => {
+                        setVisible((prev) => !prev);
+                        close.dashboard();
+                    },
                 };
             },
         },
@@ -483,7 +514,7 @@ const Store = ({ children, history }) => {
 
     // FORM
     const onSubmit = {
-        login: async (values) => {
+        login: async (values, form) => {
             try {
                 const result = await send(channels.LOGIN, values);
                 console.log(result);

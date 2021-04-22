@@ -59,78 +59,46 @@ const Store = ({ children, history }) => {
             },
         },
         button: {
-            login: (setVisible) => {
-                return {
-                    type: 'submit',
-                    content: !error ? 'Login' : error,
-                    color: !error ? 'blue' : 'red',
-                    size: 'huge',
-                    icon: 'sign-in',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => setVisible((visible) => !visible),
-                };
+            login: {
+                type: 'submit',
+                content: !error ? 'Login' : error,
+                color: !error ? 'blue' : 'red',
+                size: 'huge',
+                icon: 'sign-in',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
-            admin: (setVisible) => {
-                return {
-                    content: 'Admin',
-                    type: 'button',
-                    color: 'yellow',
-                    size: 'huge',
-                    icon: 'database',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: () => {
-                        setVisible((prev) => !prev);
-                        open.admin();
-                    },
-                };
+            admin: {
+                content: 'Admin',
+                type: 'button',
+                color: 'yellow',
+                size: 'huge',
+                icon: 'database',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
-            close: () => {
-                return {
-                    content: 'Close',
-                    type: 'button',
-                    color: 'black',
-                    size: 'huge',
-                    icon: 'close',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: async (setVisible) => {
-                        setVisible((visible) => !visible);
-                        await helpers.sleep(500);
-                        send(channels.CLOSE_APP);
-                    },
-                };
+            close: {
+                content: 'Close',
+                type: 'button',
+                color: 'black',
+                size: 'huge',
+                icon: 'close',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
-            backup: (setVisible) => {
-                return {
-                    disabled: loading,
-                    content: fileSave,
-                    loading: loading,
-                    type: 'button',
-                    size: 'huge',
-                    icon: 'save',
-                    circular: true,
-                    color: 'pink',
-                    fluid: true,
-                    onClick: async () => {
-                        setVisible((visible) => !visible);
-                        await helpers.sleep(500);
-                        try {
-                            setLoading(true);
-                            setFileSave(
-                                await send(channels.SHOW_BACKUP_DIALOG)
-                            );
-                            setLoading(false);
-                        } catch (err) {
-                            setLoading(false);
-                            setFileSave(err);
-                        }
-                    },
-                };
+            backup: {
+                disabled: loading,
+                content: fileSave,
+                loading: loading,
+                type: 'button',
+                size: 'huge',
+                icon: 'save',
+                circular: true,
+                color: 'pink',
+                fluid: true,
             },
         },
         input: {
@@ -673,7 +641,10 @@ const Store = ({ children, history }) => {
         helpers,
         loading,
         fileSave,
+        setLoading,
+        setFileSave,
         channels,
+        send,
     };
 
     return (

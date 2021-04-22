@@ -16,8 +16,8 @@ const App = () => (
         <StoreProvider>
             <Switch>
                 <Route exact path='/' component={Login} />
-                {/* <Route exact path='/dashboard' component={Dashboard} />
-                <Route exact path='/purchase' component={Purchase} />
+                {/* <Route exact path='/dashboard' component={Dashboard} /> */}
+                {/* <Route exact path='/purchase' component={Purchase} />
                 <Route exact path='/admin' component={Admin} />
                 <Route
                     exact

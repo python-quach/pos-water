@@ -20,14 +20,14 @@ export const LoginForm = ({ handleSubmit, form }) => {
 
     return (
         <Form onSubmit={onSubmit}>
-            <Field name='username' />
-            <Field name='password' />
+            <Field name='username' type='login' />
+            <Field name='password' type='login' />
             <Divider hidden />
-            <Button.Pulse name='login' />
-            <Button.Pulse name='admin' />
+            <Button.Pulse name='login' type='login' />
+            <Button.Pulse name='admin' type='login' />
             <Form.Group widths={2}>
-                <Button.Pulse name='close' />
-                <Button.Pulse name='backup' />
+                <Button.Pulse name='close' type='login' />
+                <Button.Pulse name='backup' type='login' />
             </Form.Group>
         </Form>
     );

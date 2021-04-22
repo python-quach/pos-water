@@ -20,14 +20,14 @@ export const FindForm = ({ handleSubmit, form }) => {
 
     return (
         <Form onSubmit={onSubmit}>
-            <Field name='phone' form={form} />
-            <Field name='account' form={form} />
-            <Field name='firstName' form={form} />
-            <Field name='lastName' form={form} />
-            <Button.Pulse name='find' />
-            <Button.Pulse name='add' />
-            <Button.Pulse name='report' />
-            <Button.Pulse name='logout' />
+            <Field name='phone' type='dashboard' form={form} />
+            <Field name='account' type='dashboard' form={form} />
+            <Field name='firstName' type='dashboard' form={form} />
+            <Field name='lastName' type='dashboard' form={form} />
+            <Button.Pulse name='find' type='dashboard' />
+            <Button.Pulse name='add' type='dashboard' />
+            <Button.Pulse name='report' type='dashboard' />
+            <Button.Pulse name='logout' type='dashboard' />
         </Form>
     );
 };

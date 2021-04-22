@@ -153,44 +153,19 @@ const Store = ({ children, history }) => {
                 };
             },
         },
-    };
-
-    const AdminComponent = {
-        screen: {
-            width: {
-                style: {
-                    maxWidth: 450,
-                },
-            },
-            close: {
-                closeOnDocumentClick: false,
-                closeOnEscape: false,
-                closeOnDimmerClick: false,
-                closeOnPortalMouseLeave: false,
-            },
-            segment: {
-                style: {
-                    margin: 0,
-                    height: '100%',
-                    overflow: 'hidden',
-                    zIndex: 1000,
-                    backgroundColor: '#002b487d',
-                },
-            },
-            grid: {
-                textAlign: 'center',
-                verticalAlign: 'middle',
-                style: {
-                    height: '100vh',
-                },
-            },
-            header: {
-                title: 'Mckee Pure Water',
-                content: 'Version 1.0',
-            },
+        onSubmit: async (values) => {
+            try {
+                const result = await send(channels.LOGIN, values);
+                console.log(result);
+                history.push({
+                    pathname: '/dashboard',
+                    state: result,
+                });
+            } catch (err) {
+                setError(err);
+                throw err;
+            }
         },
-        button: {},
-        field: {},
     };
 
     const DashboardComponent = {
@@ -389,6 +364,87 @@ const Store = ({ children, history }) => {
                 };
             },
         },
+        onSubmit: async (values, form) => {
+            try {
+                const data = await send(channels.FIND, values);
+                console.log(data);
+                if (data.membership) {
+                    const { record_id } = await send(channels.LAST_RECORD);
+                    console.log({ data, record_id });
+                    setTimeout(form.reset, 100);
+                    // form.reset({});
+                    // history.push({
+                    //     pathname: '/purchase',
+                    //     state: {
+                    //         record: data.membership,
+                    //         newRecordID: record_id,
+                    //         open: true,
+                    //         initialValues: {
+                    //             ...data.membership,
+                    //             record_id: record_id,
+                    //             renew: 0,
+                    //             buy: 0,
+                    //             fee: 0,
+                    //             invoiceDate: new Date().toLocaleDateString(),
+                    //             invoiceTime: new Date().toLocaleTimeString(),
+                    //         },
+                    //     },
+                    // });
+                } else if (data.memberships) {
+                    setTimeout(form.reset, 100);
+                    console.log(data.memberships);
+                    // history.push({
+                    //     pathname: '/accounts',
+                    //     state: data.memberships,
+                    // });
+                } else {
+                    setTimeout(form.reset, 100);
+                    setError(true);
+                    document.getElementById('phone').focus();
+                    return data;
+                }
+            } catch (err) {
+                throw err;
+            }
+        },
+    };
+
+    const AdminComponent = {
+        screen: {
+            width: {
+                style: {
+                    maxWidth: 450,
+                },
+            },
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                style: {
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                },
+            },
+            grid: {
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                style: {
+                    height: '100vh',
+                },
+            },
+            header: {
+                title: 'Mckee Pure Water',
+                content: 'Version 1.0',
+            },
+        },
+        button: {},
+        field: {},
     };
 
     // Effect
@@ -396,157 +452,6 @@ const Store = ({ children, history }) => {
         pulse: {
             animation: 'pulse',
             duration: 500,
-        },
-    };
-
-    const Field = {
-        username: (input) => {
-            return {
-                ...input,
-                id: 'username',
-                type: 'text',
-                placeholder: 'username',
-                className: 'blueIcon',
-                size: 'massive',
-                icon: 'user circle',
-                iconPosition: 'left',
-                autoComplete: 'off',
-                spellCheck: 'false',
-                inverted: true,
-                transparent: true,
-                fluid: true,
-                focus: true,
-                onChange: (_, { value }) => {
-                    helpers.field.resetError(input, value);
-                },
-            };
-        },
-        password: (input) => {
-            return {
-                ...input,
-                id: 'password',
-                type: 'password',
-                placeholder: 'password',
-                className: 'blueIcon',
-                size: 'massive',
-                icon: 'lock',
-                iconPosition: 'left',
-                autoComplete: 'off',
-                spellCheck: 'false',
-                inverted: true,
-                transparent: true,
-                fluid: true,
-                focus: true,
-                onChange: (_, { value }) => {
-                    helpers.field.resetError(input, value);
-                },
-            };
-        },
-        phone: (input, form) => {
-            return {
-                className: 'blueIcon',
-                id: 'phone',
-                placeholder: 'xxx-xxxx',
-                focus: true,
-                type: 'text',
-                size: 'massive',
-                icon: 'whatsapp',
-                fluid: true,
-                iconPosition: 'left',
-                transparent: true,
-                value: input.value,
-                name: input.name,
-                onFocus: () => {
-                    form.change('account', '');
-                    form.change('firstName', '');
-                    form.change('lastName', '');
-                },
-                onChange: (e, { value }) => {
-                    setError(false);
-                    return input.onChange(value);
-                },
-            };
-        },
-        account: (input, form) => {
-            return {
-                className: 'blueIcon',
-                id: 'account',
-                type: 'text',
-                placeholder: 'account #',
-                size: 'massive',
-                focus: true,
-                fluid: true,
-                icon: 'credit card',
-                iconPosition: 'left',
-                transparent: true,
-                spellCheck: 'false',
-                inverted: true,
-                value: input.value,
-                name: input.name,
-                onFocus: () => {
-                    form.batch(() => {
-                        form.change('phone', '');
-                        form.change('firstName', '');
-                        form.change('lastName', '');
-                    });
-                },
-                onChange: (e, { value }) => {
-                    setError(false);
-                    return input.onChange(value);
-                },
-            };
-        },
-        firstName: (input, form) => {
-            return {
-                placeholder: 'first name',
-                className: 'blueIcon',
-                icon: 'user circle',
-                iconPosition: 'left',
-                size: 'massive',
-                spellCheck: 'false',
-                fluid: true,
-                focus: true,
-                transparent: true,
-                inverted: true,
-                value: input.value,
-                name: input.name,
-                onFocus: () => {
-                    form.batch(() => {
-                        form.change('phone', '');
-                        form.change('account', '');
-                    });
-                },
-                onChange: (e, { value }) => {
-                    setError(false);
-                    return input.onChange(value);
-                },
-            };
-        },
-        lastName: (input, form) => {
-            return {
-                placeholder: 'last name',
-                className: 'blueIcon',
-                icon: 'user circle',
-                iconPosition: 'left',
-                size: 'massive',
-                spellCheck: 'false',
-                fluid: true,
-                focus: true,
-                transparent: true,
-                inverted: true,
-                value: input.value,
-                name: input.name,
-                onFocus: () => {
-                    form.batch(() => {
-                        form.change('phone', '');
-                        form.change('account', '');
-                    });
-                },
-                onChange: (e, { value }) => {
-                    setError(false);
-                    return input.onChange(value);
-                },
-            };
         },
     };
 
@@ -722,15 +627,6 @@ const Store = ({ children, history }) => {
             login: LoginComponent,
             dashboard: DashboardComponent,
             admin: AdminComponent,
-        },
-        field: {
-            ...Field,
-            // ...LoginComponent.field,
-            // ...DashboardComponent.field,
-        },
-        button: {
-            ...LoginComponent.button,
-            ...DashboardComponent.button,
         },
         effect: {
             pulse: TransitionEffect.pulse,

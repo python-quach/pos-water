@@ -10,49 +10,53 @@ import { StoreContext } from './store';
 
 // DASHBOARD SCREEN
 export const Dashboard = () => {
-    const { component, resetError, normalize, click } = useContext(
-        StoreContext
-    );
+    const { component, resetError, normalize } = useContext(StoreContext);
     const {
-        onSubmit,
-        input: { phone, account, firstName, lastName },
-        button: { find, add, report, logout },
+        screen,
+        form: { onSubmit, input, button, click },
+        header,
     } = component.dashboard;
 
     return (
-        <Screen name='dashboard'>
-            <Header title='Mckee Pure Water' content='Dashboard' />
+        <Screen screen={screen}>
+            <Header {...header} />
             <Form
                 onSubmit={onSubmit}
                 render={({ form }) => (
                     <>
                         <Field
-                            name={phone}
+                            name={input.phone.attr}
                             normalize={normalize}
                             reset={resetError}
-                            onFocus={() => phone.onFocus(form)}
+                            onFocus={() => input.phone.onFocus(form)}
                         />
                         <Field
-                            name={account}
+                            name={input.account.attr}
                             normalize={normalize}
                             reset={resetError}
-                            onFocus={() => account.onFocus(form)}
+                            onFocus={() => input.account.onFocus(form)}
                         />
                         <Field
-                            name={firstName}
+                            name={input.firstName.attr}
                             reset={resetError}
-                            onFocus={() => firstName.onFocus(form)}
+                            onFocus={() => input.firstName.onFocus(form)}
                         />
                         <Field
-                            name={lastName}
+                            name={input.lastName.attr}
                             reset={resetError}
-                            onFocus={() => lastName.onFocus(form)}
+                            onFocus={() => input.lastName.onFocus(form)}
                         />
                         <Divider hidden />
-                        <Button.Pulse attr={find} />
-                        <Button.Pulse attr={add} onClick={click.add} />
-                        <Button.Pulse attr={report} onClick={click.report} />
-                        <Button.Pulse attr={logout} onClick={click.logout} />
+                        <Button.Pulse attr={button.find} />
+                        <Button.Pulse attr={button.add} onClick={click.add} />
+                        <Button.Pulse
+                            attr={button.report}
+                            onClick={click.report}
+                        />
+                        <Button.Pulse
+                            attr={button.logout}
+                            onClick={click.logout}
+                        />
                     </>
                 )}
             />

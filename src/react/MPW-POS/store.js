@@ -58,97 +58,142 @@ const Store = ({ children, history }) => {
                 content: 'Version 1.0',
             },
         },
-        button: {
-            login: {
-                type: 'submit',
-                content: !error ? 'Login' : error,
-                color: !error ? 'blue' : 'red',
-                size: 'huge',
-                icon: 'sign-in',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
-            admin: {
-                content: 'Admin',
-                type: 'button',
-                color: 'yellow',
-                size: 'huge',
-                icon: 'database',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
-            close: {
-                content: 'Close',
-                type: 'button',
-                color: 'black',
-                size: 'huge',
-                icon: 'close',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
-            backup: {
-                disabled: loading,
-                content: fileSave,
-                loading: loading,
-                type: 'button',
-                size: 'huge',
-                icon: 'save',
-                circular: true,
-                color: 'pink',
-                fluid: true,
-            },
+        header: {
+            title: 'Mckee Pure Water',
+            content: 'User Login Version 1.0.0',
         },
-        input: {
-            username: {
-                id: 'username',
-                type: 'text',
-                placeholder: 'username',
-                className: 'blueIcon',
-                size: 'massive',
-                icon: 'user circle',
-                iconPosition: 'left',
-                autoComplete: 'off',
-                spellCheck: 'false',
-                inverted: true,
-                transparent: true,
-                fluid: true,
-                focus: true,
+        form: {
+            input: {
+                username: {
+                    attr: {
+                        id: 'username',
+                        type: 'text',
+                        placeholder: 'username',
+                        className: 'blueIcon',
+                        size: 'massive',
+                        icon: 'user circle',
+                        iconPosition: 'left',
+                        autoComplete: 'off',
+                        spellCheck: 'false',
+                        inverted: true,
+                        transparent: true,
+                        fluid: true,
+                        focus: true,
+                    },
+                    onFocus: () => {},
+                    onChange: () => {},
+                },
+                password: {
+                    attr: {
+                        id: 'password',
+                        type: 'password',
+                        placeholder: 'password',
+                        className: 'blueIcon',
+                        size: 'massive',
+                        icon: 'lock',
+                        iconPosition: 'left',
+                        autoComplete: 'off',
+                        spellCheck: 'false',
+                        inverted: true,
+                        transparent: true,
+                        fluid: true,
+                        focus: true,
+                    },
+                    onFocus: () => {},
+                    onChange: () => {},
+                },
             },
-            password: {
-                id: 'password',
-                type: 'password',
-                placeholder: 'password',
-                className: 'blueIcon',
-                size: 'massive',
-                icon: 'lock',
-                iconPosition: 'left',
-                autoComplete: 'off',
-                spellCheck: 'false',
-                inverted: true,
-                transparent: true,
-                fluid: true,
-                focus: true,
+            button: {
+                login: {
+                    type: 'submit',
+                    content: !error ? 'Login' : error,
+                    color: !error ? 'blue' : 'red',
+                    size: 'huge',
+                    icon: 'sign-in',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                admin: {
+                    content: 'Admin',
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'database',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                close: {
+                    content: 'Close',
+                    type: 'button',
+                    color: 'black',
+                    size: 'huge',
+                    icon: 'close',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                backup: {
+                    disabled: loading,
+                    content: fileSave,
+                    loading: loading,
+                    type: 'button',
+                    size: 'huge',
+                    icon: 'save',
+                    circular: true,
+                    color: 'pink',
+                    fluid: true,
+                },
             },
-        },
-        onSubmit: async (values, form) => {
-            try {
-                const result = await send(channels.LOGIN, values);
-                console.log(result);
-                history.push({
-                    pathname: '/dashboard',
-                    state: result,
-                });
-            } catch (err) {
-                setTimeout(() => {
-                    console.log(err);
-                    setError(err);
-                    form.reset({});
-                    document.getElementById('username').focus();
-                }, 100);
-            }
+            click: {
+                open: {
+                    adminLogin: async () => {
+                        setError(false);
+                        await helpers.sleep(500);
+                        history.push({
+                            pathname: '/admin/login',
+                            state: { open: true },
+                        });
+                    },
+                    backup: async () => {
+                        await helpers.sleep(500);
+                        setLoading(true);
+                        try {
+                            const response = await send(
+                                channels.SHOW_BACKUP_DIALOG
+                            );
+                            setFileSave(response);
+                        } catch (err) {
+                            setFileSave(err);
+                        }
+                        setLoading(false);
+                    },
+                },
+                close: {
+                    app: async () => {
+                        await helpers.sleep(500);
+                        await send(channels.CLOSE_APP);
+                    },
+                },
+            },
+            onSubmit: async (values, form) => {
+                try {
+                    const result = await send(channels.LOGIN, values);
+                    console.log(result);
+                    history.push({
+                        pathname: '/dashboard',
+                        state: result,
+                    });
+                } catch (err) {
+                    setTimeout(() => {
+                        console.log(err);
+                        setError(err);
+                        form.reset({});
+                        document.getElementById('username').focus();
+                    }, 100);
+                }
+            },
         },
     };
 
@@ -186,174 +231,226 @@ const Store = ({ children, history }) => {
                 content: 'Version 1.0',
             },
         },
-        button: {
-            find: {
-                id: 'FindMembership',
-                content: 'Find Membership',
-                color: 'blue',
-                type: 'submit',
-                size: 'huge',
-                icon: 'search',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
-            add: {
-                id: 'AddButton',
-                content: 'New Membership',
-                type: 'button',
-                size: 'huge',
-                color: 'teal',
-                icon: 'add circle',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
-            report: {
-                id: 'ReportButton',
-                content: `Daily Report: ${new Date().toLocaleDateString()}`,
-                type: 'button',
-                color: 'yellow',
-                size: 'huge',
-                icon: 'calendar',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
-            logout: {
-                content: 'Logout',
-                type: 'button',
-                id: 'LogoutButton',
-                size: 'huge',
-                color: 'black',
-                icon: 'sign-out',
-                labelPosition: 'right',
-                circular: true,
-                fluid: true,
-            },
+        header: {
+            title: '',
+            content: '',
         },
-        input: {
-            phone: {
-                className: 'blueIcon',
-                id: 'phone',
-                placeholder: 'xxx-xxxx',
-                focus: true,
-                type: 'text',
-                size: 'massive',
-                icon: 'whatsapp',
-                fluid: true,
-                iconPosition: 'left',
-                transparent: true,
-                onFocus: (form) => {
-                    form.batch(() => {
-                        form.change('account', '');
-                        form.change('firstName', '');
-                        form.change('lastName', '');
-                    });
+        form: {
+            input: {
+                phone: {
+                    attr: {
+                        className: 'blueIcon',
+                        id: 'phone',
+                        placeholder: 'xxx-xxxx',
+                        focus: true,
+                        type: 'text',
+                        size: 'massive',
+                        icon: 'whatsapp',
+                        fluid: true,
+                        iconPosition: 'left',
+                        transparent: true,
+                    },
+                    onFocus: (form) => {
+                        form.batch(() => {
+                            form.change('account', '');
+                            form.change('firstName', '');
+                            form.change('lastName', '');
+                        });
+                    },
+                    onChange: (change, value) => {
+                        setError(false);
+                        change(value);
+                    },
+                },
+                account: {
+                    attr: {
+                        id: 'account',
+                        className: 'blueIcon',
+                        type: 'text',
+                        placeholder: 'account #',
+                        size: 'massive',
+                        focus: true,
+                        fluid: true,
+                        icon: 'credit card',
+                        iconPosition: 'left',
+                        transparent: true,
+                        spellCheck: 'false',
+                        inverted: true,
+                    },
+                    onFocus: (form) => {
+                        form.batch(() => {
+                            form.change('phone', '');
+                            form.change('firstName', '');
+                            form.change('lastName', '');
+                        });
+                    },
+                    onChange: (change, value) => {
+                        setError(false);
+                        change(value);
+                    },
+                },
+                firstName: {
+                    attr: {
+                        id: 'firstName',
+                        placeholder: 'first name',
+                        className: 'blueIcon',
+                        icon: 'user circle',
+                        iconPosition: 'left',
+                        size: 'massive',
+                        spellCheck: 'false',
+                        fluid: true,
+                        focus: true,
+                        transparent: true,
+                        inverted: true,
+                    },
+                    onFocus: (form) => {
+                        form.batch(() => {
+                            form.change('phone', '');
+                            form.change('account', '');
+                        });
+                    },
+                    onChange: (change, value) => {
+                        setError(false);
+                        change(value);
+                    },
+                },
+                lastName: {
+                    attr: {
+                        id: 'lastName',
+                        placeholder: 'last name',
+                        className: 'blueIcon',
+                        icon: 'user circle',
+                        iconPosition: 'left',
+                        size: 'massive',
+                        spellCheck: 'false',
+                        fluid: true,
+                        focus: true,
+                        transparent: true,
+                        inverted: true,
+                    },
+                    onFocus: (form) => {
+                        form.batch(() => {
+                            form.change('phone', '');
+                            form.change('account', '');
+                        });
+                    },
+                    onChange: (change, value) => {
+                        setError(false);
+                        change(value);
+                    },
                 },
             },
-            account: {
-                className: 'blueIcon',
-                id: 'account',
-                type: 'text',
-                placeholder: 'account #',
-                size: 'massive',
-                focus: true,
-                fluid: true,
-                icon: 'credit card',
-                iconPosition: 'left',
-                transparent: true,
-                spellCheck: 'false',
-                inverted: true,
-                onFocus: (form) => {
-                    form.batch(() => {
-                        form.change('phone', '');
-                        form.change('firstName', '');
-                        form.change('lastName', '');
-                    });
+            button: {
+                find: {
+                    id: 'FindMembership',
+                    content: 'Find Membership',
+                    color: 'blue',
+                    type: 'submit',
+                    size: 'huge',
+                    icon: 'search',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                add: {
+                    id: 'AddButton',
+                    content: 'New Membership',
+                    type: 'button',
+                    size: 'huge',
+                    color: 'teal',
+                    icon: 'add circle',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                report: {
+                    id: 'ReportButton',
+                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'calendar',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                logout: {
+                    content: 'Logout',
+                    type: 'button',
+                    id: 'LogoutButton',
+                    size: 'huge',
+                    color: 'black',
+                    icon: 'sign-out',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
                 },
             },
-            firstName: {
-                id: 'firstName',
-                placeholder: 'first name',
-                className: 'blueIcon',
-                icon: 'user circle',
-                iconPosition: 'left',
-                size: 'massive',
-                spellCheck: 'false',
-                fluid: true,
-                focus: true,
-                transparent: true,
-                inverted: true,
-                onFocus: (form) => {
-                    form.batch(() => {
-                        form.change('phone', '');
-                        form.change('account', '');
-                    });
+
+            click: {
+                open: {
+                    addScreen: async () => {
+                        await helpers.sleep(500);
+                        history.push({ pathname: '/add', state: {} });
+                    },
+                    reportScreen: async () => {
+                        await helpers.sleep(500);
+                        history.push({
+                            pathname: '/report',
+                            state: {},
+                        });
+                    },
+                },
+                close: {
+                    dashboardScreen: async () => {
+                        await helpers.sleep(500);
+                        history.push({ pathname: '/', state: {} });
+                    },
                 },
             },
-            lastName: {
-                id: 'lastName',
-                placeholder: 'last name',
-                className: 'blueIcon',
-                icon: 'user circle',
-                iconPosition: 'left',
-                size: 'massive',
-                spellCheck: 'false',
-                fluid: true,
-                focus: true,
-                transparent: true,
-                inverted: true,
-                onFocus: (form) => {
-                    form.batch(() => {
-                        form.change('phone', '');
-                        form.change('account', '');
-                    });
-                },
-            },
-        },
-        onSubmit: async (values, form) => {
-            try {
-                const data = await send(channels.FIND, values);
-                console.log(data);
-                if (data.membership) {
-                    const { record_id } = await send(channels.LAST_RECORD);
-                    console.log({ data, record_id });
-                    setTimeout(form.reset, 100);
-                    // form.reset({});
-                    // history.push({
-                    //     pathname: '/purchase',
-                    //     state: {
-                    //         record: data.membership,
-                    //         newRecordID: record_id,
-                    //         open: true,
-                    //         initialValues: {
-                    //             ...data.membership,
-                    //             record_id: record_id,
-                    //             renew: 0,
-                    //             buy: 0,
-                    //             fee: 0,
-                    //             invoiceDate: new Date().toLocaleDateString(),
-                    //             invoiceTime: new Date().toLocaleTimeString(),
-                    //         },
-                    //     },
-                    // });
-                } else if (data.memberships) {
-                    setTimeout(form.reset, 100);
-                    console.log(data.memberships);
-                    // history.push({
-                    //     pathname: '/accounts',
-                    //     state: data.memberships,
-                    // });
-                } else {
-                    setTimeout(form.reset, 100);
-                    setError(true);
-                    document.getElementById('phone').focus();
-                    return data;
+            onSubmit: async (values, form) => {
+                try {
+                    const data = await send(channels.FIND, values);
+                    console.log(data);
+                    if (data.membership) {
+                        const { record_id } = await send(channels.LAST_RECORD);
+                        console.log({ data, record_id });
+                        setTimeout(form.reset, 100);
+                        // form.reset({});
+                        // history.push({
+                        //     pathname: '/purchase',
+                        //     state: {
+                        //         record: data.membership,
+                        //         newRecordID: record_id,
+                        //         open: true,
+                        //         initialValues: {
+                        //             ...data.membership,
+                        //             record_id: record_id,
+                        //             renew: 0,
+                        //             buy: 0,
+                        //             fee: 0,
+                        //             invoiceDate: new Date().toLocaleDateString(),
+                        //             invoiceTime: new Date().toLocaleTimeString(),
+                        //         },
+                        //     },
+                        // });
+                    } else if (data.memberships) {
+                        setTimeout(form.reset, 100);
+                        console.log(data.memberships);
+                        // history.push({
+                        //     pathname: '/accounts',
+                        //     state: data.memberships,
+                        // });
+                    } else {
+                        setTimeout(form.reset, 100);
+                        setError(true);
+                        document.getElementById('phone').focus();
+                        return data;
+                    }
+                } catch (err) {
+                    throw err;
                 }
-            } catch (err) {
-                throw err;
-            }
+            },
         },
     };
 
@@ -391,10 +488,24 @@ const Store = ({ children, history }) => {
                 content: 'Version 1.0',
             },
         },
+        header: {
+            title: 'Mckee Pure Water',
+            content: 'Admin Login Verification',
+        },
         form: {
-            field: {
-                username: {},
-                password: {},
+            input: {
+                password: {
+                    attr: {
+                        id: 'password',
+                        placeholder: 'password',
+                        type: 'password',
+                        focus: true,
+                        error: error,
+                        size: 'huge',
+                    },
+                    onFocus: () => {},
+                    onChange: () => {},
+                },
             },
             button: {
                 submit: {
@@ -412,8 +523,19 @@ const Store = ({ children, history }) => {
                     secondary: true,
                 },
             },
-            onSubmit: async (values, form) => {
-                console.log('onSubmit', { values });
+            click: {
+                close: {
+                    adminLogin: () => history.push('/'),
+                },
+            },
+            onSubmit: async ({ password }, form) => {
+                console.log('onSubmit', { password });
+                if (password === '911') {
+                    await helpers.sleep(500);
+                    history.push({ pathname: '/admin', state: true });
+                } else {
+                    throw new Error('Invalid Password');
+                }
             },
         },
     };
@@ -516,8 +638,7 @@ const Store = ({ children, history }) => {
         login: (setVisible) => {
             setVisible((visible) => !visible);
         },
-        admin: (setVisible) => {
-            setVisible((prev) => !prev);
+        admin: () => {
             open.admin();
         },
         close: async (setVisible) => {
@@ -557,7 +678,7 @@ const Store = ({ children, history }) => {
         admin: async () => {
             await helpers.sleep(500);
             history.push({
-                pathname: '/admin/confirm',
+                pathname: '/admin/login',
                 state: { open: true },
             });
         },

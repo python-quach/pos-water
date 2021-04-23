@@ -10,30 +10,36 @@ import { StoreContext } from './store';
 
 // LOGIN SCREEN
 export const Login = () => {
-    const { component, click, resetError } = useContext(StoreContext);
+    const { component, resetError } = useContext(StoreContext);
     const {
-        onSubmit,
-        input: { username, password },
-        button: { login, admin, close, backup },
+        screen,
+        header,
+        form: { onSubmit, input, button, click },
     } = component.login;
 
     return (
-        <Screen name='login'>
-            <Header title='Mckee Pure Water' content='User Login' />
+        <Screen screen={screen}>
+            <Header {...header} />
             <LoginForm
                 onSubmit={onSubmit}
                 render={() => (
                     <>
-                        <Field name={username} reset={resetError} />
-                        <Field name={password} reset={resetError} />
+                        <Field name={input.username} reset={resetError} />
+                        <Field name={input.password} reset={resetError} />
                         <Divider hidden />
-                        <Button.Pulse attr={login} />
-                        <Button.Pulse attr={admin} onClick={click.admin} />
+                        <Button.Pulse attr={button.login} />
+                        <Button.Pulse
+                            attr={button.admin}
+                            onClick={click.open.adminLogin}
+                        />
                         <Form.Group widths={2}>
-                            <Button.Pulse attr={close} onClick={click.close} />
                             <Button.Pulse
-                                attr={backup}
-                                onClick={click.backup}
+                                attr={button.close}
+                                onClick={click.close.app}
+                            />
+                            <Button.Pulse
+                                attr={button.backup}
+                                onClick={click.open.backup}
                             />
                         </Form.Group>
                     </>

@@ -357,7 +357,7 @@ const Store = ({ children, history }) => {
         },
     };
 
-    const AdminComponent = {
+    const AdminLoginComponent = {
         screen: {
             width: {
                 style: {
@@ -391,8 +391,31 @@ const Store = ({ children, history }) => {
                 content: 'Version 1.0',
             },
         },
-        button: {},
-        field: {},
+        form: {
+            field: {
+                username: {},
+                password: {},
+            },
+            button: {
+                submit: {
+                    id: 'submit',
+                    content: 'Submit',
+                    size: 'huge',
+                    type: 'submit',
+                    color: error ? 'red' : 'blue',
+                },
+                cancel: {
+                    id: 'cancel',
+                    content: 'Cancel',
+                    size: 'huge',
+                    type: 'button',
+                    secondary: true,
+                },
+            },
+            onSubmit: async (values, form) => {
+                console.log('onSubmit', { values });
+            },
+        },
     };
 
     // Effect
@@ -605,7 +628,7 @@ const Store = ({ children, history }) => {
         component: {
             login: LoginComponent,
             dashboard: DashboardComponent,
-            admin: AdminComponent,
+            adminLogin: AdminLoginComponent,
         },
         effect: {
             pulse: TransitionEffect.pulse,

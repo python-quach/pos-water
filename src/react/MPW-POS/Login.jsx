@@ -1,12 +1,12 @@
-import { Form, Divider } from 'semantic-ui-react';
-import { useContext } from 'react';
-import { StoreContext } from './store';
-
 import Screen from './Screen';
 import Header from './Header';
 import LoginForm from './Form';
 import Button from './Button';
 import Field from './Field';
+
+import { Form, Divider } from 'semantic-ui-react';
+import { useContext } from 'react';
+import { StoreContext } from './store';
 
 // LOGIN SCREEN
 export const Login = () => {

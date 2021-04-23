@@ -1,19 +1,18 @@
+import Header from './Header';
+import Screen from './Screen';
+import Form from './Form';
+import Button from './Button';
+import Field from './Field';
+
 import { Divider } from 'semantic-ui-react';
 import { useContext } from 'react';
 import { StoreContext } from './store';
 
-import Header from './Header';
-import Screen from './Screen';
-import FindForm from './Form';
-import Button from './Button';
-import Field from './Field';
-
 // DASHBOARD SCREEN
 export const Dashboard = () => {
-    const { component, resetError, normalize, close, open } = useContext(
+    const { component, resetError, normalize, click } = useContext(
         StoreContext
     );
-
     const {
         onSubmit,
         input: { phone, account, firstName, lastName },
@@ -23,7 +22,7 @@ export const Dashboard = () => {
     return (
         <Screen name='dashboard'>
             <Header title='Mckee Pure Water' content='Dashboard' />
-            <FindForm
+            <Form
                 onSubmit={onSubmit}
                 render={({ form }) => (
                     <>
@@ -31,51 +30,29 @@ export const Dashboard = () => {
                             name={phone}
                             normalize={normalize}
                             reset={resetError}
-                            onFocus={() => {
-                                form.batch(() => {
-                                    form.change('account', '');
-                                    form.change('firstName', '');
-                                    form.change('lastName', '');
-                                });
-                            }}
+                            onFocus={() => phone.onFocus(form)}
                         />
                         <Field
                             name={account}
                             normalize={normalize}
                             reset={resetError}
-                            onFocus={() => {
-                                form.batch(() => {
-                                    form.change('phone', '');
-                                    form.change('firstName', '');
-                                    form.change('lastName', '');
-                                });
-                            }}
+                            onFocus={() => account.onFocus(form)}
                         />
                         <Field
                             name={firstName}
                             reset={resetError}
-                            onFocus={() => {
-                                form.batch(() => {
-                                    form.change('phone', '');
-                                    form.change('account', '');
-                                });
-                            }}
+                            onFocus={() => firstName.onFocus(form)}
                         />
                         <Field
                             name={lastName}
                             reset={resetError}
-                            onFocus={() => {
-                                form.batch(() => {
-                                    form.change('phone', '');
-                                    form.change('account', '');
-                                });
-                            }}
+                            onFocus={() => lastName.onFocus(form)}
                         />
                         <Divider hidden />
                         <Button.Pulse attr={find} />
-                        <Button.Pulse attr={add} onClick={open.add} />
-                        <Button.Pulse attr={report} onClick={open.report} />
-                        <Button.Pulse attr={logout} onClick={close.dashboard} />
+                        <Button.Pulse attr={add} onClick={click.add} />
+                        <Button.Pulse attr={report} onClick={click.report} />
+                        <Button.Pulse attr={logout} onClick={click.logout} />
                     </>
                 )}
             />

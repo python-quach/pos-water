@@ -244,17 +244,13 @@ const Store = ({ children, history }) => {
                 fluid: true,
                 iconPosition: 'left',
                 transparent: true,
-                // value: input.value,
-                // name: input.name,
-                // onFocus: () => {
-                //     form.change('account', '');
-                //     form.change('firstName', '');
-                //     form.change('lastName', '');
-                // },
-                // onChange: (e, { value }) => {
-                //     setError(false);
-                //     return input.onChange(value);
-                // },
+                onFocus: (form) => {
+                    form.batch(() => {
+                        form.change('account', '');
+                        form.change('firstName', '');
+                        form.change('lastName', '');
+                    });
+                },
             },
             account: {
                 className: 'blueIcon',
@@ -269,6 +265,13 @@ const Store = ({ children, history }) => {
                 transparent: true,
                 spellCheck: 'false',
                 inverted: true,
+                onFocus: (form) => {
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('firstName', '');
+                        form.change('lastName', '');
+                    });
+                },
             },
             firstName: {
                 id: 'firstName',
@@ -282,6 +285,12 @@ const Store = ({ children, history }) => {
                 focus: true,
                 transparent: true,
                 inverted: true,
+                onFocus: (form) => {
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('account', '');
+                    });
+                },
             },
             lastName: {
                 id: 'lastName',
@@ -295,6 +304,12 @@ const Store = ({ children, history }) => {
                 focus: true,
                 transparent: true,
                 inverted: true,
+                onFocus: (form) => {
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('account', '');
+                    });
+                },
             },
         },
         onSubmit: async (values, form) => {

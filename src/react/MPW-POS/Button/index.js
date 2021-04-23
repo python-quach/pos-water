@@ -4,7 +4,6 @@ import { Transition, Form } from 'semantic-ui-react';
 
 // TRANSITION BUTTON
 export const PulseTransitionButton = ({ render, onClick }) => {
-    console.log({ render, onClick });
     const [visible, setVisible] = useState(true);
     const { effect } = useContext(StoreContext);
 

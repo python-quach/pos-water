@@ -26,18 +26,8 @@ export const LoginForm = () => {
             onSubmit={onSubmit}
             render={({ handleSubmit }) => (
                 <Form onSubmit={handleSubmit}>
-                    <Field
-                        name={username}
-                        onChange={(input, value) => {
-                            helpers.field.resetError(input, value);
-                        }}
-                    />
-                    <Field
-                        name={password}
-                        onChange={(input, value) => {
-                            helpers.field.resetError(input, value);
-                        }}
-                    />
+                    <Field name={username} reset={helpers.field.resetError} />
+                    <Field name={password} reset={helpers.field.resetError} />
                     <Divider hidden />
                     <Button.Pulse
                         render={login}

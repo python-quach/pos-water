@@ -187,180 +187,114 @@ const Store = ({ children, history }) => {
             },
         },
         button: {
-            find: () => {
-                return {
-                    id: 'FindMembership',
-                    content: 'Find Membership',
-                    color: 'blue',
-                    type: 'submit',
-                    size: 'huge',
-                    icon: 'search',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: (setVisible) => {
-                        setVisible((prev) => !prev);
-                    },
-                };
+            find: {
+                id: 'FindMembership',
+                content: 'Find Membership',
+                color: 'blue',
+                type: 'submit',
+                size: 'huge',
+                icon: 'search',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
-            add: () => {
-                return {
-                    id: 'AddButton',
-                    content: 'New Membership',
-                    type: 'button',
-                    size: 'huge',
-                    color: 'teal',
-                    icon: 'add circle',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: (setVisible) => {
-                        setVisible((prev) => !prev);
-                        open.add();
-                    },
-                };
+            add: {
+                id: 'AddButton',
+                content: 'New Membership',
+                type: 'button',
+                size: 'huge',
+                color: 'teal',
+                icon: 'add circle',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
-            report: () => {
-                return {
-                    id: 'ReportButton',
-                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
-                    type: 'button',
-                    color: 'yellow',
-                    size: 'huge',
-                    icon: 'calendar',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: (setVisible) => {
-                        setVisible((prev) => !prev);
-                        open.report();
-                    },
-                };
+            report: {
+                id: 'ReportButton',
+                content: `Daily Report: ${new Date().toLocaleDateString()}`,
+                type: 'button',
+                color: 'yellow',
+                size: 'huge',
+                icon: 'calendar',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
-            logout: () => {
-                return {
-                    content: 'Logout',
-                    type: 'button',
-                    id: 'LogoutButton',
-                    size: 'huge',
-                    color: 'black',
-                    icon: 'sign-out',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                    onClick: (setVisible) => {
-                        setVisible((prev) => !prev);
-                        close.dashboard();
-                    },
-                };
+            logout: {
+                content: 'Logout',
+                type: 'button',
+                id: 'LogoutButton',
+                size: 'huge',
+                color: 'black',
+                icon: 'sign-out',
+                labelPosition: 'right',
+                circular: true,
+                fluid: true,
             },
         },
-        field: {
-            phone: (input, form) => {
-                return {
-                    className: 'blueIcon',
-                    id: 'phone',
-                    placeholder: 'xxx-xxxx',
-                    focus: true,
-                    type: 'text',
-                    size: 'massive',
-                    icon: 'whatsapp',
-                    fluid: true,
-                    iconPosition: 'left',
-                    transparent: true,
-                    value: input.value,
-                    name: input.name,
-                    onFocus: () => {
-                        form.change('account', '');
-                        form.change('firstName', '');
-                        form.change('lastName', '');
-                    },
-                    onChange: (e, { value }) => {
-                        setError(false);
-                        return input.onChange(value);
-                    },
-                };
+        input: {
+            phone: {
+                className: 'blueIcon',
+                id: 'phone',
+                placeholder: 'xxx-xxxx',
+                focus: true,
+                type: 'text',
+                size: 'massive',
+                icon: 'whatsapp',
+                fluid: true,
+                iconPosition: 'left',
+                transparent: true,
+                // value: input.value,
+                // name: input.name,
+                // onFocus: () => {
+                //     form.change('account', '');
+                //     form.change('firstName', '');
+                //     form.change('lastName', '');
+                // },
+                // onChange: (e, { value }) => {
+                //     setError(false);
+                //     return input.onChange(value);
+                // },
             },
-            account: (input, form) => {
-                return {
-                    className: 'blueIcon',
-                    id: 'account',
-                    type: 'text',
-                    placeholder: 'account #',
-                    size: 'massive',
-                    focus: true,
-                    fluid: true,
-                    icon: 'credit card',
-                    iconPosition: 'left',
-                    transparent: true,
-                    spellCheck: 'false',
-                    inverted: true,
-                    value: input.value,
-                    name: input.name,
-                    onFocus: () => {
-                        form.batch(() => {
-                            form.change('phone', '');
-                            form.change('firstName', '');
-                            form.change('lastName', '');
-                        });
-                    },
-                    onChange: (e, { value }) => {
-                        setError(false);
-                        return input.onChange(value);
-                    },
-                };
+            account: {
+                className: 'blueIcon',
+                id: 'account',
+                type: 'text',
+                placeholder: 'account #',
+                size: 'massive',
+                focus: true,
+                fluid: true,
+                icon: 'credit card',
+                iconPosition: 'left',
+                transparent: true,
+                spellCheck: 'false',
+                inverted: true,
             },
-            firstName: (input, form) => {
-                return {
-                    placeholder: 'first name',
-                    className: 'blueIcon',
-                    icon: 'user circle',
-                    iconPosition: 'left',
-                    size: 'massive',
-                    spellCheck: 'false',
-                    fluid: true,
-                    focus: true,
-                    transparent: true,
-                    inverted: true,
-                    value: input.value,
-                    name: input.name,
-                    onFocus: () => {
-                        form.batch(() => {
-                            form.change('phone', '');
-                            form.change('account', '');
-                        });
-                    },
-                    onChange: (e, { value }) => {
-                        setError(false);
-                        return input.onChange(value);
-                    },
-                };
+            firstName: {
+                id: 'firstName',
+                placeholder: 'first name',
+                className: 'blueIcon',
+                icon: 'user circle',
+                iconPosition: 'left',
+                size: 'massive',
+                spellCheck: 'false',
+                fluid: true,
+                focus: true,
+                transparent: true,
+                inverted: true,
             },
-            lastName: (input, form) => {
-                return {
-                    placeholder: 'last name',
-                    className: 'blueIcon',
-                    icon: 'user circle',
-                    iconPosition: 'left',
-                    size: 'massive',
-                    spellCheck: 'false',
-                    fluid: true,
-                    focus: true,
-                    transparent: true,
-                    inverted: true,
-                    value: input.value,
-                    name: input.name,
-                    onFocus: () => {
-                        form.batch(() => {
-                            form.change('phone', '');
-                            form.change('account', '');
-                        });
-                    },
-                    onChange: (e, { value }) => {
-                        setError(false);
-                        return input.onChange(value);
-                    },
-                };
+            lastName: {
+                id: 'lastName',
+                placeholder: 'last name',
+                className: 'blueIcon',
+                icon: 'user circle',
+                iconPosition: 'left',
+                size: 'massive',
+                spellCheck: 'false',
+                fluid: true,
+                focus: true,
+                transparent: true,
+                inverted: true,
             },
         },
         onSubmit: async (values, form) => {
@@ -457,9 +391,8 @@ const Store = ({ children, history }) => {
     // Helpers
     const helpers = {
         field: {
-            resetError: (input, value) => {
+            resetError: () => {
                 setError(false);
-                return input.onChange(value);
             },
         },
         sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
@@ -621,6 +554,7 @@ const Store = ({ children, history }) => {
         onSubmit,
         onClick,
         open,
+        close,
         error,
         component: {
             login: LoginComponent,

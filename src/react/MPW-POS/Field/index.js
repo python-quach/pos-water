@@ -1,41 +1,22 @@
-import { useContext } from 'react';
-import { StoreContext } from '../store';
-import { Field } from 'react-final-form';
-import { Form } from 'semantic-ui-react';
+import { Field as FinalField } from 'react-final-form';
+import { Form as SemanticForm } from 'semantic-ui-react';
 
-export const FinalFormField = ({ name, form, type }) => {
-    const { component, helpers } = useContext(StoreContext);
-    const { field } = component[type];
-    return (
-        <Field
-            name={name}
-            parse={
-                helpers.normalize[name]
-                    ? helpers.normalize[name]
-                    : (value) => value
-            }
-            render={({ input }) => <Form.Input {...field[name](input, form)} />}
-        />
-    );
-};
-
-export const MyField = ({ name, onChange }) => (
-    <Field
+export const Field = ({ name, reset, onFocus, normalize }) => (
+    <FinalField
         name={name.id}
+        parse={normalize ? normalize[name.id] : (value) => value}
         render={({ input }) => (
-            <Form.Input
+            <SemanticForm.Input
                 {...input}
                 {...name}
+                onFocus={onFocus}
                 onChange={(_, { value }) => {
-                    if (onChange) {
-                        onChange(input, value);
-                    }
-                    return input.onChange(value);
+                    if (reset) reset();
+                    input.onChange(value);
                 }}
             />
         )}
     />
 );
 
-// export default FinalFormField;
-export default MyField;
+export default Field;

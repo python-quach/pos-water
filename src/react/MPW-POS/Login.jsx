@@ -6,7 +6,7 @@ import Form from './Form/Login';
 export const Login = () => (
     <Screen name='login'>
         <Header title='Mckee Pure Water' content='User Login' />
-        <Form name='login' />
+        <Form />
     </Screen>
 );
 

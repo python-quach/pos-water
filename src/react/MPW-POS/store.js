@@ -474,7 +474,7 @@ const Store = ({ children, history }) => {
     };
 
     // ONCLICK
-    const onClick = {
+    const click = {
         login: (setVisible) => {
             setVisible((visible) => !visible);
         },
@@ -487,11 +487,10 @@ const Store = ({ children, history }) => {
             await helpers.sleep(500);
             send(channels.CLOSE_APP);
         },
-        backup: async (setVisible) => {
-            setVisible((visible) => !visible);
+        backup: async () => {
+            setLoading(true);
             await helpers.sleep(500);
             try {
-                setLoading(true);
                 setFileSave(await send(channels.SHOW_BACKUP_DIALOG));
                 setLoading(false);
             } catch (err) {
@@ -535,6 +534,18 @@ const Store = ({ children, history }) => {
                 state: {},
             });
         },
+        backup: async (setVisible) => {
+            setVisible((visible) => !visible);
+            await helpers.sleep(500);
+            try {
+                setLoading(true);
+                setFileSave(await send(channels.SHOW_BACKUP_DIALOG));
+                setLoading(false);
+            } catch (err) {
+                setLoading(false);
+                setFileSave(err);
+            }
+        },
     };
 
     const close = {
@@ -542,17 +553,37 @@ const Store = ({ children, history }) => {
             await helpers.sleep(500);
             history.push({ pathname: '/', state: {} });
         },
+        app: async (setVisible) => {
+            setVisible((visible) => !visible);
+            await helpers.sleep(500);
+            send(channels.CLOSE_APP);
+        },
+    };
+
+    const normalize = {
+        phone: (value) => {
+            if (!value) return value;
+            const onlyNums = value.replace(/[^\d]/g, '');
+            if (onlyNums.length <= 3) return onlyNums;
+            if (onlyNums.length <= 6) return onlyNums;
+            return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
+        },
+        account: (value) => {
+            if (!value) return value;
+            const onlyNums = value.replace(/[^\d]/g, '');
+            if (onlyNums.length <= 9) return onlyNums;
+            return onlyNums.slice(0, 9);
+        },
     };
 
     // FIELD HELPERS
-    const resetError = (input, value) => {
+    const resetError = () => {
         setError(false);
-        return input.onChange(value);
     };
 
     const store = {
         onSubmit,
-        onClick,
+        click,
         open,
         close,
         error,
@@ -564,11 +595,7 @@ const Store = ({ children, history }) => {
         effect: {
             pulse: TransitionEffect.pulse,
         },
-        screen: {
-            dashboard: DashboardComponent.screen,
-            login: DashboardComponent.screen,
-        },
-        TransitionEffect,
+        normalize,
         resetError,
         setError,
         history,

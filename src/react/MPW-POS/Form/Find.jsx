@@ -5,7 +5,7 @@ import { StoreContext } from '../store';
 import Button from '../Button';
 import Field from '../Field';
 
-export const FindForm = () => {
+export const FindForm = ({ render }) => {
     const {
         component,
         helpers: {
@@ -27,6 +27,7 @@ export const FindForm = () => {
             onSubmit={onSubmit}
             render={({ handleSubmit, form }) => (
                 <Form onSubmit={handleSubmit}>
+                    {/* {render(form)} */}
                     <Field
                         name={phone}
                         normalize={normalize}
@@ -73,31 +74,34 @@ export const FindForm = () => {
                     />
                     <Divider hidden />
                     <Button.Pulse
-                        render={find}
-                        onClick={(setVisible) => {
-                            setVisible((visible) => !visible);
-                        }}
+                        attr={find}
+                        // onClick={(setVisible) => {
+                        //     setVisible((visible) => !visible);
+                        // }}
                     />
                     <Button.Pulse
-                        render={add}
-                        onClick={(setVisible) => {
-                            setVisible((visible) => !visible);
-                            open.add();
-                        }}
+                        attr={add}
+                        onClick={open.add}
+                        // onClick={(setVisible) => {
+                        //     setVisible((visible) => !visible);
+                        //     open.add();
+                        // }}
                     />
                     <Button.Pulse
-                        render={report}
-                        onClick={async (setVisible) => {
-                            setVisible((visible) => !visible);
-                            open.report();
-                        }}
+                        attr={report}
+                        onClick={open.report}
+                        // onClick={async (setVisible) => {
+                        //     setVisible((visible) => !visible);
+                        //     open.report();
+                        // }}
                     />
                     <Button.Pulse
-                        render={logout}
-                        onClick={async (setVisible) => {
-                            setVisible((visible) => !visible);
-                            close.dashboard();
-                        }}
+                        attr={logout}
+                        onClick={close.dashboard}
+                        // onClick={async (setVisible) => {
+                        //     setVisible((visible) => !visible);
+                        //     close.dashboard();
+                        // }}
                     />
                 </Form>
             )}

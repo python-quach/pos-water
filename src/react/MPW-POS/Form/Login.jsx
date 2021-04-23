@@ -24,7 +24,7 @@ export const LoginForm = () => {
     return (
         <FinalForm
             onSubmit={onSubmit}
-            render={({ handleSubmit }) => (
+            render={({ handleSubmit, form }) => (
                 <Form onSubmit={handleSubmit}>
                     <Field name={username} reset={helpers.field.resetError} />
                     <Field name={password} reset={helpers.field.resetError} />

@@ -449,20 +449,37 @@ module.exports = (db) => {
     async function getUsers(event, _) {
         console.log('getUsers');
         try {
-            const result = await db.getAllUsers();
-            console.log(result);
-            event.sender.send(channels.GET_USERS, result);
+            const users = await db.getAllUsers();
+            console.log(users);
+            users
+                ? event.sender.send(channels.GET_USERS, { data: users })
+                : event.sender.send(channels.GET_USERS, {
+                      error: 'Unable To Get User',
+                  });
         } catch (err) {
-            event.sender.send(channels.GET_USERS, []);
+            return console.log(err.message);
         }
     }
+
+    /**
+     * Add new user
+     * @param {*} event
+     * @param {*} args
+     */
     async function addUser(event, args) {
         console.log('controller: addUser', args);
         try {
             const result = await db.addUser(args);
-            event.sender.send(channels.ADD_USER, result);
+            // event.sender.send(channels.ADD_USER, result);
+            result
+                ? event.sender.send(channels.ADD_USER, { data: result })
+                : event.sender.send(channels.ADD_USER, {
+                      error: 'Unable to add user',
+                  });
         } catch (err) {
-            event.sender.send(channels.ADD_USER, err);
+            return console.log(err.message);
+            // event.sender.send(channels.ADD_USER, err);
+            // event.sender.send(channels.ADD_USER, err);
         }
     }
     async function deleteUser(event, args) {

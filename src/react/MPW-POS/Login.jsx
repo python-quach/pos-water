@@ -10,12 +10,9 @@ import { StoreContext } from './store';
 
 // LOGIN SCREEN
 export const Login = () => {
-    const { component, resetError } = useContext(StoreContext);
-    const {
-        screen,
-        header,
-        form: { onSubmit, input, button, click },
-    } = component.login;
+    const { screen, header, onSubmit, input, button } = useContext(
+        StoreContext
+    ).component.login;
 
     return (
         <Screen screen={screen}>
@@ -24,22 +21,31 @@ export const Login = () => {
                 onSubmit={onSubmit}
                 render={() => (
                     <>
-                        <Field name={input.username} reset={resetError} />
-                        <Field name={input.password} reset={resetError} />
+                        <Field
+                            name={input.username.attr}
+                            onChange={input.username.onChange}
+                        />
+                        <Field
+                            name={input.password.attr}
+                            onChange={input.password.onChange}
+                        />
                         <Divider hidden />
-                        <Button.Pulse attr={button.login} />
                         <Button.Pulse
-                            attr={button.admin}
-                            onClick={click.open.adminLogin}
+                            attr={button.login.attr}
+                            onClick={button.login.onClick}
+                        />
+                        <Button.Pulse
+                            attr={button.admin.attr}
+                            onClick={button.admin.onClick}
                         />
                         <Form.Group widths={2}>
                             <Button.Pulse
-                                attr={button.close}
-                                onClick={click.close.app}
+                                attr={button.close.attr}
+                                onClick={button.close.onClick}
                             />
                             <Button.Pulse
-                                attr={button.backup}
-                                onClick={click.open.backup}
+                                attr={button.backup.attr}
+                                onClick={button.backup.onClick}
                             />
                         </Form.Group>
                     </>

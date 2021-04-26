@@ -10,6 +10,14 @@ export const login = (values) =>
         });
     });
 
+export const getUsers = () =>
+    new Promise((resolve, reject) => {
+        ipcRenderer.send(channels.GET_USERS);
+        ipcRenderer.on(channels.GET_USERS, (_, arg) => {
+            ipcRenderer.removeAllListeners(channels.GET_USERS);
+        });
+    });
+
 export const sendRequest = (message, values) =>
     new Promise((resolve, reject) => {
         ipcRenderer.send(message, values);

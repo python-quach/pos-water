@@ -10,12 +10,8 @@ import { StoreContext } from './store';
 
 // DASHBOARD SCREEN
 export const Dashboard = () => {
-    const { component, resetError, normalize } = useContext(StoreContext);
-    const {
-        screen,
-        form: { onSubmit, input, button, click },
-        header,
-    } = component.dashboard;
+    const { component } = useContext(StoreContext);
+    const { screen, onSubmit, input, button, header } = component.dashboard;
 
     return (
         <Screen screen={screen}>
@@ -26,36 +22,35 @@ export const Dashboard = () => {
                     <>
                         <Field
                             name={input.phone.attr}
-                            normalize={normalize}
-                            reset={resetError}
+                            normalize={input.phone.normalize}
                             onFocus={() => input.phone.onFocus(form)}
                         />
                         <Field
                             name={input.account.attr}
-                            normalize={normalize}
-                            reset={resetError}
+                            normalize={input.account.normalize}
                             onFocus={() => input.account.onFocus(form)}
                         />
                         <Field
                             name={input.firstName.attr}
-                            reset={resetError}
                             onFocus={() => input.firstName.onFocus(form)}
                         />
                         <Field
                             name={input.lastName.attr}
-                            reset={resetError}
                             onFocus={() => input.lastName.onFocus(form)}
                         />
                         <Divider hidden />
-                        <Button.Pulse attr={button.find} />
-                        <Button.Pulse attr={button.add} onClick={click.add} />
+                        <Button.Pulse attr={button.find.attr} />
                         <Button.Pulse
-                            attr={button.report}
-                            onClick={click.report}
+                            attr={button.add.attr}
+                            onClick={button.add.onClick}
                         />
                         <Button.Pulse
-                            attr={button.logout}
-                            onClick={click.logout}
+                            attr={button.report.attr}
+                            onClick={button.report.onClick}
+                        />
+                        <Button.Pulse
+                            attr={button.logout.attr}
+                            onClick={button.logout.onClick}
                         />
                     </>
                 )}

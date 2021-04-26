@@ -13,7 +13,9 @@ export const PulseTransitionButton = ({ attr, onClick }) => {
                 {...attr}
                 onClick={() => {
                     setVisible((visible) => !visible);
-                    if (onClick) onClick();
+                    setTimeout(() => {
+                        if (onClick) onClick();
+                    }, 500);
                 }}
             />
         </Transition>

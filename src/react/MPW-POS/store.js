@@ -23,9 +23,82 @@ const Store = ({ children, history }) => {
     const [loading, setLoading] = useState(false);
     const [fileSave, setFileSave] = useState('Backup');
 
+    // User Table Admin
+    const [users, setUsers] = useState([]);
+    const [user, setUser] = useState({});
+    const [open, setOpen] = useState(false);
+
+    // CRUD
+    const crud = {
+        create: async ({ newItem, setState, channels }) => {
+            try {
+                const result = await send(channels, newItem);
+                setState((list) => [...list, result]);
+                return result;
+            } catch (err) {
+                throw err;
+            }
+        },
+        read: async (setState) => {
+            try {
+                const data = await send(channels.GET_USERS);
+                console.log('Response From Server', { data });
+                setState(data);
+            } catch (err) {
+                setState([]);
+                return console.log('Unable to get user');
+            }
+        },
+        update: ({ updatedItem, setState }) => {
+            setState((list) => {
+                list.map((item) =>
+                    item.id === updatedItem.id ? updatedItem : item
+                );
+            });
+        },
+        delete: ({ deletedId, setState }) => {
+            setState((list) => list.filter((item) => item.id !== deletedId));
+        },
+    };
+
+    // Effect
+    const TransitionEffect = {
+        pulse: {
+            animation: 'pulse',
+            duration: 500,
+        },
+    };
+
+    // Helpers
+    const helpers = {
+        sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+        normalize: {
+            phone: (value) => {
+                if (!value) return value;
+                const onlyNums = value.replace(/[^\d]/g, '');
+                if (onlyNums.length <= 3) return onlyNums;
+                if (onlyNums.length <= 6) return onlyNums;
+                return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
+            },
+            account: (value) => {
+                if (!value) return value;
+                const onlyNums = value.replace(/[^\d]/g, '');
+                if (onlyNums.length <= 9) return onlyNums;
+                return onlyNums.slice(0, 9);
+            },
+        },
+        reset: {
+            field: (change, value) => {
+                setError(false);
+                change(value);
+            },
+        },
+    };
+
     // LOGIN SCREEN COMPONENT
     const LoginComponent = {
         screen: {
+            open: history ? true : false,
             width: {
                 style: {
                     maxWidth: 450,
@@ -62,49 +135,55 @@ const Store = ({ children, history }) => {
             title: 'Mckee Pure Water',
             content: 'User Login Version 1.0.0',
         },
-        form: {
-            input: {
-                username: {
-                    attr: {
-                        id: 'username',
-                        type: 'text',
-                        placeholder: 'username',
-                        className: 'blueIcon',
-                        size: 'massive',
-                        icon: 'user circle',
-                        iconPosition: 'left',
-                        autoComplete: 'off',
-                        spellCheck: 'false',
-                        inverted: true,
-                        transparent: true,
-                        fluid: true,
-                        focus: true,
-                    },
-                    onFocus: () => {},
-                    onChange: () => {},
+        input: {
+            username: {
+                attr: {
+                    id: 'username',
+                    type: 'text',
+                    placeholder: 'username',
+                    className: 'blueIcon',
+                    size: 'massive',
+                    icon: 'user circle',
+                    iconPosition: 'left',
+                    autoComplete: 'off',
+                    spellCheck: 'false',
+                    inverted: true,
+                    transparent: true,
+                    fluid: true,
+                    focus: true,
                 },
-                password: {
-                    attr: {
-                        id: 'password',
-                        type: 'password',
-                        placeholder: 'password',
-                        className: 'blueIcon',
-                        size: 'massive',
-                        icon: 'lock',
-                        iconPosition: 'left',
-                        autoComplete: 'off',
-                        spellCheck: 'false',
-                        inverted: true,
-                        transparent: true,
-                        fluid: true,
-                        focus: true,
-                    },
-                    onFocus: () => {},
-                    onChange: () => {},
+                onFocus: () => {},
+                onChange: (change, value) => {
+                    setError(false);
+                    change(value);
                 },
             },
-            button: {
-                login: {
+            password: {
+                attr: {
+                    id: 'password',
+                    type: 'password',
+                    placeholder: 'password',
+                    className: 'blueIcon',
+                    size: 'massive',
+                    icon: 'lock',
+                    iconPosition: 'left',
+                    autoComplete: 'off',
+                    spellCheck: 'false',
+                    inverted: true,
+                    transparent: true,
+                    fluid: true,
+                    focus: true,
+                },
+                onFocus: () => {},
+                onChange: (change, value) => {
+                    setError(false);
+                    change(value);
+                },
+            },
+        },
+        button: {
+            login: {
+                attr: {
                     type: 'submit',
                     content: !error ? 'Login' : error,
                     color: !error ? 'blue' : 'red',
@@ -114,7 +193,10 @@ const Store = ({ children, history }) => {
                     circular: true,
                     fluid: true,
                 },
-                admin: {
+                onClick: () => {},
+            },
+            admin: {
+                attr: {
                     content: 'Admin',
                     type: 'button',
                     color: 'yellow',
@@ -124,7 +206,17 @@ const Store = ({ children, history }) => {
                     circular: true,
                     fluid: true,
                 },
-                close: {
+                onClick: async () => {
+                    setError(false);
+                    await helpers.sleep(500);
+                    history.push({
+                        pathname: '/admin/login',
+                        state: { open: true },
+                    });
+                },
+            },
+            close: {
+                attr: {
                     content: 'Close',
                     type: 'button',
                     color: 'black',
@@ -134,7 +226,13 @@ const Store = ({ children, history }) => {
                     circular: true,
                     fluid: true,
                 },
-                backup: {
+                onClick: async () => {
+                    await helpers.sleep(500);
+                    await send(channels.CLOSE_APP);
+                },
+            },
+            backup: {
+                attr: {
                     disabled: loading,
                     content: fileSave,
                     loading: loading,
@@ -145,317 +243,44 @@ const Store = ({ children, history }) => {
                     color: 'pink',
                     fluid: true,
                 },
-            },
-            click: {
-                open: {
-                    adminLogin: async () => {
-                        setError(false);
-                        await helpers.sleep(500);
-                        history.push({
-                            pathname: '/admin/login',
-                            state: { open: true },
-                        });
-                    },
-                    backup: async () => {
-                        await helpers.sleep(500);
-                        setLoading(true);
-                        try {
-                            const response = await send(
-                                channels.SHOW_BACKUP_DIALOG
-                            );
-                            setFileSave(response);
-                        } catch (err) {
-                            setFileSave(err);
-                        }
-                        setLoading(false);
-                    },
-                },
-                close: {
-                    app: async () => {
-                        await helpers.sleep(500);
-                        await send(channels.CLOSE_APP);
-                    },
+                onClick: async () => {
+                    await helpers.sleep(500);
+                    setLoading(true);
+                    try {
+                        const response = await send(
+                            channels.SHOW_BACKUP_DIALOG
+                        );
+                        setFileSave(response);
+                    } catch (err) {
+                        setFileSave(err);
+                    }
+                    setLoading(false);
                 },
             },
-            onSubmit: async (values, form) => {
-                try {
-                    const result = await send(channels.LOGIN, values);
-                    console.log(result);
-                    history.push({
-                        pathname: '/dashboard',
-                        state: result,
-                    });
-                } catch (err) {
-                    setTimeout(() => {
-                        console.log(err);
-                        setError(err);
-                        form.reset({});
-                        document.getElementById('username').focus();
-                    }, 100);
-                }
-            },
+        },
+        onSubmit: async (values, form) => {
+            try {
+                const result = await send(channels.LOGIN, values);
+                console.log(result);
+                history.push({
+                    pathname: '/dashboard',
+                    state: result,
+                });
+            } catch (err) {
+                setTimeout(() => {
+                    console.log(err);
+                    setError(err);
+                    form.reset({});
+                    document.getElementById('username').focus();
+                }, 100);
+            }
         },
     };
 
+    // DASHBOARD SCREEN COMPONENT
     const DashboardComponent = {
         screen: {
-            width: {
-                style: {
-                    maxWidth: 450,
-                },
-            },
-            close: {
-                closeOnDocumentClick: false,
-                closeOnEscape: false,
-                closeOnDimmerClick: false,
-                closeOnPortalMouseLeave: false,
-            },
-            segment: {
-                style: {
-                    margin: 0,
-                    height: '100%',
-                    overflow: 'hidden',
-                    zIndex: 1000,
-                    backgroundColor: '#002b487d',
-                },
-            },
-            grid: {
-                textAlign: 'center',
-                verticalAlign: 'middle',
-                style: {
-                    height: '100vh',
-                },
-            },
-            header: {
-                title: 'Mckee Pure Water',
-                content: 'Version 1.0',
-            },
-        },
-        header: {
-            title: '',
-            content: '',
-        },
-        form: {
-            input: {
-                phone: {
-                    attr: {
-                        className: 'blueIcon',
-                        id: 'phone',
-                        placeholder: 'xxx-xxxx',
-                        focus: true,
-                        type: 'text',
-                        size: 'massive',
-                        icon: 'whatsapp',
-                        fluid: true,
-                        iconPosition: 'left',
-                        transparent: true,
-                    },
-                    onFocus: (form) => {
-                        form.batch(() => {
-                            form.change('account', '');
-                            form.change('firstName', '');
-                            form.change('lastName', '');
-                        });
-                    },
-                    onChange: (change, value) => {
-                        setError(false);
-                        change(value);
-                    },
-                },
-                account: {
-                    attr: {
-                        id: 'account',
-                        className: 'blueIcon',
-                        type: 'text',
-                        placeholder: 'account #',
-                        size: 'massive',
-                        focus: true,
-                        fluid: true,
-                        icon: 'credit card',
-                        iconPosition: 'left',
-                        transparent: true,
-                        spellCheck: 'false',
-                        inverted: true,
-                    },
-                    onFocus: (form) => {
-                        form.batch(() => {
-                            form.change('phone', '');
-                            form.change('firstName', '');
-                            form.change('lastName', '');
-                        });
-                    },
-                    onChange: (change, value) => {
-                        setError(false);
-                        change(value);
-                    },
-                },
-                firstName: {
-                    attr: {
-                        id: 'firstName',
-                        placeholder: 'first name',
-                        className: 'blueIcon',
-                        icon: 'user circle',
-                        iconPosition: 'left',
-                        size: 'massive',
-                        spellCheck: 'false',
-                        fluid: true,
-                        focus: true,
-                        transparent: true,
-                        inverted: true,
-                    },
-                    onFocus: (form) => {
-                        form.batch(() => {
-                            form.change('phone', '');
-                            form.change('account', '');
-                        });
-                    },
-                    onChange: (change, value) => {
-                        setError(false);
-                        change(value);
-                    },
-                },
-                lastName: {
-                    attr: {
-                        id: 'lastName',
-                        placeholder: 'last name',
-                        className: 'blueIcon',
-                        icon: 'user circle',
-                        iconPosition: 'left',
-                        size: 'massive',
-                        spellCheck: 'false',
-                        fluid: true,
-                        focus: true,
-                        transparent: true,
-                        inverted: true,
-                    },
-                    onFocus: (form) => {
-                        form.batch(() => {
-                            form.change('phone', '');
-                            form.change('account', '');
-                        });
-                    },
-                    onChange: (change, value) => {
-                        setError(false);
-                        change(value);
-                    },
-                },
-            },
-            button: {
-                find: {
-                    id: 'FindMembership',
-                    content: 'Find Membership',
-                    color: 'blue',
-                    type: 'submit',
-                    size: 'huge',
-                    icon: 'search',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                },
-                add: {
-                    id: 'AddButton',
-                    content: 'New Membership',
-                    type: 'button',
-                    size: 'huge',
-                    color: 'teal',
-                    icon: 'add circle',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                },
-                report: {
-                    id: 'ReportButton',
-                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
-                    type: 'button',
-                    color: 'yellow',
-                    size: 'huge',
-                    icon: 'calendar',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                },
-                logout: {
-                    content: 'Logout',
-                    type: 'button',
-                    id: 'LogoutButton',
-                    size: 'huge',
-                    color: 'black',
-                    icon: 'sign-out',
-                    labelPosition: 'right',
-                    circular: true,
-                    fluid: true,
-                },
-            },
-
-            click: {
-                open: {
-                    addScreen: async () => {
-                        await helpers.sleep(500);
-                        history.push({ pathname: '/add', state: {} });
-                    },
-                    reportScreen: async () => {
-                        await helpers.sleep(500);
-                        history.push({
-                            pathname: '/report',
-                            state: {},
-                        });
-                    },
-                },
-                close: {
-                    dashboardScreen: async () => {
-                        await helpers.sleep(500);
-                        history.push({ pathname: '/', state: {} });
-                    },
-                },
-            },
-            onSubmit: async (values, form) => {
-                try {
-                    const data = await send(channels.FIND, values);
-                    console.log(data);
-                    if (data.membership) {
-                        const { record_id } = await send(channels.LAST_RECORD);
-                        console.log({ data, record_id });
-                        setTimeout(form.reset, 100);
-                        // form.reset({});
-                        // history.push({
-                        //     pathname: '/purchase',
-                        //     state: {
-                        //         record: data.membership,
-                        //         newRecordID: record_id,
-                        //         open: true,
-                        //         initialValues: {
-                        //             ...data.membership,
-                        //             record_id: record_id,
-                        //             renew: 0,
-                        //             buy: 0,
-                        //             fee: 0,
-                        //             invoiceDate: new Date().toLocaleDateString(),
-                        //             invoiceTime: new Date().toLocaleTimeString(),
-                        //         },
-                        //     },
-                        // });
-                    } else if (data.memberships) {
-                        setTimeout(form.reset, 100);
-                        console.log(data.memberships);
-                        // history.push({
-                        //     pathname: '/accounts',
-                        //     state: data.memberships,
-                        // });
-                    } else {
-                        setTimeout(form.reset, 100);
-                        setError(true);
-                        document.getElementById('phone').focus();
-                        return data;
-                    }
-                } catch (err) {
-                    throw err;
-                }
-            },
-        },
-    };
-
-    const AdminLoginComponent = {
-        screen: {
+            open: history ? true : false,
             width: {
                 style: {
                     maxWidth: 450,
@@ -490,105 +315,181 @@ const Store = ({ children, history }) => {
         },
         header: {
             title: 'Mckee Pure Water',
-            content: 'Admin Login Verification',
+            content: 'Dashboard',
         },
-        form: {
-            input: {
-                password: {
-                    attr: {
-                        id: 'password',
-                        placeholder: 'password',
-                        type: 'password',
-                        focus: true,
-                        error: error,
-                        size: 'huge',
-                    },
-                    onFocus: () => {},
-                    onChange: () => {},
+        input: {
+            phone: {
+                attr: {
+                    className: 'blueIcon',
+                    id: 'phone',
+                    placeholder: 'xxx-xxxx',
+                    focus: true,
+                    type: 'text',
+                    size: 'massive',
+                    icon: 'whatsapp',
+                    fluid: true,
+                    iconPosition: 'left',
+                    transparent: true,
+                },
+                normalize: helpers.normalize.phone,
+                onFocus: (form) =>
+                    form.batch(() => {
+                        form.change('account', '');
+                        form.change('firstName', '');
+                        form.change('lastName', '');
+                    }),
+                onChange: (change, value) => {
+                    setError(false);
+                    change(value);
                 },
             },
-            button: {
-                submit: {
-                    id: 'submit',
-                    content: 'Submit',
-                    size: 'huge',
+            account: {
+                attr: {
+                    id: 'account',
+                    className: 'blueIcon',
+                    type: 'text',
+                    placeholder: 'account #',
+                    size: 'massive',
+                    focus: true,
+                    fluid: true,
+                    icon: 'credit card',
+                    iconPosition: 'left',
+                    transparent: true,
+                    spellCheck: 'false',
+                    inverted: true,
+                },
+                normalize: helpers.normalize.account,
+                onFocus: (form) =>
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('firstName', '');
+                        form.change('lastName', '');
+                    }),
+                onChange: (change, value) => {
+                    setError(false);
+                    change(value);
+                },
+            },
+            firstName: {
+                attr: {
+                    id: 'firstName',
+                    placeholder: 'first name',
+                    className: 'blueIcon',
+                    icon: 'user circle',
+                    iconPosition: 'left',
+                    size: 'massive',
+                    spellCheck: 'false',
+                    fluid: true,
+                    focus: true,
+                    transparent: true,
+                    inverted: true,
+                },
+                onFocus: (form) =>
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('account', '');
+                    }),
+                onChange: (change, value) => {
+                    setError(false);
+                    change(value);
+                },
+            },
+            lastName: {
+                attr: {
+                    id: 'lastName',
+                    placeholder: 'last name',
+                    className: 'blueIcon',
+                    icon: 'user circle',
+                    iconPosition: 'left',
+                    size: 'massive',
+                    spellCheck: 'false',
+                    fluid: true,
+                    focus: true,
+                    transparent: true,
+                    inverted: true,
+                },
+                onFocus: (form) =>
+                    form.batch(() => {
+                        form.change('phone', '');
+                        form.change('account', '');
+                    }),
+                onChange: (change, value) => {
+                    setError(false);
+                    change(value);
+                },
+            },
+        },
+        button: {
+            find: {
+                attr: {
+                    id: 'FindMembership',
+                    content: 'Find Membership',
+                    color: 'blue',
                     type: 'submit',
-                    color: error ? 'red' : 'blue',
-                },
-                cancel: {
-                    id: 'cancel',
-                    content: 'Cancel',
                     size: 'huge',
+                    icon: 'search',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                onClick: () => {},
+            },
+            add: {
+                attr: {
+                    id: 'AddButton',
+                    content: 'New Membership',
                     type: 'button',
-                    secondary: true,
+                    size: 'huge',
+                    color: 'teal',
+                    icon: 'add circle',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
                 },
-            },
-            click: {
-                close: {
-                    adminLogin: () => history.push('/'),
-                },
-            },
-            onSubmit: async ({ password }, form) => {
-                console.log('onSubmit', { password });
-                if (password === '911') {
+                onClick: async () => {
                     await helpers.sleep(500);
-                    history.push({ pathname: '/admin', state: true });
-                } else {
-                    throw new Error('Invalid Password');
-                }
+                    history.push({ pathname: '/add', state: {} });
+                },
+            },
+            report: {
+                attr: {
+                    id: 'ReportButton',
+                    content: `Daily Report: ${new Date().toLocaleDateString()}`,
+                    type: 'button',
+                    color: 'yellow',
+                    size: 'huge',
+                    icon: 'calendar',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                onClick: async () => {
+                    await helpers.sleep(500);
+                    history.push({
+                        pathname: '/report',
+                        state: {},
+                    });
+                },
+            },
+            logout: {
+                attr: {
+                    content: 'Logout',
+                    type: 'button',
+                    id: 'LogoutButton',
+                    size: 'huge',
+                    color: 'black',
+                    icon: 'sign-out',
+                    labelPosition: 'right',
+                    circular: true,
+                    fluid: true,
+                },
+                onClick: async () => {
+                    await helpers.sleep(500);
+                    history.push({ pathname: '/', state: {} });
+                },
             },
         },
-    };
-
-    // Effect
-    const TransitionEffect = {
-        pulse: {
-            animation: 'pulse',
-            duration: 500,
-        },
-    };
-
-    // Helpers
-    const helpers = {
-        field: {
-            resetError: () => {
-                setError(false);
-            },
-        },
-        sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-        normalize: {
-            phone: (value) => {
-                if (!value) return value;
-                const onlyNums = value.replace(/[^\d]/g, '');
-                if (onlyNums.length <= 3) return onlyNums;
-                if (onlyNums.length <= 6) return onlyNums;
-                return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
-            },
-            account: (value) => {
-                if (!value) return value;
-                const onlyNums = value.replace(/[^\d]/g, '');
-                if (onlyNums.length <= 9) return onlyNums;
-                return onlyNums.slice(0, 9);
-            },
-        },
-    };
-
-    // FORM
-    const onSubmit = {
-        login: async (values, form) => {
-            try {
-                const result = await send(channels.LOGIN, values);
-                console.log(result);
-                history.push({
-                    pathname: '/dashboard',
-                    state: result,
-                });
-            } catch (err) {
-                setError(err);
-                throw err;
-            }
-        },
-        find: async (values, form) => {
+        onSubmit: async (values, form) => {
             try {
                 const data = await send(channels.FIND, values);
                 console.log(data);
@@ -633,138 +534,336 @@ const Store = ({ children, history }) => {
         },
     };
 
-    // ONCLICK
-    const click = {
-        login: (setVisible) => {
-            setVisible((visible) => !visible);
+    // ADMIN SCREEN COMPONENT
+    const AdminLoginComponent = {
+        screen: {
+            open: history ? true : false,
+            width: {
+                style: {
+                    maxWidth: 450,
+                },
+            },
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                style: {
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                },
+            },
+            grid: {
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                style: {
+                    height: '100vh',
+                },
+            },
+            header: {
+                title: 'Mckee Pure Water',
+                content: 'Version 1.0',
+            },
         },
-        admin: () => {
-            open.admin();
+        header: {
+            title: 'Mckee Pure Water',
+            content: 'Admin Login Verification',
         },
-        close: async (setVisible) => {
-            setVisible((visible) => !visible);
-            await helpers.sleep(500);
-            send(channels.CLOSE_APP);
+        input: {
+            password: {
+                attr: {
+                    id: 'password',
+                    placeholder: 'password',
+                    type: 'password',
+                    focus: true,
+                    error: error,
+                    size: 'huge',
+                },
+                onFocus: () => {},
+                onChange: helpers.reset.field,
+            },
         },
-        backup: async () => {
-            setLoading(true);
-            await helpers.sleep(500);
-            try {
-                setFileSave(await send(channels.SHOW_BACKUP_DIALOG));
-                setLoading(false);
-            } catch (err) {
-                setLoading(false);
-                setFileSave(err);
+        button: {
+            submit: {
+                attr: {
+                    id: 'submit',
+                    content: 'Submit',
+                    size: 'huge',
+                    type: 'submit',
+                    color: error ? 'red' : 'blue',
+                },
+                onClick: () => {},
+            },
+            cancel: {
+                attr: {
+                    id: 'cancel',
+                    content: 'Cancel',
+                    size: 'huge',
+                    type: 'button',
+                    secondary: true,
+                },
+                onClick: () => history.push('/'),
+            },
+        },
+        onSubmit: async ({ password }, form) => {
+            console.log('onSubmit', { password });
+            if (password === '911') {
+                await helpers.sleep(500);
+                history.push({
+                    pathname: '/admin/users',
+                    state: { open: true },
+                });
+            } else {
+                setError(true);
+                setTimeout(form.reset);
             }
         },
-        find: (setVisible) => {
-            setVisible((prev) => !prev);
-        },
-        add: (setVisible) => {
-            setVisible((prev) => !prev);
-            open.add();
-        },
-        report: (setVisible) => {
-            setVisible((prev) => !prev);
-            open.report();
-        },
-        logout: (setVisible) => {
-            setVisible((prev) => !prev);
-            close.dashboard();
-        },
     };
 
-    const open = {
-        admin: async () => {
-            await helpers.sleep(500);
-            history.push({
-                pathname: '/admin/login',
-                state: { open: true },
-            });
+    // USER SCREEN COMPONENT
+    const UserComponent = {
+        screen: {
+            open: history ? true : false,
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                style: {
+                    margin: 0,
+                    height: '100%',
+                    overflow: 'hidden',
+                    zIndex: 1000,
+                    backgroundColor: '#002b487d',
+                },
+            },
+            grid: {
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                style: {
+                    height: '100vh',
+                },
+            },
+            width: {
+                style: {
+                    // maxWidth: 450,
+                    maxWidth: 866,
+                },
+            },
         },
-        add: async () => {
-            await helpers.sleep(500);
-            history.push({ pathname: '/add', state: {} });
+        header: {
+            title: 'Mckee Pure Water',
+            content: 'User Admin Screen',
         },
-        report: async () => {
-            await helpers.sleep(500);
-            history.push({
-                pathname: '/report',
-                state: {},
-            });
+        form: {
+            onSubmit: async (values) => {
+                console.log('onSubmit', { values });
+                crud.create({ newItem: values, setState: setUsers });
+            },
         },
-        backup: async (setVisible) => {
-            setVisible((visible) => !visible);
-            await helpers.sleep(500);
+        button: {
+            add: {
+                attr: {
+                    id: 'add',
+                    content: 'Add',
+                    type: 'button',
+                    floated: 'right',
+                    icon: 'user',
+                    labelPosition: 'left',
+                    primary: true,
+                    size: 'huge',
+                },
+                onClick: () => {
+                    setOpen(true);
+                },
+            },
+            done: {
+                attr: {
+                    id: 'done',
+                    content: 'Done',
+                    type: 'button',
+                    floated: 'right',
+                    size: 'huge',
+                    icon: true,
+                    secondary: true,
+                },
+                onClick: () => {
+                    history.push('/');
+                },
+            },
+            delete: {
+                attr: {
+                    id: 'delete',
+                    content: 'Delete',
+                    size: 'huge',
+                    floated: 'right',
+                    negative: true,
+                },
+                onClick: (user_id) => {
+                    crud.delete({ deletedId: user_id, setState: setUsers });
+                },
+            },
+            edit: {
+                attr: {
+                    id: 'edit',
+                    content: 'Edit',
+                    size: 'huge',
+                    floated: 'right',
+                    primary: true,
+                },
+                onClick: (user) => {
+                    console.log('Edit', { user });
+                    setUser(user);
+                    setOpen(true);
+                },
+            },
+        },
+        table: {
+            attr: {
+                id: 'UserTable',
+                celled: true,
+                compact: true,
+                definition: true,
+                basic: true,
+                inverted: true,
+                size: 'large',
+            },
+            header: {
+                fullWidth: true,
+            },
+            row: {
+                header: {
+                    style: { fontSize: '22px' },
+                },
+                body: {
+                    style: { fontSize: '20px', fontWeight: 'bold' },
+                },
+            },
+            cell: {
+                headerCells: [
+                    { content: 'username' },
+                    { content: 'password' },
+                    { content: 'Action', width: 5, textAlign: 'right' },
+                ],
+                header: {
+                    username: {
+                        content: 'username',
+                    },
+                    password: {
+                        content: 'password',
+                    },
+                    action: {
+                        content: 'Action',
+                        width: 5,
+                        textAlign: 'right',
+                    },
+                },
+            },
+        },
+        action: {
+            add: () => {},
+            read: async () => {
+                const users = await send(channels.GET_USERS);
+                console.log({ users });
+                setUsers(users);
+            },
+            update: () => {},
+            remove: () => {},
+        },
+        users,
+        setUsers,
+    };
+
+    const UserModalComponent = {
+        modal: {
+            open: open,
+            dimmer: 'blurring',
+            size: 'fullscreen',
+            basic: true,
+            centered: true,
+        },
+        form: {
+            size: 'massive',
+        },
+        input: {
+            username: {
+                attr: {
+                    id: 'username',
+                    placeholder: 'username',
+                },
+                onFocus: () => {},
+                onChange: () => {},
+            },
+            password: {
+                attr: {
+                    id: 'password',
+                    placeholder: 'password',
+                },
+                onFocus: () => {},
+                onChange: () => {},
+            },
+        },
+        button: {
+            submit: {
+                attr: {
+                    id: 'submit',
+                    type: 'submit',
+                    content: !user.user_id ? 'Add' : 'Save',
+                    size: 'massive',
+                    circular: true,
+                    primary: true,
+                },
+                onClick: () => {},
+            },
+            cancel: {
+                attr: {
+                    id: 'cancel',
+                    type: 'button',
+                    content: 'Cancel',
+                    size: 'massive',
+                    circular: true,
+                    secondary: true,
+                },
+                onClick: () => {
+                    setUser({});
+                    setOpen(false);
+                },
+            },
+        },
+        onSubmit: async (values) => {
             try {
-                setLoading(true);
-                setFileSave(await send(channels.SHOW_BACKUP_DIALOG));
-                setLoading(false);
+                await crud.create({
+                    newItem: values,
+                    setState: setUsers,
+                    channel: channels.ADD_USER,
+                });
+                setOpen(false);
             } catch (err) {
-                setLoading(false);
-                setFileSave(err);
+                setOpen(false);
             }
         },
+        user,
     };
 
-    const close = {
-        dashboard: async () => {
-            await helpers.sleep(500);
-            history.push({ pathname: '/', state: {} });
-        },
-        app: async (setVisible) => {
-            setVisible((visible) => !visible);
-            await helpers.sleep(500);
-            send(channels.CLOSE_APP);
-        },
-    };
-
-    const normalize = {
-        phone: (value) => {
-            if (!value) return value;
-            const onlyNums = value.replace(/[^\d]/g, '');
-            if (onlyNums.length <= 3) return onlyNums;
-            if (onlyNums.length <= 6) return onlyNums;
-            return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}`;
-        },
-        account: (value) => {
-            if (!value) return value;
-            const onlyNums = value.replace(/[^\d]/g, '');
-            if (onlyNums.length <= 9) return onlyNums;
-            return onlyNums.slice(0, 9);
-        },
-    };
-
-    // FIELD HELPERS
-    const resetError = () => {
-        setError(false);
-    };
-
+    // STORE
     const store = {
-        onSubmit,
-        click,
-        open,
-        close,
-        error,
         component: {
             login: LoginComponent,
             dashboard: DashboardComponent,
-            adminLogin: AdminLoginComponent,
+            admin: AdminLoginComponent,
+            user: UserComponent,
+            userModal: UserModalComponent,
         },
         effect: {
             pulse: TransitionEffect.pulse,
         },
-        normalize,
-        resetError,
-        setError,
-        history,
-        helpers,
-        loading,
-        fileSave,
-        setLoading,
-        setFileSave,
-        channels,
-        send,
     };
 
     return (

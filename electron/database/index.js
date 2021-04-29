@@ -1,6 +1,5 @@
 const { sql, buyData, renewData, editData } = require('../query');
 const { dialog } = require('electron');
-const { totalFee, total_account_invoices } = require('../db');
 
 module.exports = (db, dbFile) => {
     /**

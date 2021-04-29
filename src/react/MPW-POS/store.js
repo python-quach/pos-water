@@ -28,13 +28,14 @@ const Store = ({ children, history }) => {
     const [user, setUser] = useState({});
     const [open, setOpen] = useState(false);
 
+    const [edit, setEdit] = useState(false);
+
     // CRUD
     const crud = {
-        create: async ({ newItem, setState, channels }) => {
+        create: async ({ newItem, setState, channel }) => {
             try {
-                const result = await send(channels, newItem);
+                const result = await send(channel, newItem);
                 setState((list) => [...list, result]);
-                return result;
             } catch (err) {
                 throw err;
             }
@@ -49,15 +50,26 @@ const Store = ({ children, history }) => {
                 return console.log('Unable to get user');
             }
         },
-        update: ({ updatedItem, setState }) => {
-            setState((list) => {
-                list.map((item) =>
-                    item.id === updatedItem.id ? updatedItem : item
-                );
-            });
+        update: async ({ updatedItem, setState, channel }) => {
+            try {
+                await send(channel, updatedItem);
+                setState((list) => {
+                    return list.map((item) =>
+                        item.user_id === updatedItem.user_id
+                            ? updatedItem
+                            : item
+                    );
+                });
+            } catch (err) {
+                setUser({});
+                throw err;
+            }
         },
         delete: ({ deletedId, setState }) => {
-            setState((list) => list.filter((item) => item.id !== deletedId));
+            console.log({ deletedId, setState });
+            setState((list) =>
+                list.filter((item) => item.user_id !== deletedId)
+            );
         },
     };
 
@@ -275,6 +287,100 @@ const Store = ({ children, history }) => {
                 }, 100);
             }
         },
+    };
+
+    const PurchaseComponent = {
+        screen: {
+            open: history ? true : false,
+            width: {},
+            close: {
+                closeOnDocumentClick: false,
+                closeOnEscape: false,
+                closeOnDimmerClick: false,
+                closeOnPortalMouseLeave: false,
+            },
+            segment: {
+                width: '100%',
+                height: '100%',
+                position: 'fixed',
+                zIndex: 1000,
+                backgroundColor: '#002b487d',
+            },
+            grid: {
+                style: { height: '100vh' },
+            },
+        },
+        header: {
+            title: 'Mckee Pure Water',
+            content: 'Purchase Screen Version 1.0.1',
+        },
+        input: {
+            account: {
+                attr: {},
+            },
+            since: {
+                attr: {},
+            },
+            areaCode: {
+                attr: {},
+            },
+            phone: {
+                attr: {},
+            },
+            fullname: {
+                attr: {},
+            },
+            first: {
+                attr: {},
+            },
+            last: {
+                attr: {},
+            },
+        },
+        button: {
+            edit: {
+                attr: {
+                    style: { marginTop: '30px' },
+                },
+                onClick: () => {},
+            },
+            cancel: {
+                attr: {
+                    style: { marginTop: '30px' },
+                },
+                onClick: () => {},
+            },
+            save: {
+                attr: {
+                    style: { marginTop: '30px' },
+                },
+                onClick: () => {},
+            },
+            buy: {
+                attr: {
+                    style: { marginTop: '30px', width: '160px' },
+                },
+                onClick: () => {},
+            },
+            renew: {
+                attr: {
+                    style: { marginTop: '30px', width: '160px' },
+                },
+                onClick: () => {},
+            },
+            done: {
+                attr: {},
+                onClick: () => {},
+            },
+            history: {
+                attr: {},
+                onClick: () => {},
+            },
+        },
+        onSubmit: async (values) => {
+            console.log('PurchaseComponent: onSubmit:', values);
+        },
+        edit,
     };
 
     // DASHBOARD SCREEN COMPONENT
@@ -497,31 +603,31 @@ const Store = ({ children, history }) => {
                     const { record_id } = await send(channels.LAST_RECORD);
                     console.log({ data, record_id });
                     setTimeout(form.reset, 100);
-                    // form.reset({});
-                    // history.push({
-                    //     pathname: '/purchase',
-                    //     state: {
-                    //         record: data.membership,
-                    //         newRecordID: record_id,
-                    //         open: true,
-                    //         initialValues: {
-                    //             ...data.membership,
-                    //             record_id: record_id,
-                    //             renew: 0,
-                    //             buy: 0,
-                    //             fee: 0,
-                    //             invoiceDate: new Date().toLocaleDateString(),
-                    //             invoiceTime: new Date().toLocaleTimeString(),
-                    //         },
-                    //     },
-                    // });
+                    form.reset({});
+                    history.push({
+                        pathname: '/purchase',
+                        state: {
+                            record: data.membership,
+                            newRecordID: record_id,
+                            open: true,
+                            initialValues: {
+                                ...data.membership,
+                                record_id: record_id,
+                                renew: 0,
+                                buy: 0,
+                                fee: 0,
+                                invoiceDate: new Date().toLocaleDateString(),
+                                invoiceTime: new Date().toLocaleTimeString(),
+                            },
+                        },
+                    });
                 } else if (data.memberships) {
                     setTimeout(form.reset, 100);
                     console.log(data.memberships);
-                    // history.push({
-                    //     pathname: '/accounts',
-                    //     state: data.memberships,
-                    // });
+                    history.push({
+                        pathname: '/accounts',
+                        state: data.memberships,
+                    });
                 } else {
                     setTimeout(form.reset, 100);
                     setError(true);
@@ -593,6 +699,7 @@ const Store = ({ children, history }) => {
                 attr: {
                     id: 'submit',
                     content: 'Submit',
+                    circular: true,
                     size: 'huge',
                     type: 'submit',
                     color: error ? 'red' : 'blue',
@@ -603,11 +710,15 @@ const Store = ({ children, history }) => {
                 attr: {
                     id: 'cancel',
                     content: 'Cancel',
+                    circular: true,
                     size: 'huge',
                     type: 'button',
                     secondary: true,
                 },
-                onClick: () => history.push('/'),
+                onClick: () => {
+                    setError(false);
+                    history.push('/');
+                },
             },
         },
         onSubmit: async ({ password }, form) => {
@@ -638,8 +749,8 @@ const Store = ({ children, history }) => {
             segment: {
                 style: {
                     margin: 0,
-                    height: '100%',
-                    overflow: 'hidden',
+                    height: '100vh',
+                    overflow: 'scroll',
                     zIndex: 1000,
                     backgroundColor: '#002b487d',
                 },
@@ -653,8 +764,7 @@ const Store = ({ children, history }) => {
             },
             width: {
                 style: {
-                    // maxWidth: 450,
-                    maxWidth: 866,
+                    maxWidth: 800,
                 },
             },
         },
@@ -675,23 +785,20 @@ const Store = ({ children, history }) => {
                     content: 'Add',
                     type: 'button',
                     floated: 'right',
-                    icon: 'user',
-                    labelPosition: 'left',
+                    circular: true,
                     primary: true,
                     size: 'huge',
+                    fluid: true,
                 },
-                onClick: () => {
-                    setOpen(true);
-                },
+                onClick: () => setOpen(true),
             },
             done: {
                 attr: {
                     id: 'done',
                     content: 'Done',
                     type: 'button',
-                    floated: 'right',
+                    circular: true,
                     size: 'huge',
-                    icon: true,
                     secondary: true,
                 },
                 onClick: () => {
@@ -702,20 +809,24 @@ const Store = ({ children, history }) => {
                 attr: {
                     id: 'delete',
                     content: 'Delete',
+                    circular: true,
                     size: 'huge',
-                    floated: 'right',
                     negative: true,
                 },
                 onClick: (user_id) => {
+                    console.log('delete', { user_id });
                     crud.delete({ deletedId: user_id, setState: setUsers });
                 },
             },
             edit: {
                 attr: {
                     id: 'edit',
+                    type: 'button',
                     content: 'Edit',
                     size: 'huge',
+                    fluid: true,
                     floated: 'right',
+                    circular: true,
                     primary: true,
                 },
                 onClick: (user) => {
@@ -768,19 +879,16 @@ const Store = ({ children, history }) => {
             },
         },
         action: {
-            add: () => {},
-            read: async () => {
+            fetchData: async () => {
                 const users = await send(channels.GET_USERS);
-                console.log({ users });
                 setUsers(users);
             },
-            update: () => {},
-            remove: () => {},
         },
         users,
         setUsers,
     };
 
+    // USER UPDATE COMPONENT
     const UserModalComponent = {
         modal: {
             open: open,
@@ -839,14 +947,25 @@ const Store = ({ children, history }) => {
         },
         onSubmit: async (values) => {
             try {
-                await crud.create({
-                    newItem: values,
-                    setState: setUsers,
-                    channel: channels.ADD_USER,
-                });
+                user.user_id
+                    ? await crud.update({
+                          updatedItem: {
+                              ...user,
+                              username: values.username,
+                              password: values.password,
+                          },
+                          setState: setUsers,
+                          channel: channels.EDIT_USER,
+                      })
+                    : await crud.create({
+                          newItem: values,
+                          setState: setUsers,
+                          channel: channels.ADD_USER,
+                      });
                 setOpen(false);
+                setUser({});
             } catch (err) {
-                setOpen(false);
+                return console.log(err.message);
             }
         },
         user,

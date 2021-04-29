@@ -68,13 +68,13 @@ const api = require('./database')(db, dbFile);
 const controller = require('./controller')(api);
 
 ipcMain.on(channels.LOGIN, controller.verifyCredential);
-ipcMain.on(channels.ADD, controller.addNewMember);
+ipcMain.on(channels.ADD, controller.addNewMembership);
 ipcMain.on(channels.FIND, controller.findMembership);
 ipcMain.on(channels.SHOW_BACKUP_DIALOG, controller.backupDatabase);
 ipcMain.on(channels.BUY, controller.buyWater);
 ipcMain.on(channels.RENEW, controller.renewMembership);
 ipcMain.on(channels.EDIT, controller.editMembershipInfo);
-ipcMain.on(channels.HISTORY, controller.getMembershipHistory);
+ipcMain.on(channels.HISTORY, controller.getHistory);
 ipcMain.on(channels.TOTAL, controller.getTotalAccountInvoices);
 ipcMain.on(channels.LAST_RECORD, controller.getLastRecord);
 ipcMain.on(channels.TOTAL_FEE, controller.getTotalFee);

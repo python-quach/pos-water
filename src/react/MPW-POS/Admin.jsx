@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Screen from './Screen';
 import Header from './Header';
 import Form from './Form';
@@ -13,6 +14,10 @@ export const Admin = () => {
     const { screen, header, onSubmit, input, button } = useContext(
         StoreContext
     ).component.admin;
+
+    useEffect(() => {
+        document.getElementById('password').focus();
+    }, []);
 
     return (
         <Screen screen={screen}>

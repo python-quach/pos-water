@@ -10,7 +10,6 @@ export const UserModal = () => {
         StoreContext
     ).component.userModal;
 
-    console.log('UserModal', { modal });
     return (
         <Modal {...modal}>
             <Modal.Content>

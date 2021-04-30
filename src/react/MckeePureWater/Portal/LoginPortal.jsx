@@ -1,6 +1,6 @@
 import { TransitionablePortal, Segment, Grid } from 'semantic-ui-react';
 
-export const LoginPortal = ({ open, children }) => (
+const LoginPortal = ({ open, children }) => (
     <TransitionablePortal
         open={open}
         closeOnDocumentClick={false}

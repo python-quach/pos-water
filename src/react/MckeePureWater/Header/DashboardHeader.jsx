@@ -1,6 +1,6 @@
 import { Header, Icon } from 'semantic-ui-react';
 
-const LoginHeader = ({ title, content }) => (
+const DashboardHeader = ({ title, content }) => (
     <Header as='h1' inverted size='huge' textAlign='left'>
         <Icon name='braille' color='blue' />
         <Header.Content>
@@ -10,4 +10,4 @@ const LoginHeader = ({ title, content }) => (
     </Header>
 );
 
-export default LoginHeader;
+export default DashboardHeader;

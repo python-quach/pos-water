@@ -2,55 +2,41 @@ import { useState, useEffect } from 'react';
 import { channels } from '../../../shared/constants';
 import { withRouter } from 'react-router-dom';
 import { Form as FinalForm, Field } from 'react-final-form';
-import { Form, Divider } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 import PulseButton from '../Button/PulseButton';
 
 const { ipcRenderer } = window;
 
-const LoginForm = ({ history }) => {
+const DashboardForm = ({ history }) => {
     const [error, setError] = useState(false);
 
-    useEffect(() => {
-        document.getElementById('username').focus();
-    }, []);
+    useEffect(() => {});
 
     const onSubmit = async (values, form) => {
         console.log('onSubmit: ', values);
-        ipcRenderer.send(channels.LOGIN, values);
-        ipcRenderer.on(channels.LOGIN, (_, { error, data }) => {
-            ipcRenderer.removeAllListeners(channels.LOGIN);
+        ipcRenderer.send(channels.FIND, values);
+        ipcRenderer.on(channels.FIND, (_, { error, data }) => {
+            ipcRenderer.removeAllListeners(channels.FIND);
             if (error) {
                 setTimeout(form.reset);
                 setError(error);
             } else {
                 console.log('Response from server: ', data);
-                history.push({ pathname: '/dashboard', state: data });
             }
         });
     };
 
     return (
         <FinalForm
-            subscription={{ values: true }}
             onSubmit={onSubmit}
             render={({ handleSubmit }) => (
                 <Form onSubmit={handleSubmit}>
                     <Field
-                        name='username'
+                        name='phone'
                         render={({ input }) => (
                             <Form.Input
-                                id='username'
-                                placeholder='username'
-                                className='blueIcon'
-                                size='massive'
-                                icon='user circle'
-                                iconPosition='left'
-                                autoComplete='off'
-                                spellCheck='false'
-                                inverted
-                                transparent
-                                fluid
-                                focus
+                                id='phone'
+                                placeholder='phone'
                                 name={input.name}
                                 value={input.value}
                                 onChange={(value) => {
@@ -61,21 +47,11 @@ const LoginForm = ({ history }) => {
                         )}
                     />
                     <Field
-                        name='password'
+                        name='account'
                         render={({ input }) => (
                             <Form.Input
-                                id='password'
-                                placeholder='password'
-                                className='blueIcon'
-                                size='massive'
-                                icon='lock'
-                                iconPosition='left'
-                                autoComplete='off'
-                                spellCheck='false'
-                                inverted
-                                transparent
-                                fluid
-                                focus
+                                id='account'
+                                placeholder='account'
                                 name={input.name}
                                 value={input.value}
                                 onChange={(value) => {
@@ -85,18 +61,49 @@ const LoginForm = ({ history }) => {
                             />
                         )}
                     />
-                    <Divider hidden />
+                    <Field
+                        name='firstName'
+                        render={({ input }) => (
+                            <Form.Input
+                                id='firstName'
+                                placeholder='firstName'
+                                name={input.name}
+                                value={input.value}
+                                onChange={(value) => {
+                                    setError(false);
+                                    input.onChange(value);
+                                }}
+                            />
+                        )}
+                    />
+                    <Field
+                        name='lastName'
+                        render={({ input }) => (
+                            <Form.Input
+                                id='lastName'
+                                placeholder='lastName'
+                                name={input.name}
+                                value={input.value}
+                                onChange={(value) => {
+                                    setError(false);
+                                    input.onChange(value);
+                                }}
+                            />
+                        )}
+                    />
                     <PulseButton
                         render={(setVisible) => (
                             <Form.Button
-                                content='Login'
+                                content='Find Membership'
                                 size='huge'
+                                icon='search'
+                                labelPosition='right'
                                 circular
                                 fluid
                                 color={error ? 'red' : 'blue'}
                                 onClick={() => {
                                     setVisible((visible) => !visible);
-                                    document.getElementById('username').focus();
+                                    document.getElementById('phone').focus();
                                 }}
                             />
                         )}
@@ -104,12 +111,31 @@ const LoginForm = ({ history }) => {
                     <PulseButton
                         render={(setVisible) => (
                             <Form.Button
-                                content='Admin'
-                                size='huge'
+                                content='New Membership'
                                 type='button'
+                                size='huge'
+                                icon='add circle'
+                                labelPosition='right'
                                 circular
                                 fluid
+                                color='teal'
+                                onClick={() =>
+                                    setVisible((visible) => !visible)
+                                }
+                            />
+                        )}
+                    />
+                    <PulseButton
+                        render={(setVisible) => (
+                            <Form.Button
+                                content={`Daily Report: ${new Date().toLocaleDateString()}`}
+                                type='button'
+                                size='huge'
                                 color='yellow'
+                                icon='calendar'
+                                labelPosition='right'
+                                circular
+                                fluid
                                 onClick={() =>
                                     setVisible((visible) => !visible)
                                 }
@@ -119,30 +145,19 @@ const LoginForm = ({ history }) => {
                     <PulseButton
                         render={(setVisible) => (
                             <Form.Button
-                                content='Backup'
-                                size='huge'
+                                content='Logout'
                                 type='button'
-                                circular
-                                fluid
-                                color='pink'
-                                onClick={() =>
-                                    setVisible((visible) => !visible)
-                                }
-                            />
-                        )}
-                    />
-                    <PulseButton
-                        render={(setVisible) => (
-                            <Form.Button
-                                content='Close'
                                 size='huge'
-                                type='button'
-                                circular
-                                fluid
                                 color='black'
+                                icon='sign-out'
+                                labelPosition='right'
+                                circular
+                                fluid
                                 onClick={() => {
                                     setVisible((visible) => !visible);
-                                    ipcRenderer.send(channels.CLOSE_APP);
+                                    setTimeout(() => {
+                                        history.push('/');
+                                    }, 500);
                                 }}
                             />
                         )}
@@ -153,4 +168,4 @@ const LoginForm = ({ history }) => {
     );
 };
 
-export default withRouter(LoginForm);
+export default withRouter(DashboardForm);

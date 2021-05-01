@@ -7,6 +7,136 @@ import PulseButton from '../Button/PulseButton';
 
 const { ipcRenderer } = window;
 
+const LoginButton = ({ error }) => (
+    <PulseButton
+        render={(setVisible) => (
+            <Form.Button
+                content='Login'
+                size='huge'
+                color={error ? 'red' : 'blue'}
+                icon='sign-in'
+                labelPosition='right'
+                circular
+                fluid
+                onClick={() => {
+                    setVisible((visible) => !visible);
+                    document.getElementById('username').focus();
+                }}
+            />
+        )}
+    />
+);
+const AdminButton = () => (
+    <PulseButton
+        render={(setVisible) => (
+            <Form.Button
+                content='Admin'
+                size='huge'
+                type='button'
+                color='yellow'
+                icon='database'
+                labelPosition='right'
+                circular
+                fluid
+                onClick={() => setVisible((visible) => !visible)}
+            />
+        )}
+    />
+);
+const CloseButton = () => (
+    <PulseButton
+        render={(setVisible) => (
+            <Form.Button
+                content='Close'
+                size='huge'
+                type='button'
+                color='black'
+                icon='close'
+                labelPosition='right'
+                circular
+                fluid
+                onClick={() => {
+                    setVisible((visible) => !visible);
+                    setTimeout(() => {
+                        ipcRenderer.send(channels.CLOSE_APP);
+                    }, 500);
+                }}
+            />
+        )}
+    />
+);
+const BackupButton = () => (
+    <PulseButton
+        render={(setVisible) => (
+            <Form.Button
+                content='Backup'
+                size='huge'
+                type='button'
+                color='pink'
+                icon='save'
+                labelPosition='right'
+                circular
+                fluid
+                onClick={() => setVisible((visible) => !visible)}
+            />
+        )}
+    />
+);
+const UsernameField = ({ setError }) => (
+    <Field
+        name='username'
+        render={({ input }) => (
+            <Form.Input
+                id='username'
+                placeholder='username'
+                className='blueIcon'
+                size='massive'
+                icon='user circle'
+                iconPosition='left'
+                autoComplete='off'
+                spellCheck='false'
+                inverted
+                transparent
+                fluid
+                focus
+                name={input.name}
+                value={input.value}
+                onChange={(value) => {
+                    setError(false);
+                    input.onChange(value);
+                }}
+            />
+        )}
+    />
+);
+const PasswordField = ({ setError }) => (
+    <Field
+        name='password'
+        render={({ input }) => (
+            <Form.Input
+                id='password'
+                placeholder='password'
+                className='blueIcon'
+                size='massive'
+                icon='lock'
+                iconPosition='left'
+                autoComplete='off'
+                spellCheck='false'
+                inverted
+                transparent
+                fluid
+                focus
+                name={input.name}
+                value={input.value}
+                onChange={(value) => {
+                    setError(false);
+                    input.onChange(value);
+                }}
+            />
+        )}
+    />
+);
+
 const LoginForm = ({ history }) => {
     const [error, setError] = useState(false);
 
@@ -35,118 +165,15 @@ const LoginForm = ({ history }) => {
             onSubmit={onSubmit}
             render={({ handleSubmit }) => (
                 <Form onSubmit={handleSubmit}>
-                    <Field
-                        name='username'
-                        render={({ input }) => (
-                            <Form.Input
-                                id='username'
-                                placeholder='username'
-                                className='blueIcon'
-                                size='massive'
-                                icon='user circle'
-                                iconPosition='left'
-                                autoComplete='off'
-                                spellCheck='false'
-                                inverted
-                                transparent
-                                fluid
-                                focus
-                                name={input.name}
-                                value={input.value}
-                                onChange={(value) => {
-                                    setError(false);
-                                    input.onChange(value);
-                                }}
-                            />
-                        )}
-                    />
-                    <Field
-                        name='password'
-                        render={({ input }) => (
-                            <Form.Input
-                                id='password'
-                                placeholder='password'
-                                className='blueIcon'
-                                size='massive'
-                                icon='lock'
-                                iconPosition='left'
-                                autoComplete='off'
-                                spellCheck='false'
-                                inverted
-                                transparent
-                                fluid
-                                focus
-                                name={input.name}
-                                value={input.value}
-                                onChange={(value) => {
-                                    setError(false);
-                                    input.onChange(value);
-                                }}
-                            />
-                        )}
-                    />
+                    <UsernameField setError={setError} />
+                    <PasswordField setError={setError} />
                     <Divider hidden />
-                    <PulseButton
-                        render={(setVisible) => (
-                            <Form.Button
-                                content='Login'
-                                size='huge'
-                                circular
-                                fluid
-                                color={error ? 'red' : 'blue'}
-                                onClick={() => {
-                                    setVisible((visible) => !visible);
-                                    document.getElementById('username').focus();
-                                }}
-                            />
-                        )}
-                    />
-                    <PulseButton
-                        render={(setVisible) => (
-                            <Form.Button
-                                content='Admin'
-                                size='huge'
-                                type='button'
-                                circular
-                                fluid
-                                color='yellow'
-                                onClick={() =>
-                                    setVisible((visible) => !visible)
-                                }
-                            />
-                        )}
-                    />
-                    <PulseButton
-                        render={(setVisible) => (
-                            <Form.Button
-                                content='Backup'
-                                size='huge'
-                                type='button'
-                                circular
-                                fluid
-                                color='pink'
-                                onClick={() =>
-                                    setVisible((visible) => !visible)
-                                }
-                            />
-                        )}
-                    />
-                    <PulseButton
-                        render={(setVisible) => (
-                            <Form.Button
-                                content='Close'
-                                size='huge'
-                                type='button'
-                                circular
-                                fluid
-                                color='black'
-                                onClick={() => {
-                                    setVisible((visible) => !visible);
-                                    ipcRenderer.send(channels.CLOSE_APP);
-                                }}
-                            />
-                        )}
-                    />
+                    <LoginButton error={error} />
+                    <AdminButton />
+                    <Form.Group widths={2}>
+                        <CloseButton />
+                        <BackupButton />
+                    </Form.Group>
                 </Form>
             )}
         />

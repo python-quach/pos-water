@@ -224,10 +224,17 @@ module.exports = (db) => {
     }
 
     async function editMembership(event, args) {
-        const { account, phone, first, last } = args;
+        console.log(args);
+        const { originalAccount, account, phone, first, last } = args;
 
         try {
-            const records = await db.edit([first, last, phone, account]);
+            const records = await db.edit([
+                first,
+                last,
+                phone,
+                account,
+                originalAccount,
+            ]);
             event.sender.send(channels.SENTER_EDIT, records);
         } catch (err) {
             console.log(err.message);

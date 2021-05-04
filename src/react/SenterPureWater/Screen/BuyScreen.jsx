@@ -10,6 +10,7 @@ import Modal from './Modal';
 
 const BuyScreen = (props) => {
     const { state } = props.location;
+    const [error, setError] = useState(false);
 
     const [open, setOpen] = useState(state ? true : false);
     const [history, setHistory] = useState(state ? state.history : []);
@@ -77,10 +78,20 @@ const BuyScreen = (props) => {
     };
 
     const handleEdit = async (values) => {
+        console.log(values.account, record.account);
         try {
-            const data = await editMembership(values);
-            setRecord(data[data.length - 1]);
-            setHistory(data);
+            const data = await editMembership({
+                ...values,
+                originalAccount: record.account,
+            });
+            console.log(data);
+            if (data.error) {
+                setError(data.error);
+            } else {
+                setError(false);
+                setRecord(data[data.length - 1]);
+                setHistory(data);
+            }
             return data;
         } catch (err) {
             return console.log(err);
@@ -102,7 +113,7 @@ const BuyScreen = (props) => {
     );
 
     const field = {
-        account: <Field.Account edit={edit} />,
+        account: <Field.Account edit={edit} error={error} />,
         since: <Field.MemberSince edit={edit} />,
         phone: <Field.PhoneNumber edit={edit} />,
         first: <Field.FirstName edit={edit} />,
@@ -120,6 +131,7 @@ const BuyScreen = (props) => {
             <Button.Edit
                 edit={edit}
                 handleEdit={handleEdit}
+                originalAccount={record.account}
                 values={values}
                 setEdit={setEdit}
                 setOpenReceipt={setOpenReceipt}

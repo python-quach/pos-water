@@ -389,22 +389,72 @@ module.exports = (app) => {
     }
 
     function edit(data) {
+        console.log(data);
         const account = data[3];
+        const original = data[4];
         return new Promise((resolve, reject) => {
-            db.run(
-                `UPDATE memberships SET first = ?, last = ?, phone = ? WHERE account = ?`,
-                data,
-                function (err) {
+            if (account !== original) {
+                const findDuplicateAccount = `SELECT * FROM memberships WHERE account = ?`;
+                db.get(findDuplicateAccount, account, (err, row) => {
                     if (err) reject(err);
-                    db.all(
-                        `SELECT * FROM memberships WHERE account = ?`,
-                        account,
-                        (err, rows) => (err ? reject(err) : resolve(rows))
-                    );
-                }
-            );
+                    if (!row) {
+                        db.run(
+                            `UPDATE memberships SET first = ?, last = ?, phone = ?, account = ?  WHERE account = ?`,
+                            data,
+                            function (err) {
+                                if (err) reject(err);
+                                db.all(
+                                    `SELECT * FROM memberships WHERE account = ?`,
+                                    account,
+                                    (err, rows) =>
+                                        err ? reject(err) : resolve(rows)
+                                );
+                            }
+                        );
+                    } else {
+                        resolve({
+                            error: `Account ${row.account} already existed`,
+                            data,
+                        });
+                    }
+                });
+            } else {
+                const newArray = data.slice(0, 4);
+                console.log(newArray);
+                db.run(
+                    `UPDATE memberships SET first = ?, last = ?, phone = ? WHERE account = ?`,
+                    newArray,
+                    function (err) {
+                        if (err) reject(err);
+                        db.all(
+                            `SELECT * FROM memberships WHERE account = ?`,
+                            account,
+                            (err, rows) => (err ? reject(err) : resolve(rows))
+                        );
+                    }
+                );
+            }
         });
     }
+
+    // function edit(data) {
+    //     console.log(data);
+    //     const account = data[3];
+    //     return new Promise((resolve, reject) => {
+    //         db.run(
+    //             `UPDATE memberships SET first = ?, last = ?, phone = ? WHERE account = ?`,
+    //             data,
+    //             function (err) {
+    //                 if (err) reject(err);
+    //                 db.all(
+    //                     `SELECT * FROM memberships WHERE account = ?`,
+    //                     account,
+    //                     (err, rows) => (err ? reject(err) : resolve(rows))
+    //                 );
+    //             }
+    //         );
+    //     });
+    // }
 
     function remove(account, password) {
         return new Promise((resolve, reject) => {

@@ -434,13 +434,13 @@ export const BuyScreenField = {
         />
     ),
 
-    Account: ({ edit }) => (
+    Account: ({ edit, error }) => (
         <Field
             name='account'
             parse={normalize.account}
             render={({ input }) => (
                 <Form.Input
-                    disabled={edit}
+                    // disabled={edit}
                     id='account'
                     size='huge'
                     className='TodayDate'
@@ -449,7 +449,8 @@ export const BuyScreenField = {
                     icon='hashtag'
                     iconPosition='left'
                     inverted
-                    readOnly
+                    error={error ? error : edit}
+                    readOnly={edit ? false : true}
                     width={2}
                 />
             )}

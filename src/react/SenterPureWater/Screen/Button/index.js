@@ -258,13 +258,21 @@ export const BuyScreenButton = {
             }}
         />
     ),
-    Edit: ({ values, setEdit, edit, handleEdit, setOpenReceipt }) => (
+    Edit: ({
+        values,
+        setEdit,
+        edit,
+        handleEdit,
+        setOpenReceipt,
+        originalAccount,
+    }) => (
         <Form.Button
             type='button'
             disabled={
                 !values.first ||
                 !values.last ||
                 !values.phone ||
+                !values.account ||
                 values.phone.length < 14
             }
             content={edit ? 'Save' : 'Edit'}
@@ -298,6 +306,7 @@ export const BuyScreenButton = {
                 e.preventDefault();
                 form.reset({
                     ...values,
+                    account: record.account,
                     first: record.first,
                     last: record.last,
                     phone: record.phone,

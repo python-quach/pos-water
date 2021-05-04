@@ -28,7 +28,7 @@ function createWindow() {
         },
     });
 
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
     mainWindow.loadURL(startUrl);
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();

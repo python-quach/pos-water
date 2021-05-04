@@ -112,9 +112,21 @@ export function findBothNames(firstName, lastName) {
     });
 }
 
-export const editMembership = ({ account, first, last, phone }) => {
+export const editMembership = ({
+    account,
+    first,
+    last,
+    phone,
+    originalAccount,
+}) => {
     return new Promise((resolve, reject) => {
-        ipcRenderer.send(channels.SENTER_EDIT, { account, first, last, phone });
+        ipcRenderer.send(channels.SENTER_EDIT, {
+            account,
+            first,
+            last,
+            phone,
+            originalAccount,
+        });
         ipcRenderer.on(channels.SENTER_EDIT, (_, args) => {
             ipcRenderer.removeAllListeners(channels.SENTER_EDIT);
             if (args) {
